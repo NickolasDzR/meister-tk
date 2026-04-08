@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["resources/views/components/*"],
+      "@modules/*": ["resources/views/modules/*"],
+      "@utils": ["resources/ts/helpers/utils.ts"],
+      "@types": ["resources/ts/helpers/types.ts"],
+
+      "@splideJs": ["node_modules/@splidejs/splide/dist/js/splide.esm.js"],
+      "@splidecss": ["node_modules/@splidejs/splide/dist/css/splide-core.min.css"],
+
+
+      "@classWatcher": ["resources/ts/modules/classWatcher"],
+
+      "@nice-select2-scss": ["node_modules/nice-select2/src/scss/nice-select2.scss"],
+      "@nice-select2": ["./resources/ts/modules/nice-select2.js"],
+
+      "@dadatajson": ["json/dadata.json"],
+    }
+  },
+  "typeRoots": ["resources/ts/helpers/types.ts", "node_modules/@types"],
+  "include": ["resources/ts/**/*.ts", "resources/ts/**/*.tsx"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

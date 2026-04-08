@@ -1,0 +1,80 @@
+@php
+    $nav = [
+        ['link' => '#', 'text' => 'Новости'],
+        ['link' => '#', 'text' => 'Расчитать доставку'],
+        ['link' => '#', 'text' => 'Контакты']
+    ];
+
+    $soc = [
+        ['link' => '#', 'name' => 'ws'],
+        ['link' => '#', 'name' => 'tg'],
+        ['link' => '#', 'name' => 'vk']
+    ];
+
+    $contacts = [
+        [
+            'title' => '+7 (999) 120 59 82',
+            'titleLink' => '#',
+            'subtitle' => 'nickolasdzr@yandex.ru',
+            'subtitleLink' => '#'
+        ]
+    ];
+
+    $slides = [
+        [
+            'images' => [
+                'mobile' => 'slider/slide-1',
+                'tablet' => 'slider/slide-1-desk',
+            ],
+            'title' => 'Обманчивый штиль: как меняются ставки на автоперевозки в середине лета',
+            'subtitle' => 'Рассказываем, на каких направлениях тарифы в июле изменились сильнее всего',
+            'link' => '#',
+        ],
+        [
+            'images' => [
+                'mobile' => 'slider/slide-2',
+                'tablet' => 'slider/slide-2-desk',
+            ],
+            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
+            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
+            'link' => '#',
+        ],
+        [
+            'images' => [
+                'mobile' => 'slider/slide-2',
+                'tablet' => 'slider/slide-2-desk',
+            ],
+            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
+            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
+            'link' => '#',
+        ],
+        [
+            'images' => [
+                'mobile' => 'slider/slide-2',
+                'tablet' => 'slider/slide-2-desk',
+            ],
+            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
+            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
+            'link' => '#',
+        ],
+        [
+            'images' => [
+                'mobile' => 'slider/slide-2',
+                'tablet' => 'slider/slide-2-desk',
+            ],
+            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
+            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
+            'link' => '#',
+        ],
+    ];
+@endphp
+
+@extends('layouts.app')
+
+@section('content')
+    @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
+
+    <main>
+        @include('modules.main-slider.main-slider', ['items' => $slides])
+    </main>
+@endsection

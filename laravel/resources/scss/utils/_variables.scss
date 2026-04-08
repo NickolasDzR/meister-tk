@@ -1,0 +1,35 @@
+/* Цветовая палитра */
+$black: #1A1A1A;
+$dark: #333333;
+$lightGray: #4B4B4B;
+$white: #fff;
+$indigo: #1F425D;
+$keppel: #3B97A2;
+$blue-green: #07A6B9;
+$gray: #999999;
+$red: #D00E3D;
+
+$telegram: #00a7e9;
+$vk: #466f9c;
+$whatsapp: #00a83f;
+
+$font: "Geologica", sans-serif;
+$second-font: "Montserrat", sans-serif;
+
+// Размеры
+$border-radius: 20px !default;
+$border-radius-sm: 12px !default;
+$spacing-unit: 1rem !default;
+
+// Тени
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02) !default;
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05) !default;
+$shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !default;
+
+// Брейкпоинты
+$break_sm: 576px !default;
+$break_md: 768px !default;
+$break_lg: 992px !default;
+$break_xl: 1200px !default;
+$break_xxl: 1400px;
+

@@ -1,0 +1,39 @@
+.button {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 18px 25px;
+    outline: none;
+    color: var(--white);
+    text-decoration: none;
+    text-transform: none;
+    display: inline-block;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .3s ease;
+
+    &[disabled] {
+        pointer-events: none;
+        background-color: #999;
+    }
+
+    &_transparent {
+        border: 2px solid var(--white);
+
+        &:hover {
+            background-color: var(--keppel);
+            border-color: var(--keppel);
+        }
+    }
+
+    &_keppel {
+        background-color: var(--keppel);
+        border-radius: 0;
+
+        &:hover {
+            background-color: var(--white);
+            border-color: var(--white);
+            color: var(--keppel)
+        }
+    }
+}

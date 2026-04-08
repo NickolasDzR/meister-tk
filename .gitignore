@@ -1,0 +1,4 @@
+docker/db
+docker/log
+docker/redis
+.idea

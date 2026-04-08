@@ -1,0 +1,286 @@
+@use '_variables' as *;
+
+:root {
+    /* Цветовая палитра */
+    --black: #1A1A1A;
+    --dark: #333333;
+    --lightGray: #4B4B4B;
+    --white: #fff;
+    --indigo: #1F425D;
+    --keppel: #3B97A2;
+    --blue-green: #07A6B9;
+    --gray: #999999;
+    --red: #D00E3D;
+
+    --telegram: #00a7e9;
+    --vk: #466f9c;
+    --whatsapp: #00a83f;
+
+    --font: "Geologica", sans-serif;
+    --second-font: "Montserrat", sans-serif;
+}
+
+/* Базовые сбросы и глобальные стили */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font);
+    min-width: 320px;
+    overflow-x: hidden;
+    color: $black;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.js-hamburger-activator {
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+
+    &.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.disable {
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+
+/* Типографика */
+h1, h2, h3 {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Ссылки */
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--color-accent-hover);
+}
+
+/* Списки без маркеров */
+.list-unstyled {
+    list-style: none;
+}
+
+/* Разделители */
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 3rem 0;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Подвал */
+.footer {
+    margin-top: auto;
+    padding: 3rem 0;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-black-light);
+}
+
+
+.has-drag-handle {
+    &::before {
+        display: block;
+        height: 4px;
+        background: rgba(0, 11, 33, 0.18);
+        border-radius: 10px;
+        content: "";
+        width: 60px;
+        position: absolute;
+        left: 50%;
+        right: 50%;
+        transform: translateX(-50%);
+        top: 10px;
+        z-index: 2;
+
+        @media (min-width: $break_md) {
+            display: none;
+        }
+    }
+}
+
+.text-muted {
+    color: rgba(33, 37, 41, .75);
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.align-items-end {
+    align-items: flex-end;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.d-md-none {
+    @media (min-width: $break_md) {
+        display: none !important;
+    }
+}
+
+.d-block {
+    display: block !important;
+}
+
+.d-md-block {
+    @media (min-width: $break_md) {
+        display: block !important;
+    }
+}
+
+.d-md-flex {
+    @media (min-width: $break_md) {
+        display: flex !important;
+    }
+}
+
+.d-xl-block {
+    @media (min-width: $break_xl) {
+        display: block !important;
+    }
+}
+
+.relative {
+    position: relative;
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.ms-1 {
+    margin-left: .25rem;
+}
+
+.mt-1 {
+    margin-top: .25rem;
+}
+
+.mb-1 {
+    margin-bottom: .25rem;
+}
+
+.me-1 {
+    margin-right: .25rem;
+}
+
+.mt-2 {
+    margin-top: .5rem;
+}
+
+.mb-2 {
+    margin-bottom: .5rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.me-4 {
+    margin-right: 1.5rem;
+}
+
+.py-4 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.me-2 {
+    margin-right: .5rem;
+}
+
+.ms-2 {
+    margin-left: .5rem;
+}
+
+.mt-3 {
+    margin-top: .75rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}

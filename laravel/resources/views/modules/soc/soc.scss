@@ -1,0 +1,39 @@
+.soc {
+    display: flex;
+    justify-content: center;
+
+    &__list {
+        display: flex;
+    }
+
+    &__item {
+        & + & {
+            margin-left: 35px;
+        }
+    }
+
+    &__link {
+        &:hover {
+            .soc__svg {
+                &_vk {
+                    fill: var(--vk);
+                }
+
+                &_tg {
+                    fill: var(--telegram);
+                }
+
+                &_ws {
+                    fill: var(--whatsapp);
+                }
+            }
+        }
+    }
+
+    &__svg {
+        fill: var(--indigo);
+        width: 25px;
+        height: 25px;
+        transition: all .3s ease;
+    }
+}

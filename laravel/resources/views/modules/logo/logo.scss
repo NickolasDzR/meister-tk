@@ -1,0 +1,13 @@
+@use '_variables' as *;
+
+.logo {
+    svg, img {
+        width: 157px;
+        height: 55px;
+
+        @media (min-width: $break_md) {
+            width: 173px;
+            height: 65px;
+        }
+    }
+}

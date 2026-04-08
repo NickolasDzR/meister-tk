@@ -1,0 +1,70 @@
+// Стандартные брейкпоинты Bootstrap:
+// xs: 0 (по умолчанию)
+// sm: 576px
+// md: 768px
+// lg: 992px
+// xl: 1200px
+// xxl: 1400px (стандартный)
+
+// - Оставляем xl = 1200px
+// - Добавляем xxl = 1440px
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+        xxl: 1440px  // кастомный брейкпоинт
+);
+
+// 2. Максимальная ширина контейнера для каждого брейкпоинта
+$container-max-widths: (
+        xxl: 1440px
+);
+
+// 3. Количество колонок (оставляем стандартное 12)
+$grid-columns: 12;
+
+// 4. Отступы между колонками (гутеры)
+$grid-gutter-width: 15px; // 24px, стандартный
+
+// 5. Импортируем только сетку Bootstrap (не весь Bootstrap)
+// Это позволит подключить только нужные части
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+// Переопределяем переменные еще раз после импорта variables,
+// чтобы гарантировать, что наши значения применились
+$grid-breakpoints: (
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+        xxl: 1440px
+) !default;
+
+$container-max-widths: (
+        sm: 540px,
+        md: 720px,
+        lg: 960px,
+        xl: 1140px,
+        xxl: 1320px
+) !default;
+
+// Отступы контейнера (то, что вы хотите изменить)
+$container-padding-x: 30px; // было 15px, поставьте меньше если надо
+
+// Отступы между колонками
+$grid-gutter-width: 30px;
+
+// Количество колонок
+$grid-columns: 12;
+
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+
+//@import "bootstrap/scss/bootstrap";

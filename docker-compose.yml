@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+    ports:
+      - "8083:8083"
+      - "8084:8084"
+
+    container_name: meister_nginx
+    depends_on:
+      - laravel
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  laravel:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./laravel/:/var/www/laravel
+    working_dir: /var/www/laravel
+    container_name: meister_laravel
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - ./docker/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: meister_db
+      MYSQL_ROOT_PASSWORD: "!18Thfijdrjkz272729"
+    ports:
+      - 8101:3306
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: meister-tk_db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: meister_phpmyadmin
+    depends_on:
+      - db
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=100M
+    restart: always
+    ports:
+      - 8086:80
+    volumes:
+      - /sessions
