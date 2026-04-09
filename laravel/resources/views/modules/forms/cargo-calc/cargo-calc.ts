@@ -5,9 +5,9 @@ if (closeFormButton) {
     closeFormButton.addEventListener('click', () => cargoCalcMain.classList.remove("active"));
 
     // TODO При нажатии на кнопку сделать валидацию инпутов и просчёт рейса
-    const cargoCalcFormButton = document.querySelector(".cargo-calc__button") as HTMLButtonElement;
+    // const cargoCalcFormButton = document.querySelector(".cargo-calc__button") as HTMLButtonElement;
 
-    cargoCalcFormButton.addEventListener('click', e => {
-
-    });
+    // cargoCalcFormButton.addEventListener('click', e: Event => {
+    //
+    // });
 }

@@ -5,7 +5,7 @@
     overflow-y: hidden;
 
     @media (min-width: $break_md) {
-        height: calc(100vh - 110px);
+        height: calc(100vh - 109px);
     }
 
     &__slider {
@@ -74,7 +74,7 @@
         }
 
         @media (min-width: $break_xxl) {
-            left: calc((100vw - 1560px + 15px) / 2);
+            left: calc((100vw - 1426px + 15px) / 2);
         }
     }
 

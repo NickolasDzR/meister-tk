@@ -30,7 +30,11 @@ const inputEventHandling = (input: HTMLInputElement) => {
 }
 
 if (inputs.length) {
-    Array.from(inputs, input => {
-        inputEventHandling(input.querySelector("input") as HTMLInputElement);
+    Array.from(inputs, (el: HTMLDivElement) => {
+        const input = el.querySelector("input") as HTMLInputElement | undefined;
+
+        if (input) {
+            inputEventHandling(input);
+        }
     })
 }

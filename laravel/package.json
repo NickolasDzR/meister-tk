@@ -4,8 +4,9 @@
     "type": "module",
     "scripts": {
         "images": "node vite.convert-images-to-webp.js",
-        "dev": "npm run images && vite",
-        "build": "npm run images && vite build"
+        "fonts": "node vite.copy-fonts.js",
+        "dev": "npm run images && npm run fonts && vite",
+        "build": "npm run images && npm run fonts && vite build"
     },
     "devDependencies": {
         "@splidejs/splide-extension-intersection": "^0.2.0",
@@ -26,7 +27,9 @@
         "sharp": "^0.34.5",
         "tailwindcss": "^4.0.0",
         "typescript": "^6.0.2",
-        "vite": "^8.0.4"
+        "vite": "^8.0.4",
+        "vite-plugin-copy": "^0.1.6",
+        "vite-plugin-static-copy": "^4.0.1"
     },
     "dependencies": {
         "@mornya/dynamic-load-libs": "^0.3.5",

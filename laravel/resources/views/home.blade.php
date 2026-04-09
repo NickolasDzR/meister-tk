@@ -6,7 +6,6 @@
     ];
 
     $soc = [
-        ['link' => '#', 'name' => 'ws'],
         ['link' => '#', 'name' => 'tg'],
         ['link' => '#', 'name' => 'vk']
     ];
@@ -76,5 +75,7 @@
 
     <main>
         @include('modules.main-slider.main-slider', ['items' => $slides])
+        @include('modules.forms.cargo-calc.cargo-calc', ['title' => 'Отправить груз', 'button' => 'Расчитать доставку'])
     </main>
+    <x-button type="keppel" class="main__cargo-calc-button" text="Расчитать доставку" />
 @endsection

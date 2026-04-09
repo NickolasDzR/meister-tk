@@ -1,4 +1,4 @@
-export const YMapApiKey = "8015e492-aa36-4f9e-83b5-e5a5dbb3e45b"
+export const YMapApiKey = "ddfceee2-5581-4011-b3aa-47da0e92c91a"
 
 import "@components/hamburger/hamburger";
 import "@components/select/select";

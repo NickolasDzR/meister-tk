@@ -4,6 +4,7 @@
     display: inline-flex;
     transition: transform .3s ease;
     overflow: hidden;
+    padding: 15px;
 
     &::before {
         content: "";

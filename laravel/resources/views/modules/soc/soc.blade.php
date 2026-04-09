@@ -1,8 +1,8 @@
 @props(['value' => false, 'parentClass' => ''])
 
 @php
-    $socItems = $value['items'] ?? [];
-    $svgClassBase = $value['svgClass'] ?? '';
+    $socItems = $items ?? [];
+    $svgClassBase = $svgClass ?? '';
 @endphp
 
 <div {{ $attributes->merge(['class' => 'soc ' . $parentClass]) }}>
@@ -10,10 +10,10 @@
         @foreach($socItems as $item)
             <li class="soc__item">
                 <a class="soc__link" href="{{ $item['link'] ?? '#' }}">
-{{--                    <x-icon--}}
-{{--                            :name="$item['name'] ?? ''"--}}
-{{--                            :class="$svgClassBase ? 'soc__svg ' . $svgClassBase . ' soc__svg_' . ($item['name'] ?? '') : 'soc__svg soc__svg_' . ($item['name'] ?? '')"--}}
-{{--                    />--}}
+                    <x-icon
+                        :name="$item['name'] ?? ''"
+                        :class="$svgClassBase ? 'soc__svg ' . $svgClassBase . ' soc__svg_' . ($item['name'] ?? '') : 'soc__svg soc__svg_' . ($item['name'] ?? '')"
+                    />
                 </a>
             </li>
         @endforeach

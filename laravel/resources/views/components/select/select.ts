@@ -1,6 +1,6 @@
 import NiceSelect from "@nice-select2";
 import {
-    addressesResponseType, DeliveryCostConfig,
+    addressesResponseType, Coordinates, DeliveryCostConfig,
     formatedAddressesResponseType,
     niceSelect2Instance,
     SelectSettings,
@@ -72,7 +72,7 @@ const onChangedInput = async (input: HTMLInputElement) => {
 
     // Удаляем пустые (null) значения и дубли
     const uniqueLocations = [...new Map(
-        results.filter(({ value, lon, lat }) => value && lon && lat)
+        results.filter(({value, lon, lat}) => value && lon && lat)
             .map(obj => [obj.value, obj])
     ).values()];
 
@@ -267,7 +267,7 @@ const formEventHandler = (event: CustomEvent) => {
             const costPerKm = deliveryCosts[category].costPerKm as number;
 
             // Передаём данные в обработчик результатов и показываем пользователю
-            text = String(Math.round((costPerKm * distance) / 1000)*1000);
+            text = String(Math.round((costPerKm * distance) / 1000) * 1000);
         }
         // Если у нас ошибка в возвращаемом значении дистации между точками2
     } else {
@@ -309,6 +309,11 @@ const costCalculator = (coord: [number, number], form: HTMLFormElement) => {
             });
 
             form.dispatchEvent(customEvent);
+        });
+
+        multiRoute.model.events.add('requestfail', function(event: Event) {
+            // @ts-ignore
+            console.log("Route creation failed: " + event.get('error').message);
         });
 
         form.addEventListener("formCalculationEvent", formEventHandler);
@@ -487,7 +492,7 @@ const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
         const form = button.closest(".cargo-calc__form") as HTMLFormElement;
 
         // Собираем данные с формы
-        const valueFormElements = getFormValues(form);
+        const valueFormElements = getFormValues(form) as Coordinates;
 
         const isValidFormValues = (obj: any): obj is valueFormElementsTypes => {
             return obj &&
@@ -499,10 +504,11 @@ const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
         // Проверил, есть ли все данные введенные в форме
         if (valueFormElements && isValidFormValues(valueFormElements)) {
             ymaps.ready(() => {
-                const location0 = Array.isArray(valueFormElements.location_0) ? Number(valueFormElements.location_0[0]) : Number(valueFormElements.location_0);
-                const location1 = Array.isArray(valueFormElements.location_1) ? Number(valueFormElements.location_1[0]) : Number(valueFormElements.location_1);
+                // const location0 = Array.isArray(valueFormElements.location_0) ? Number(valueFormElements.location_0[0]) : Number(valueFormElements.location_0);
+                // const location1 = Array.isArray(valueFormElements.location_1) ? Number(valueFormElements.location_1[0]) : Number(valueFormElements.location_1);
 
-                costCalculator([location0, location1], form);
+                // @ts-ignore
+                costCalculator([valueFormElements["location_0"] as [number, number], valueFormElements["location_1"] as [number, number]], form);
             });
         } else {
             console.error("Отсутствует одно из значений для просчёта стоимости рейса");

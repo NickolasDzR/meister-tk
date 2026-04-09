@@ -1,10 +1,10 @@
 @props(['postCards' => false])
 
 <div class="post-cards">
-    <ul class="list">
+    <ul class="post-cards__list">
         @foreach($postCards as $card)
-            <li class="item">
-                <x-post-card :value="$card" />
+            <li class="post-cards__item">
+                @include('modules.post-card.post-card', ['card' => $card])
             </li>
         @endforeach
     </ul>

@@ -5,8 +5,6 @@ import path from "node:path";
 import autoprefixer from 'autoprefixer';
 import postcssSortMediaQueries from 'postcss-sort-media-queries';
 import combineMediaQuery from 'postcss-combine-media-query';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { imageToWebpPlugin } from 'vite-plugin-image-to-webp';
 
 export default defineConfig({
     plugins: [
@@ -71,7 +69,7 @@ export default defineConfig({
         }
     },
     server: {
-        host: '0.0.0.0',  // Важно для Docker
+        host: 'dev.local', // Важно для Docker
         port: 5173,
         hmr: {
             host: 'localhost',

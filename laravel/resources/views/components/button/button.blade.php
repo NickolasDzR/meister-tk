@@ -1,12 +1,3 @@
-@props(['value' => false])
+@props(['type' => '', 'class' => '', 'text' => ''])
 
-@php
-    $mod = isset($value['type']) ? 'button_' . $value['type'] : '';
-    $el = isset($value['class']) ? $value['class'] : '';
-@endphp
-
-<button class="{{ trim($mod . ' ' . $el) }}">{{ $value['text'] ?? '' }}</button>
-
-{{--
--- <x-button :value="['type' => 'primary', 'class' => 'btn', 'text' => 'Click me']" />
---}}
+<button class="{{ trim('button button_' . $type . ' ' . $class) }}">{{ $text }}</button>

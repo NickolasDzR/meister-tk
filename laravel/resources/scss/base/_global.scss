@@ -198,6 +198,12 @@ img {
     }
 }
 
+.d-xl-none {
+    @media (min-width: $break_xl) {
+        display: none !important;
+    }
+}
+
 .d-xl-block {
     @media (min-width: $break_xl) {
         display: block !important;
@@ -206,6 +212,10 @@ img {
 
 .relative {
     position: relative;
+}
+
+.p-0 {
+    padding: 0;
 }
 
 .mt-0 {

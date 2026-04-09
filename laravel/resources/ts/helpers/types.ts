@@ -109,3 +109,8 @@ export interface DeliveryCostConfig {
     maxWeight: number;
     costPerKm: number;
 }
+
+export interface Coordinates {
+    location_0: [number, number];
+    location_1: [number, number];
+}

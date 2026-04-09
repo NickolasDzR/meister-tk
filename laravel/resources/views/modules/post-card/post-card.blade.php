@@ -1,12 +1,16 @@
 @props(['value' => false])
 
 <div class="post-card">
-    <x-picture :name="$value['image'] ?? ''" class="image" />
+    <x-graphic.picture :value="[
+        'name' => $card['image'],
+        'alt' => $card['title'],
+        'class' => 'post-card__image image',
+    ]" />
 
-    <a class="link" href="{{ $value['link'] ?? '#' }}">
-        <div class="content">
-            <p class="title">{{ $value['title'] ?? '' }}</p>
-            <p class="subtitle">{{ $value['subtitle'] ?? '' }}</p>
+    <a class="post-card__link" href="{{ $card['link'] ?? '#' }}">
+        <div class="post-card__content">
+            <p class="post-card__title">{{ $card['title'] ?? '' }}</p>
+            <p class="post-card__subtitle">{{ $card['subtitle'] ?? '' }}</p>
         </div>
     </a>
 </div>

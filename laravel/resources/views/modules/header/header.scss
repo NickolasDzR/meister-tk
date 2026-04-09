@@ -6,10 +6,7 @@
 
     &__logo {
         flex: 0;
-
-        @media (min-width: $break_md) {
-            margin-right: auto;
-        }
+        margin-right: 56px;
 
         @media (min-width: $break_xl) {
             margin-right: 55px;
@@ -56,6 +53,16 @@
             margin-top: auto;
         }
 
+        .header__logo {
+            margin-bottom: 60px;
+            margin-right: auto;
+            margin-left: auto;
+
+            @media (min-width: $break_md) {
+                margin-left: auto;
+            }
+        }
+
         .header__soc {
             margin-bottom: 62px;
         }
@@ -66,6 +73,7 @@
         display: flex;
         align-items: center;
         margin-right: 27px;
+        margin-left: auto;
 
         @media (min-width: $break_xl) {
             opacity: 1;
