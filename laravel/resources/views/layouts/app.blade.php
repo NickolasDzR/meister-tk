@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="csrf-param" content="_token"/>
+    <meta name="ymap-api-key" content="{{ env('YMAP_API_KEY') }}">
     <!-- Bootstrap (оставим для сетки и утилит, но будем переопределять) -->
     @vite(['resources/ts/app.ts', 'resources/scss/app.scss'])
 

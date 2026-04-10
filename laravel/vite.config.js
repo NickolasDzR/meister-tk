@@ -47,6 +47,7 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'resources/scripts'),
             '$': path.resolve(__dirname, 'resources/scss'),
 
+            "@helpers": path.resolve(__dirname, 'resources/ts/helpers/'),
             "@types": path.resolve(__dirname, 'resources/ts/helpers/types'),
             "@utils": path.resolve(__dirname, 'resources/ts/helpers/utils'),
 

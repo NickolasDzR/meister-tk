@@ -247,8 +247,6 @@ const formEventHandler = (event: CustomEvent) => {
             const cargoWeight = +cargoWeightInput.value as number;
             let category: WeightCategory;
 
-            console.log(distance);
-
             // Определяем категорию груза по весу
             if (cargoWeight >= deliveryCosts.upTo2Tons.minWeight && cargoWeight <= deliveryCosts.upTo2Tons.maxWeight) {
                 category = 'upTo2Tons';
@@ -273,8 +271,6 @@ const formEventHandler = (event: CustomEvent) => {
     } else {
         text = undefined;
     }
-
-    console.log(text);
 
     showUserResults(text ? "valid" : "calculation_error", text, form);
 };
@@ -531,7 +527,12 @@ if (cargoCalcButton) {
             buttonActiveHandler.disable(button);
         }
 
-        await YMAPLoader(YMapApiKey);
+        const loaded = await YMAPLoader(YMapApiKey);
+
+        if (!loaded) {
+            showUserResults("calculation_error", undefined, button.closest(".cargo-calc__form") as HTMLFormElement);
+            return;
+        }
 
         getCargoFormInputValuesHandler(event.target as HTMLButtonElement);
     })

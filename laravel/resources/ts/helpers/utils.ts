@@ -1,5 +1,31 @@
 import {DynamicLoad} from "@mornya/dynamic-load-libs";
 
+/**
+ * Возвращает высоту элемента.
+ *
+ * @param element - DOM-элемент
+ * @param includeMargin - учитывать margin-top и margin-bottom (по умолчанию false)
+ *
+ * Без флага: height + padding-top + padding-bottom + border-top + border-bottom (offsetHeight)
+ * С флагом:  то же самое + margin-top + margin-bottom
+ */
+export const getElementHeight = (element: HTMLElement, includeMargin = false): number => {
+    if (!element) {
+        console.error("getElementHeight: нужно передать DOM-элемент");
+        return 0;
+    }
+
+    const height = element.offsetHeight; // content + padding + border
+
+    if (!includeMargin) return height;
+
+    const style = getComputedStyle(element);
+    const marginTop    = parseFloat(style.marginTop)    || 0;
+    const marginBottom = parseFloat(style.marginBottom) || 0;
+
+    return height + marginTop + marginBottom;
+};
+
 export const capitalizeFirstLetter = (val: string) => {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }

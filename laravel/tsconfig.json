@@ -19,6 +19,7 @@
     "paths": {
       "@components/*": ["resources/views/components/*"],
       "@modules/*": ["resources/views/modules/*"],
+      "@helpers": ["resources/ts/helpers"],
       "@utils": ["resources/ts/helpers/utils.ts"],
       "@types": ["resources/ts/helpers/types.ts"],
 
