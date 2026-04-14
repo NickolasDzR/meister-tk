@@ -1,0 +1,111 @@
+@use '_variables' as *;
+
+.post {
+    &__header {
+        position: relative;
+    }
+
+    &__cover {
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 10px;
+        height: 582px;
+    }
+
+    &__head-img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    &__title {
+        color: var(--white);
+        z-index: 1;
+        padding-bottom: 60px;
+
+        font-size: 26px;
+        font-weight: 600;
+        position: relative;
+        margin-bottom: 0;
+
+        @media (min-width: $break_md) {
+            font-size: 36px;
+        }
+
+        @media (min-width: $break_xl) {
+            padding-bottom: 112px;
+        }
+    }
+
+    &__excerpt {
+        margin-bottom: 53px;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 1.33;
+        color: var(--black);
+    }
+
+    &__date {
+        margin-bottom: 40px;
+        display: block;
+    }
+
+    &__block-image-with-text {
+        position: relative;
+
+        @media (min-width: $break_lg) {
+            display: flex;
+            gap: 15px;
+        }
+
+        @media (min-width: $break_xl) {
+            gap: 30px;
+        }
+
+        .post__block-image {
+            margin-bottom: 30px;
+
+            @media (min-width: $break_lg) {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    &__block-image {
+        height: 316px;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+
+        @media (min-width: $break_lg) {
+            width: 50%;
+        }
+
+        & img {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &__block-text {
+        font-size: 16px;
+        font-weight: 300;
+        margin-bottom: 30px;
+        color: var(--lightGray);
+        line-height: 1.6;
+
+        @media (min-width: $break_lg) {
+            width: 50%;
+        }
+
+        &_image {
+            margin-bottom: 0;
+        }
+    }
+}

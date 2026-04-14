@@ -47,6 +47,20 @@ return [
             'report' => false,
         ],
 
+        'yandex' => [
+            'driver' => 's3',
+            'key' => env('YANDEX_ACCESS_KEY'),
+            'secret' => env('YANDEX_SECRET_KEY'),
+            'region' => env('YANDEX_REGION', 'ru-central1'),
+            'bucket' => env('YANDEX_BUCKET'),
+            'endpoint' => env('YANDEX_ENDPOINT', 'https://storage.yandexcloud.net'),
+            'root' => env('YANDEX_FOLDER', 'meister-blog'),
+            'url' => env('YANDEX_ENDPOINT', 'https://storage.yandexcloud.net').'/'.env('YANDEX_BUCKET'),
+            'use_path_style_endpoint' => true,
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
