@@ -79,6 +79,8 @@
 
 @extends('layouts.app')
 
+@section('title', 'Список постов')
+
 @section('content')
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
 

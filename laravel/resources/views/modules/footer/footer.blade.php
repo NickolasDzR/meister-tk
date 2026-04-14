@@ -1,14 +1,28 @@
 @props(['value' => false])
 
-<div {{ $attributes->merge(['class' => 'contacts ' . ($value['parentClass'] ?? '')]) }}>
-    <ul class="contacts__list">
-        @foreach(($value['items'] ?? []) as $item)
-            <li class="contacts__item">
-                <a class="contacts__link-title" href="{{ $item['titleLink'] ?? '#' }}">{{ $item['title'] ?? '' }}</a>
-                @if($item['subtitle'] ?? false)
-                    <a class="contacts__link-subtitle" href="{{ $item['subtitleLink'] ?? '#' }}">{{ $item['subtitle'] }}</a>
-                @endif
-            </li>
-        @endforeach
-    </ul>
-</div>
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-5">
+                <p class="footer__address">
+                    ООО «Мейстер» , 606007, Нижегородская область, г. Дзержинск, Водозаборная, 3а.
+                </p>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-12 col-xl-5 d-flex justify-content-xl-end align-items-center">
+                <ul class="footer__list">
+                    <li class="footer__item">
+                        <a href="#" class="footer__link">
+                            Контакты
+                        </a>
+                    </li>
+                    <li class="footer__item">
+                        <a href="#" class="footer__link">
+                            Новости
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

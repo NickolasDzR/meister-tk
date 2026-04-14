@@ -114,14 +114,6 @@ img {
     display: block;
 }
 
-/* Подвал */
-.footer {
-    margin-top: auto;
-    padding: 3rem 0;
-    border-top: 1px solid var(--color-border);
-    color: var(--color-black-light);
-}
-
 
 .has-drag-handle {
     &::before {
@@ -150,6 +142,16 @@ img {
 
 .justify-content-center {
     justify-content: center;
+}
+
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.justify-content-xl-end {
+    @media (min-width: $break_xl) {
+        justify-content: flex-end;
+    }
 }
 
 .justify-content-between {

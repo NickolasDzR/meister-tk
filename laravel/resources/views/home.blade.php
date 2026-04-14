@@ -70,6 +70,8 @@
 
 @extends('layouts.app')
 
+@section('title', 'Главная страница')
+
 @section('content')
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
 

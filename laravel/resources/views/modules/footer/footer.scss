@@ -1,0 +1,66 @@
+@use '_variables' as *;
+
+.footer {
+    margin-top: auto;
+    padding: 32px 0;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-black-light);
+
+    @media (min-width: $break_md) {
+        padding: 26px 0;
+    }
+
+    @media (min-width: $break_xl) {
+        padding: 60px 0;
+    }
+
+    &__address {
+        margin-bottom: 21px;
+
+        @media (min-width: $break_xl) {
+            margin-bottom: 0;
+        }
+    }
+
+    &__address, &__link {
+        font-size: 14px;
+        line-height: 1.5;
+        font-weight: 300;
+        color: var(--lightGray);
+    }
+
+    &__list {
+        @media (min-width: $break_md) {
+            display: flex;
+        }
+
+        @media (min-width: $break_xl) {
+            flex-wrap: wrap;
+        }
+    }
+
+    &__item {
+        & + & {
+            margin-top: 13px;
+
+            @media (min-width: $break_md) {
+                margin-top: 0;
+                margin-left: 28px;
+            }
+
+            @media (min-width: $break_xl) {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+
+        @media (min-width: $break_xl) {
+            width: 100%;
+        }
+    }
+
+    &__link {
+        text-decoration: underline;
+        display: inline-block;
+    }
+}
