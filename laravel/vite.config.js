@@ -12,6 +12,12 @@ export default defineConfig({
             input: [
                 'resources/ts/app.ts',
                 'resources/scss/app.scss',
+                'resources/scss/pages/home.scss',
+                'resources/scss/pages/posts.scss',
+                'resources/scss/pages/post.scss',
+                'resources/ts/pages/home.ts',
+                'resources/ts/pages/posts.ts',
+                'resources/ts/pages/post.ts',
             ],
             refresh: true,
         }),
@@ -56,7 +62,7 @@ export default defineConfig({
 
             '_grid': path.resolve(__dirname, './resources/scss/utils/_grid.scss'),
             '_variables': path.resolve(__dirname, './resources/scss/utils/_variables.scss'),
-            '_vendor': path.resolve(__dirname, './resources/scss/utils/_vendor.scss'),
+            '_reset': path.resolve(__dirname, './resources/scss/utils/_reset.scss'),
 
             // SCSS утилиты
             "@scss": path.resolve(__dirname, 'resources/scss'),

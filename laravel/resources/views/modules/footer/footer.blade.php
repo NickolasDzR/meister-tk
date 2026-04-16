@@ -1,6 +1,6 @@
 @props(['value' => false])
 
-<footer class="footer">
+<footer class="footer {{ !request()->routeIs('posts') ? 'footer_bordered' : '' }}">
     <div class="container">
         <div class="row">
             <div class="col-12 col-xl-5">

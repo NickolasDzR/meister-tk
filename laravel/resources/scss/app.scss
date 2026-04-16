@@ -2,14 +2,10 @@
 @use '_fonts';
 @use '_grid';
 @use '_global';
-
-// Подключаем библиотеки
-@use '_vendor';
+@use '_reset';
 
 // Компоненты
 @use '@components/hamburger/hamburger';
-@use '@components/button/button';
-@use '@components/input/input';
 
 // Модули
 @use '@modules/header/header';
@@ -18,11 +14,5 @@
 @use '@modules/logo/logo';
 @use '@modules/soc/soc';
 @use '@modules/contacts/contacts';
-@use '@modules/main-slider/main-slider';
-@use '@modules/forms/cargo-calc/cargo-calc';
-@use '@modules/post-list/post-list';
-@use '@modules/post-cards/post-cards';
-@use '@modules/post-card/post-card';
-@use '@modules/footer/footer';
 
-@use '@modules/post/post';
+

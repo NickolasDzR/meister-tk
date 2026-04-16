@@ -1,0 +1,8 @@
+@use 'nice-select2/src/scss/nice-select2';
+@use '../../../node_modules/@splidejs/splide/dist/css/splide-core.min.css';
+
+// Стили главной страницы
+@use '@components/button/button';
+@use '@components/input/input';
+@use '@modules/main-slider/main-slider';
+@use '@modules/forms/cargo-calc/cargo-calc';

@@ -1,6 +1,20 @@
 @use '_variables' as *;
 
 .post {
+    &__block {
+        &:has(h2) {
+            margin-top: 60px;
+
+            @media (min-width: $break_xl) {
+                margin-top: 90px;
+            }
+        }
+
+        &:not(:has(h2)) {
+            margin-top: 30px;
+        }
+    }
+
     &__header {
         position: relative;
     }
@@ -77,11 +91,12 @@
     }
 
     &__block-image {
-        height: 316px;
+        min-height: 316px;
         width: 100%;
         overflow: hidden;
         display: flex;
         align-items: center;
+        position: relative;
 
         @media (min-width: $break_lg) {
             width: 50%;
@@ -89,8 +104,20 @@
 
         & img {
             width: 100%;
-            height: auto;
+            height: unset;
+            object-fit: cover;
+
+            @media (min-width: $break_lg) {
+                position: absolute;
+            }
         }
+    }
+
+    &__heading {
+        font-size: 30px;
+        line-height: 1.33;
+        font-weight: 600;
+        color: var(--black);
     }
 
     &__block-text {
@@ -100,12 +127,110 @@
         color: var(--lightGray);
         line-height: 1.6;
 
-        @media (min-width: $break_lg) {
-            width: 50%;
-        }
-
         &_image {
             margin-bottom: 0;
+
+            @media (min-width: $break_lg) {
+                width: 50%;
+            }
+        }
+    }
+
+    &__quote {
+        position: relative;
+        padding-left: 48px;
+    }
+
+    &__quote p, &__callout, &__list-item {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.6;
+        color: var(--lightGray);
+    }
+    
+    &__quote-svg {
+        display: block;
+        position: absolute;
+        left: 0;
+    }
+
+    &__callout {
+        color: var(--lightGray);
+        padding-left: 11px;
+        position: relative;
+
+        &::before {
+            content: "";
+            width: 1px;
+            background-color: var(--lightGray);
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 96px;
+            max-height: 76%;
+
+            @media (min-width: $break_md) {
+                width: 3px;
+            }
+        }
+
+        @media (min-width: $break_md) {
+            padding-left: 34px;
+        }
+    }
+
+    &__list {
+        &:is(ol) {
+            counter-reset: ol-counter;
+
+            li {
+                &::before {
+                    content: counter(ol-counter) ".";
+                    counter-increment: ol-counter;
+                    background-color: transparent;
+                    width: auto;
+                    height: auto;
+                    top: 0;
+                    left: 0;
+                }
+            }
+        }
+    }
+
+    &__list-item {
+        padding-left: 25px;
+        position: relative;
+        
+        &::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            background-color: var(--lightGray);
+            display: block;
+            border-radius: 9999px;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+        }
+
+        & + & {
+            margin-top: 10px;
+        }
+    }
+
+    &__item-content {
+
+    }
+
+    &__two-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+
+    &__two-images-image {
+        @media (min-width: $break_md) {
+            width: calc(50% - 15px);
         }
     }
 }

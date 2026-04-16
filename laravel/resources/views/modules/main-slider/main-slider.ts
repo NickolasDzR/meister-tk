@@ -81,7 +81,6 @@ if (mainSlider) {
                     Array.from(navigationButtons).forEach(button => {
                         button.addEventListener("click", () => {
                             if (sliderAutoplayComp) sliderAutoplayComp.pause()
-
                         })
                     })
                 }

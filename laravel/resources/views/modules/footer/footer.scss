@@ -3,8 +3,11 @@
 .footer {
     margin-top: auto;
     padding: 32px 0;
-    border-top: 1px solid var(--color-border);
     color: var(--color-black-light);
+
+    &_bordered {
+        border-top: 1px solid var(--color-border);
+    }
 
     @media (min-width: $break_md) {
         padding: 26px 0;

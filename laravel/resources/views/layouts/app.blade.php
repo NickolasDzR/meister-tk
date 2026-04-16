@@ -8,8 +8,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="csrf-param" content="_token"/>
     <meta name="ymap-api-key" content="{{ env('YMAP_API_KEY') }}">
-    <!-- Bootstrap (оставим для сетки и утилит, но будем переопределять) -->
     @vite(['resources/ts/app.ts', 'resources/scss/app.scss'])
+
+    <!-- Ставим стили и скрипты определенной страницы -->
+    @php $page = Route::currentRouteName() ?? 'home'; @endphp
+    @vite(["resources/scss/pages/{$page}.scss", "resources/ts/pages/{$page}.ts"])
 
     @stack('styles')
     <title>@yield('title', 'Сайт компании ООО "Мейстер"')</title>
