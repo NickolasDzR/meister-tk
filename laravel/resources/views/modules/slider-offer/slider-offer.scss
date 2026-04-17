@@ -14,15 +14,118 @@
 
             .slider-offer__list {
                 display: flex;
-                gap: 24px;
             }
 
             .slider-offer__slide {
-                flex: 0 0 280px;
+                flex: 0 0 auto;
+                margin-right: 21px;
+
+                @media (min-width: $break_xl) {
+                    margin-right: 30px;
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
             }
         }
 
         visibility: visible;
+    }
+
+    &__slide {
+        width: 290px;
+
+        @media (min-width: $break_md) {
+            width: 354px;
+        }
+
+        @media (min-width: $break_xl) {
+            width: 500px;
+        }
+    }
+
+    &__arrows {
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 40px;
+        display: none;
+
+        @media (min-width: $break_sm) {
+            margin-top: 0;
+        }
+    }
+
+    &__splide.is-initialized {
+        .splide__arrows {
+            display: flex;
+        }
+    }
+
+    &__counter {
+        min-width: 60px;
+        text-align: center;
+        font-size: 16px;
+        color: var(--lightGray);
+    }
+
+    &__arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid transparent;
+        background-color: rgba($lightestBlue, 1);
+        border-radius: 50%;
+        cursor: pointer;
+        color: var(--lightGray);
+        transition: all 0.3s ease;
+
+        @media (min-width: $break_sm) {
+            position: absolute;
+            top: 94px;
+
+            opacity: 0.59;
+        }
+
+        &_prev, &_next {
+            svg {
+                position: relative;
+            }
+        }
+
+        &_prev {
+            @media (min-width: $break_sm) {
+                left: 15px;
+            }
+
+            svg {
+                right: 2px;
+            }
+        }
+
+        &_next {
+            @media (min-width: $break_sm) {
+                right: 15px;
+            }
+
+            svg {
+                left: 2px;
+            }
+        }
+
+        &:hover {
+            background-color: var(--gray);
+            opacity: 0.59;
+            color: white;
+        }
+
+        svg {
+            display: block;
+            transition: all .3s ease;
+        }
     }
 
     &__link {
@@ -34,7 +137,11 @@
     &__img {
         display: block;
         width: 100%;
-        aspect-ratio: 16 / 9;
+        height: 242px;
+
+        @media (min-width: $break_xl) {
+            height: 342px;
+        }
         object-fit: cover;
     }
 

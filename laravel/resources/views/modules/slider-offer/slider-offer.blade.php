@@ -34,6 +34,20 @@
                     @endforeach
                 </ul>
             </div>
+
+            <div class="splide__arrows slider-offer__arrows">
+                <button class="slider-offer__arrow slider-offer__arrow_prev splide__arrow splide__arrow--prev" aria-label="Назад">
+                    <svg viewBox="0 0 12 20" width="12" height="20" fill="none">
+                        <path d="M11 1L2 10L11 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <span class="slider-offer__counter"></span>
+                <button class="slider-offer__arrow slider-offer__arrow_next splide__arrow splide__arrow--next" aria-label="Вперёд">
+                    <svg viewBox="0 0 12 20" width="12" height="20" fill="none">
+                        <path d="M1 1L10 10L1 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </section>
 @endif

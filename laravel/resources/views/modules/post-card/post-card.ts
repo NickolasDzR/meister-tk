@@ -1,16 +1,13 @@
-import { getElementHeight } from "@utils";
-import { getBreakpoint, type Breakpoint } from "@helpers/resize";
+import { getElementHeight, breakpoint, type Breakpoint } from "@utils";
 
 const postCardTitleBottomMargin: Partial<Record<Breakpoint, number>> = {
     md: 65,
     xs: 30,
 };
 
-const BREAKPOINT_ORDER: Breakpoint[] = ["xs", "sm", "md", "lg", "xl", "xxl"];
-
 const getMarginForBreakpoint = (bp: Breakpoint): number => {
     let result = 0;
-    for (const b of BREAKPOINT_ORDER) {
+    for (const b of breakpoint.order) {
         if (postCardTitleBottomMargin[b] !== undefined) {
             result = postCardTitleBottomMargin[b]!;
         }
@@ -34,7 +31,7 @@ const applyTransform = (state: CardState): void => {
 
 const initPostCards = (): void => {
     const cards  = document.querySelectorAll<HTMLElement>(".post-card");
-    const margin = getMarginForBreakpoint(getBreakpoint(window.innerWidth));
+    const margin = getMarginForBreakpoint(breakpoint.current(window.innerWidth));
 
     // Следит за изменением высоты заголовка (перенос строк при ресайзе)
     const observer = new ResizeObserver((entries) => {

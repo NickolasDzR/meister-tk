@@ -3,35 +3,26 @@
  *
  * Зеркалит брейкпоинты из resources/scss/utils/_variables.scss.
  * Слушает только изменение ШИРИНЫ (игнорирует скрытие/появление тулбара на мобилках).
- * Диспатчит кастомный ивент "breakpointChange" на window при смене брейкпоинта.
+ * Диспатчит два кастомных ивента на window:
+ *   - "widthChange"      — при любом изменении ширины (каждый пиксель, с дебаунсом 500мс)
+ *   - "breakpointChange" — только при смене брейкпоинта
  *
  * Подписка из любой части проекта:
+ *   window.addEventListener("widthChange", (e) => {
+ *       console.log(e.detail.width);
+ *   });
  *   window.addEventListener("breakpointChange", (e) => {
  *       console.log(e.detail.previous, "→", e.detail.current);
  *   });
  */
 
-export const BREAKPOINTS = {
-    sm:  576,
-    md:  768,
-    lg:  992,
-    xl:  1200,
-    xxl: 1400,
-} as const;
+import { breakpoint, type Breakpoint } from '@utils';
 
-export type Breakpoint = keyof typeof BREAKPOINTS | "xs";
-
-export const getBreakpoint = (width: number): Breakpoint => {
-    if (width >= BREAKPOINTS.xxl) return "xxl";
-    if (width >= BREAKPOINTS.xl)  return "xl";
-    if (width >= BREAKPOINTS.lg)  return "lg";
-    if (width >= BREAKPOINTS.md)  return "md";
-    if (width >= BREAKPOINTS.sm)  return "sm";
-    return "xs";
-};
+export type { Breakpoint };
+export { breakpoint };
 
 let prevWidth:          number                              = window.innerWidth;
-let currentBreakpoint:  Breakpoint                          = getBreakpoint(window.innerWidth);
+let currentBreakpoint:  Breakpoint                          = breakpoint.current(window.innerWidth);
 let resizeTimer:        ReturnType<typeof setTimeout> | null = null;
 
 const onResize = (): void => {
@@ -44,7 +35,9 @@ const onResize = (): void => {
         if (width === prevWidth) return;
         prevWidth = width;
 
-        const next = getBreakpoint(width);
+        window.dispatchEvent(new CustomEvent("widthChange", { detail: { width } }));
+
+        const next = breakpoint.current(width);
 
         console.log(`[resize] ширина: ${width}px | брейкпоинт: ${next}`);
 
