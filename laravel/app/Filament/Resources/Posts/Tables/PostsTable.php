@@ -19,6 +19,8 @@ class PostsTable
             ->columns([
                 ImageColumn::make("image")
                     ->label("Фото")
+                    ->disk("yandex")
+                    ->checkFileExistence(false)
                     ->circular(),
 
                 TextColumn::make("title")

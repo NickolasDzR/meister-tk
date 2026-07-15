@@ -12,6 +12,8 @@ class Post extends Model
         'excerpt',
         'content',
         'image',
+        'image_mobile',
+        'image_tablet',
         'published',
         'published_at',
     ];

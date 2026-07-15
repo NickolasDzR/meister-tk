@@ -47,10 +47,26 @@ class PostForm
                             ->columnSpan(2),
 
                         FileUpload::make("image")
-                            ->label("Обложка")
+                            ->label("Главная картинка (обложка)")
+                            ->helperText("Используется везде, где не задана отдельная картинка для мобильной/планшетной версии")
                             ->image()
                             ->disk("yandex")->directory("posts")
+                            ->required()
                             ->columnSpan(2),
+
+                        FileUpload::make("image_mobile")
+                            ->label("Картинка для мобильной версии")
+                            ->helperText("Необязательно. Если не задана — используется главная картинка")
+                            ->image()
+                            ->disk("yandex")->directory("posts")
+                            ->columnSpan(1),
+
+                        FileUpload::make("image_tablet")
+                            ->label("Картинка для планшета/десктопа")
+                            ->helperText("Необязательно. Если не задана — используется главная картинка")
+                            ->image()
+                            ->disk("yandex")->directory("posts")
+                            ->columnSpan(1),
 
                         Toggle::make("published")
                             ->label("Опубликовано")

@@ -1,9 +1,11 @@
 @props(['value' => false])
 
 <div class="post-card">
-    <x-graphic.picture :value="[
-        'name' => $card['image'],
-        'alt' => $card['title'],
+    <x-graphic.remote-picture :value="[
+        'main' => $card['image'] ?? null,
+        'mobile' => $card['image_mobile'] ?? null,
+        'tablet' => $card['image_tablet'] ?? null,
+        'alt' => $card['title'] ?? '',
         'class' => 'post-card__image image',
     ]" />
 
@@ -17,10 +19,12 @@
 
 {{--
 -- Использование:
--- <x-post-card :value="[
---     'image' => 'post-image.jpg',
---     'link' => '/blog/post-1',
+-- @include('modules.post-card.post-card', ['card' => [
+--     'image' => 'posts/cover.webp',
+--     'image_mobile' => 'posts/cover-mobile.webp',
+--     'image_tablet' => 'posts/cover-tablet.webp',
+--     'link' => '/posts/post-1',
 --     'title' => 'Заголовок поста',
 --     'subtitle' => 'Краткое описание поста'
--- ]" />
+-- ]])
 --}}

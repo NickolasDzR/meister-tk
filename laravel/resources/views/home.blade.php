@@ -19,53 +19,14 @@
         ]
     ];
 
-    $slides = [
-        [
-            'images' => [
-                'mobile' => 'slider/slide-1',
-                'tablet' => 'slider/slide-1-desk',
-            ],
-            'title' => 'Обманчивый штиль: как меняются ставки на автоперевозки в середине лета',
-            'subtitle' => 'Рассказываем, на каких направлениях тарифы в июле изменились сильнее всего',
-            'link' => '#',
-        ],
-        [
-            'images' => [
-                'mobile' => 'slider/slide-2',
-                'tablet' => 'slider/slide-2-desk',
-            ],
-            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
-            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
-            'link' => '#',
-        ],
-        [
-            'images' => [
-                'mobile' => 'slider/slide-2',
-                'tablet' => 'slider/slide-2-desk',
-            ],
-            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
-            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
-            'link' => '#',
-        ],
-        [
-            'images' => [
-                'mobile' => 'slider/slide-2',
-                'tablet' => 'slider/slide-2-desk',
-            ],
-            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
-            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
-            'link' => '#',
-        ],
-        [
-            'images' => [
-                'mobile' => 'slider/slide-2',
-                'tablet' => 'slider/slide-2-desk',
-            ],
-            'title' => 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, contur',
-            'subtitle' => 'fugiat nulla pariatur. Excepteur sint occaecat cupidatat asdasdasdasd',
-            'link' => '#',
-        ],
-    ];
+    $slides = $posts->map(fn ($post) => [
+        'image' => $post->image,
+        'image_mobile' => $post->image_mobile,
+        'image_tablet' => $post->image_tablet,
+        'title' => $post->title,
+        'subtitle' => $post->excerpt ?? '',
+        'link' => route('post', $post->slug),
+    ])->all();
 @endphp
 
 @extends('layouts.app')

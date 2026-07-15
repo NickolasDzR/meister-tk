@@ -36,13 +36,14 @@
                                     <div class="main-slider__content col-12">
                                         <div class="main-slider__title">{{ $item['title'] ?? '' }}</div>
                                         <div class="main-slider__subtitle">{{ $item['subtitle'] ?? '' }}</div>
-                                        <a class="main-slider__article-link button button_transparent" href="#">Подробнее</a>
+                                        <a class="main-slider__article-link button button_transparent" href="{{ $item['link'] ?? '#' }}">Подробнее</a>
                                     </div>
-                                    <x-graphic.picture :value="[
-                                        'name' => $item['images']['mobile'],
-                                        'alt' => $item['title'],
+                                    <x-graphic.remote-picture :value="[
+                                        'main' => $item['image'] ?? null,
+                                        'mobile' => $item['image_mobile'] ?? null,
+                                        'tablet' => $item['image_tablet'] ?? null,
+                                        'alt' => $item['title'] ?? '',
                                         'class' => 'main-slider__image image',
-                                        'md' => true,  // будет использоваться планшетная версия
                                     ]" />
                                 </div>
                             </div>

@@ -5,7 +5,9 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'logo ' . $parentClass]) }}>
-    @svg('logo', $svgClass)
+    <a class="logo__link" href="/">
+        @svg('logo', $svgClass)
+    </a>
 </div>
 
 {{--

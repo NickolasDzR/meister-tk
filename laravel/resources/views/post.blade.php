@@ -31,7 +31,13 @@
             <header class="post__header">
                 @if($post->image)
                     <div class="post__cover">
-                        <img class="post__head-img" src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($post->image) }}" alt="{{ $post->title }}">
+                        <x-graphic.remote-picture :value="[
+                            'main' => $post->image,
+                            'mobile' => $post->image_mobile,
+                            'tablet' => $post->image_tablet,
+                            'alt' => $post->title,
+                            'class' => 'post__head-img',
+                        ]" />
 
                         <div class="container">
                             <div class="row">

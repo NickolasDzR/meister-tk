@@ -4,7 +4,11 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('home');
+    $posts = Post::where('published', true)
+        ->orderByDesc('published_at')
+        ->get();
+
+    return view('home', compact('posts'));
 });
 
 Route::get('/posts', function () {

@@ -28,6 +28,10 @@
         justify-content: center;
         margin-bottom: 10px;
         height: 582px;
+
+        picture {
+            display: contents;
+        }
     }
 
     &__head-img {

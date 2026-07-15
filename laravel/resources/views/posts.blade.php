@@ -20,7 +20,9 @@
     ];
 
     $postCards = $posts->map(fn ($post) => [
-        'image' => $post->image ?? 'post-cards/post-card-1',
+        'image' => $post->image,
+        'image_mobile' => $post->image_mobile,
+        'image_tablet' => $post->image_tablet,
         'link' => route('post', $post->slug),
         'title' => $post->title,
         'subtitle' => $post->excerpt ?? '',
