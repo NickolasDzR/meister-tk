@@ -4,6 +4,7 @@
 
     $slides = $slides ?? Post::where('published', true)
         ->whereNotNull('image')
+        ->when(isset($post), fn ($query) => $query->whereKeyNot($post->id))
         ->inRandomOrder()
         ->limit(8)
         ->get()

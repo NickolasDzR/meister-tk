@@ -188,6 +188,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
+                    <h3 style="font-size: 30px; margin-bottom: 20px;">
+                        Другие статьи
+                    </h3>
+                </div>
+                <div class="col-12">
                     @include('modules.slider-offer.slider-offer')
                 </div>
             </div>

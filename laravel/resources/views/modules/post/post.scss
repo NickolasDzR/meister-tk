@@ -19,6 +19,14 @@
         position: relative;
     }
 
+    &__content {
+        margin-bottom: 60px;
+
+        @media (min-width: $break_xl) {
+            margin-bottom: 120px;
+        }
+    }
+
     &__cover {
         overflow: hidden;
         position: relative;

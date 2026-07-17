@@ -108,14 +108,21 @@
         padding: 2px 7px 1px;
         transform: translate3D(-23px, -24px, 0);
 
-        .nice-select:after {
-            border-color: var(--keppel);
-        }
-
         @media (min-width: $break_md) {
             transform: translate3D(-29px, -29px, 0);
             font-size: 12px;
         }
+    }
+
+    // То же самое состояние, но для стрелки селекта (.nice-select:after) —
+    // вынесено отдельным селектором, а не вложено в блок с ::before,
+    // потому что после псевдоэлемента нельзя продолжать селектор (невалидный CSS)
+    &:has(.nice-select .option.selected) .nice-select:after,
+    &:not(.input_select) .input__placeholder:not(.error):focus ~ .nice-select:after,
+    &:not(.input_select) input.valid ~ .nice-select:after,
+    & .nice-select.error ~ .nice-select:after,
+    .input__placeholder.error ~ .nice-select:after {
+        border-color: var(--keppel);
     }
 
     & .nice-select.error ~ .input__label::before,
