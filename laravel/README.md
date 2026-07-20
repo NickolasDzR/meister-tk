@@ -1,58 +1,198 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Мейстер — API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend для системы автоматизации бизнеса логистических компаний. Laravel 13 + Sanctum (токены), фронтенд — React (Inertia или отдельное SPA поверх этого API).
 
-## About Laravel
+Есть два независимых блока:
+- **Публичный сайт** (Blade) — `/`, `/posts` и админка постов на Filament (`/admin`) — сюда фронтенд не лезет.
+- **API для CRM** (этот файл) — `/api/*`, токены Sanctum, всё, что нужно для React.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Быстрый старт
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+make up             # поднять контейнеры
+make bash            # зайти в контейнер laravel
+php artisan migrate  # прогнать миграции
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Дев-домен: `http://dev.local:8083`. Все API-роуты — под префиксом `/api`.
 
-## Contributing
+**Postman-коллекция** со всеми запросами ниже (плюс автоподстановка токенов/id между запросами) — [`postman/meister-api.postman_collection.json`](../postman/meister-api.postman_collection.json) в корне репозитория.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Модель данных
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+User (аккаунт, email/пароль)
+  │
+  │  many-to-many через company_user (role, position)
+  │
+Company (inn, name, kpp, ogrn, address, dadata_status)
+```
 
-## Security Vulnerabilities
+**Важно:** один аккаунт (`User`, один email) может быть привязан **к нескольким компаниям одновременно** — например директор с несколькими ИП/ООО. Роль (`admin`/`employee`) и должность (`position`) хранятся не на пользователе, а **на связи** с конкретной компанией — в одной компании человек может быть `admin`, в другой (если его туда позвали сотрудником) — `employee`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **`admin`** — тот, кто зарегистрировал компанию (или кого явно сделали админом). Может добавлять/удалять сотрудников именно этой компании, смотреть список сотрудников, дёргать refresh-dadata.
+- **`employee`** — обычный сотрудник (логист, бухгалтер и т.п., см. `position`). Доступа к управлению сотрудниками нет.
 
-## License
+Права всегда проверяются **в контексте конкретной компании** (`{company}` в URL), а не глобально — то, что юзер admin в компании №1, не даёт ему прав в компании №2.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Аутентификация
+
+Токены Sanctum (`Bearer <token>`), без cookie/CSRF — подходит и для веба, и для мобильных клиентов.
+
+Все запросы под `auth:sanctum` требуют заголовок:
+```
+Authorization: Bearer <token>
+Accept: application/json
+```
+
+### `POST /api/register`
+Регистрация нового аккаунта **вместе с его первой компанией**. Создаёт `User` + `Company` + связь `role: admin` за одну транзакцию.
+
+**Body:**
+```json
+{
+    "inn": "7736207543",
+    "company_name": "ООО Ромашка",
+    "name": "Иван Директоров",
+    "email": "director@example.com",
+    "password": "Password123!",
+    "password_confirmation": "Password123!"
+}
+```
+- `inn` — 10 цифр (ООО) или 12 (ИП), обязательно.
+- `company_name` — **не обязателен, если Дадата найдёт компанию по ИНН** (тогда название/адрес/КПП/ОГРН подтянутся автоматически). Обязателен, если Дадата недоступна или не нашла компанию — тогда без него будет `422`.
+
+**Успех — `201`:**
+```json
+{
+    "user": { "id": 1, "name": "Иван Директоров", "email": "director@example.com", ... },
+    "company": { "id": 1, "inn": "7736207543", "name": "ООО ЯНДЕКС", "kpp": "...", "ogrn": "...", "address": "...", "dadata_status": "ACTIVE" },
+    "token": "1|xxxxxxxxxxxxxxxxxxxxx"
+}
+```
+
+После регистрации на email уходит письмо с подтверждением (в деве — просто пишется в `storage/logs/laravel.log`, реальный SMTP не настроен).
+
+**Ошибки — `422`:**
+| Причина | `errors.inn` |
+|---|---|
+| Компания с таким ИНН уже зарегистрирована | `"Компания с таким ИНН уже зарегистрирована в системе."` |
+| Дадата не нашла компанию, `company_name` не передан | `"Не удалось найти компанию по этому ИНН. Укажите название компании вручную."` |
+| Компания ликвидирована (по данным Дадаты) | `"Компания ликвидирована, регистрация невозможна."` |
+| `email` уже занят | `errors.email` |
+
+### `POST /api/login`
+```json
+{ "email": "director@example.com", "password": "Password123!" }
+```
+Успех — `200`, `{ "user": {...}, "token": "..." }`. Неверные данные — `422`.
+
+### `POST /api/logout`
+Требует `Authorization`. Отзывает **только тот токен**, которым был выполнен запрос (не все сессии юзера). Успех — `200`.
+
+### `GET /api/user`
+Данные текущего авторизованного пользователя (без списка компаний — за ним отдельно на `/api/companies`).
+
+---
+
+## Компании
+
+### `POST /api/companies/lookup`
+Публичный (без токена). Поиск компании по ИНН через Дадату — для автозаполнения формы регистрации ещё до сабмита.
+
+```json
+{ "inn": "7736207543" }
+```
+- `200` → `{ "company": { "inn", "kpp", "ogrn", "name", "address", "status" } }`
+- `404` → компания не найдена в Дадате
+- `409` → компания с таким ИНН уже зарегистрирована у нас
+
+### `GET /api/companies`
+Список **всех компаний текущего аккаунта** с ролью/должностью в каждой:
+```json
+{
+    "companies": [
+        { "id": 1, "inn": "...", "name": "ООО Ромашка", "role": "admin", "position": null, ... },
+        { "id": 2, "inn": "...", "name": "ИП Иванов", "role": "admin", "position": null, ... }
+    ]
+}
+```
+Используй этот список для переключателя компаний в интерфейсе (условный "выбор организации" в шапке CRM).
+
+### `POST /api/companies`
+Добавить **ещё одну** компанию к уже существующему (залогиненному) аккаунту. Отдельного подтверждения не требуется — валидный токен уже доказывает владение аккаунтом. Логика поиска/ошибок (ИНН занят / не найден / ликвидирована) — точно такая же, как в `register`.
+
+```json
+{ "inn": "1234567890", "company_name": "ИП Второй (если Дадата не найдёт)" }
+```
+Успех — `201`, `{ "company": {...} }`. Новый пользователь **не создаётся** — компания привязывается к текущему юзеру с ролью `admin`.
+
+### `POST /api/companies/{company}/refresh-dadata`
+Только для админа этой компании. Повторно запрашивает Дадату по сохранённому ИНН и обновляет `name`/`kpp`/`ogrn`/`address`/`dadata_status`. Полезно, если при регистрации Дадата была недоступна и компанию создали только с ручным названием.
+
+- `200` → `{ "company": {...} }` (обновлённые данные)
+- `404` → Дадата всё ещё не смогла ничего найти
+
+---
+
+## Сотрудники
+
+Все роуты — `/api/companies/{company}/employees`, доступны **только админу указанной компании** (проверяется middleware `company.admin` — не путать с "админ вообще", это админ именно `{company}`).
+
+### `GET /api/companies/{company}/employees`
+```json
+{
+    "employees": [
+        { "id": 1, "name": "Иван Директоров", "email": "director@example.com", "role": "admin", "position": null, ... },
+        { "id": 2, "name": "Логист Логистов", "email": "logist@example.com", "role": "employee", "position": "Логист", ... }
+    ]
+}
+```
+
+### `POST /api/companies/{company}/employees`
+Добавить сотрудника.
+
+```json
+{
+    "name": "Логист Логистов",
+    "email": "logist@example.com",
+    "password": "Password123!",
+    "password_confirmation": "Password123!",
+    "position": "Логист"
+}
+```
+Если пользователь с таким `email` **уже существует** в системе (например, он уже директор своей компании) — новый аккаунт не создаётся, существующий просто добавляется в эту компанию как `employee`. В этом случае `name`/`password` можно не передавать — достаточно `email`.
+
+Успех — `201`, `{ "employee": {...} }`.
+
+### `DELETE /api/companies/{company}/employees/{employee}`
+Убирает сотрудника из **этой** компании (сам аккаунт не удаляется — если он состоит ещё где-то, там он останется). Нельзя удалить самого себя (`422`).
+
+---
+
+## Коды ошибок — общая логика
+
+| Код | Когда |
+|---|---|
+| `401` | Нет / невалидный / отозванный токен |
+| `403` | Компания с указанным `{company}` существует, но текущий юзер не `admin` именно в ней (может вообще не состоять в ней, может быть там `employee`) |
+| `404` | `{company}` или `{employee}` с таким id не существует вовсе — это route model binding, отрабатывает раньше проверки прав |
+| `409` | Конфликт (например, ИНН уже зарегистрирован — на этапе lookup) |
+| `422` | Ошибка валидации / бизнес-правила (формат ИНН, занятый email, ликвидированная компания, дубль ИНН) — тело всегда `{ "message": "...", "errors": { "field": ["..."] } }` |
+
+---
+
+## Переменные окружения (для справки)
+
+```
+DADATA_API_KEY=...
+DADATA_SECRET_KEY=...
+SANCTUM_STATEFUL_DOMAINS=... (для cookie-режима, сейчас используем чисто токены — не критично для React+Bearer)
+MAIL_MAILER=log   # письма падают в storage/logs/laravel.log, реального SMTP в деве нет
+```

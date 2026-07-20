@@ -26,3 +26,5 @@ Route::get('/posts/{slug}', function (string $slug) {
 
     return view('post', compact('post'));
 })->name('post');
+
+require __DIR__.'/auth.php';
