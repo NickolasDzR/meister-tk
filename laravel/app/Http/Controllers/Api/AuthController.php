@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\EmployeePosition;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\CompanyOnboardingService;
@@ -67,7 +68,10 @@ class AuthController extends Controller
             ]);
 
             // Тот, кто регистрирует компанию, автоматически становится её директором/админом.
-            $company->users()->attach($user->id, ['role' => 'admin']);
+            $company->users()->attach($user->id, [
+                'role' => 'admin',
+                'position' => EmployeePosition::Director->value,
+            ]);
 
             return [$user, $company];
         });

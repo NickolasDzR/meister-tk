@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\EmployeePosition;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -55,9 +57,15 @@ class EmployeeController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['nullable', 'confirmed', Password::defaults()],
-            // Должность сотрудника внутри компании — свободный текст (логист, бухгалтер и т.п.),
-            // не влияет на права доступа, только на отображение в интерфейсе.
-            'position' => ['nullable', 'string', 'max:255'],
+            // Должность — строго одно из 4 фиксированных значений (см. App\Enums\EmployeePosition).
+            // 'director' сюда специально не входит: директор — это тот, кто зарегистрировал
+            // компанию (AuthController::register), через этот эндпоинт добавляются только
+            // logist/accountant/clerk.
+            'position' => ['required', Rule::in([
+                EmployeePosition::Logist->value,
+                EmployeePosition::Accountant->value,
+                EmployeePosition::Clerk->value,
+            ])],
         ]);
 
         $employee = DB::transaction(function () use ($validated, $company) {
@@ -83,7 +91,7 @@ class EmployeeController extends Controller
 
             $company->users()->attach($employee->id, [
                 'role' => 'employee',
-                'position' => $validated['position'] ?? null,
+                'position' => $validated['position'],
             ]);
 
             return $employee;
