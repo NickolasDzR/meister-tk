@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CompanyLookupController;
+use App\Http\Controllers\Api\DadataSearchController;
 use App\Http\Controllers\Api\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/companies/lookup', CompanyLookupController::class);
+
+// Автокомплит по названию/части ИНН — общий для формы регистрации компании
+// и формы добавления контрагента, поэтому не под /companies/*, а отдельно.
+Route::post('/dadata/search', DadataSearchController::class);
 
 // Всё, что дальше, требует Bearer-токена (auth:sanctum).
 Route::middleware('auth:sanctum')->group(function () {
