@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CompanyLookupController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\CounterpartyController;
 use App\Http\Controllers\Api\DadataSearchController;
 use App\Http\Controllers\Api\EmployeeController;
 use Illuminate\Http\Request;
@@ -29,6 +32,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // (директор может иметь несколько ИП/ООО на одном аккаунте).
     Route::get('/companies', [CompanyController::class, 'index']);
     Route::post('/companies', [CompanyController::class, 'store']);
+
+    // Контрагенты (заказчики/перевозчики) конкретной компании. Пока без
+    // company.admin — доступно любому сотруднику компании, не только
+    // директору (сам контроллер всё равно проверяет company_id, чтобы
+    // не отдать/не изменить контрагента чужой компании).
+    Route::get('/companies/{company}/counterparties', [CounterpartyController::class, 'index']);
+    Route::post('/companies/{company}/counterparties', [CounterpartyController::class, 'store']);
+    Route::get('/companies/{company}/counterparties/{counterparty}', [CounterpartyController::class, 'show']);
+    Route::put('/companies/{company}/counterparties/{counterparty}', [CounterpartyController::class, 'update']);
+    Route::delete('/companies/{company}/counterparties/{counterparty}', [CounterpartyController::class, 'destroy']);
+
+    // Контакты и банковские счета контрагента — точечно, независимо друг
+    // от друга (попап на конкретной записи), не как часть общей формы контрагента.
+    Route::post('/companies/{company}/counterparties/{counterparty}/contacts', [ContactController::class, 'store']);
+    Route::put('/companies/{company}/counterparties/{counterparty}/contacts/{contact}', [ContactController::class, 'update']);
+    Route::delete('/companies/{company}/counterparties/{counterparty}/contacts/{contact}', [ContactController::class, 'destroy']);
+
+    Route::post('/companies/{company}/counterparties/{counterparty}/bank-accounts', [BankAccountController::class, 'store']);
+    Route::put('/companies/{company}/counterparties/{counterparty}/bank-accounts/{bankAccount}', [BankAccountController::class, 'update']);
+    Route::delete('/companies/{company}/counterparties/{counterparty}/bank-accounts/{bankAccount}', [BankAccountController::class, 'destroy']);
 
     // Всё, что ниже, — про конкретную компанию {company}, доступно только
     // её директору (role = admin именно в этой компании, а не глобально).
