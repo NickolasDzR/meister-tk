@@ -83,6 +83,22 @@ class Counterparty extends Model
         return $this->hasMany(CounterpartyFile::class);
     }
 
+    /**
+     * Водители перевозчика. У заказчика их не бывает — связь пустая.
+     */
+    public function drivers(): HasMany
+    {
+        return $this->hasMany(Driver::class);
+    }
+
+    /**
+     * Машины перевозчика.
+     */
+    public function vehicles(): HasMany
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
