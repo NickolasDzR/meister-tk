@@ -11,6 +11,13 @@ use App\Http\Controllers\Api\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// CRM своего фронта пока не имеет, а /register и /dadata/search открыты без
+// токена. Пока флаг выключен (по умолчанию и на проде) — роуты не
+// регистрируются вовсе: см. config/features.php.
+if (! config('features.crm_api')) {
+    return;
+}
+
 // Публичные роуты — доступны без токена, нужны на форме регистрации.
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
