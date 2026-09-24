@@ -1,0 +1,102 @@
+@use '_variables' as *;
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+
+    @media (min-width: $break_md) {
+        margin-top: 48px;
+    }
+
+    &__list {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        @media (min-width: $break_md) {
+            gap: 10px;
+        }
+    }
+
+    &__item {
+        display: flex;
+    }
+
+    &__link {
+        font-family: var(--font);
+        font-size: 16px;
+        line-height: 1;
+        color: var(--dark);
+        text-decoration: none;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 8px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .3s ease;
+
+        @media (min-width: $break_md) {
+            min-width: 48px;
+            height: 48px;
+        }
+
+        &:hover {
+            background-color: var(--lightestBlue);
+            color: var(--keppel);
+        }
+
+        &_active {
+            background-color: var(--keppel);
+            color: var(--white);
+            pointer-events: none;
+        }
+    }
+
+    &__arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 9999px;
+        background-color: var(--lightestBlue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .3s ease;
+
+        @media (min-width: $break_md) {
+            width: 48px;
+            height: 48px;
+        }
+
+        &:hover {
+            background-color: var(--keppel);
+
+            .pagination__svg-path {
+                stroke: var(--white);
+            }
+        }
+
+        &_disabled {
+            opacity: .35;
+            pointer-events: none;
+        }
+    }
+
+    &__svg {
+        width: 10px;
+        height: 16px;
+        display: block;
+    }
+
+    &__svg-path {
+        fill: none;
+        stroke: var(--indigo);
+        stroke-width: 2;
+        transition: stroke .3s ease;
+    }
+}

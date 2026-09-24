@@ -24,9 +24,19 @@ Route::get('/', function () {
 });
 
 Route::get('/posts', function () {
-    $posts = Post::where('published', true)
+    // По девять карточек на страницу. content со всем текстом статьи
+    // в списке не нужен — выбираем только то, что показывает карточка.
+    $posts = Post::query()
+        ->select('id', 'title', 'slug', 'excerpt', 'image', 'image_mobile', 'image_tablet', 'published_at')
+        ->where('published', true)
         ->orderByDesc('published_at')
-        ->get();
+        ->paginate(9);
+
+    // Страницы за последней отдавали пустой список с кодом 200: человек видел
+    // пустоту без объяснений, а поисковик — бесконечные адреса без содержимого.
+    // Теперь это честный 404. Пустой список на первой странице (статей нет
+    // вообще) под правило не попадает — это нормальное состояние сайта.
+    abort_if($posts->currentPage() > $posts->lastPage() && $posts->total() > 0, 404);
 
     return view('posts', compact('posts'));
 })->name('posts');
