@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        // Последний слайд главной — приглашение перейти в список статей.
+        // Отдельная таблица, а не константы в коде: текст и картинку
+        // редактируют в админке, без выкладки.
+        Schema::create('promo_slides', function (Blueprint $table) {
+            $table->id();
+
+            $table->string('title');
+            $table->text('subtitle')->nullable();
+            $table->string('button_text')->default('Все статьи');
+            $table->string('link')->nullable();
+
+            $table->string('image')->nullable();
+            $table->string('image_mobile')->nullable();
+            $table->string('image_tablet')->nullable();
+
+            $table->boolean('is_active')->default(true);
+
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('promo_slides');
+    }
+};

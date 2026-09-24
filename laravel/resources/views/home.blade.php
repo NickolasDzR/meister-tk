@@ -37,7 +37,18 @@
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
 
     <main>
-        @include('modules.main-slider.main-slider', ['items' => $slides])
+        @include('modules.main-slider.main-slider', [
+            'items' => $slides,
+            'cta' => $promo ? [
+                'title' => $promo->title,
+                'subtitle' => $promo->subtitle,
+                'button' => $promo->button_text,
+                'link' => $promo->link ?: route('posts'),
+                'image' => $promo->image,
+                'image_mobile' => $promo->image_mobile,
+                'image_tablet' => $promo->image_tablet,
+            ] : null,
+        ])
         @include('modules.forms.cargo-calc.cargo-calc', ['title' => 'Отправить груз', 'button' => 'Расчитать доставку'])
     </main>
     <x-button type="keppel" class="main__cargo-calc-button" text="Расчитать доставку" />

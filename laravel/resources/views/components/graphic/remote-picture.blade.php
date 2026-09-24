@@ -10,6 +10,10 @@
     $alt = $value['alt'] ?? '';
     $class = $value['class'] ?? '';
 
+    // Первый экран (обложка статьи, первый слайд) грузится сразу и в приоритете:
+    // это LCP-картинка, откладывать её нечем оправдать. Остальные — лениво.
+    $eager = $value['eager'] ?? false;
+
     $mobileUrl = $mobile ? Storage::disk('yandex')->url($mobile) : null;
     $tabletUrl = $tablet ? Storage::disk('yandex')->url($tablet) : null;
 @endphp
@@ -26,7 +30,10 @@
                 class="{{ $class }}"
                 src="{{ $mobileUrl ?? $tabletUrl }}"
                 alt="{{ $alt }}"
-                loading="lazy"
+                loading="{{ $eager ? 'eager' : 'lazy' }}"
+                decoding="{{ $eager ? 'sync' : 'async' }}"
+                @if($eager) fetchpriority="high" @endif
+                onerror="this.style.display='none'"
         >
     </picture>
 @endif

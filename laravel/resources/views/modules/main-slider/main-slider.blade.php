@@ -2,7 +2,12 @@
 
 @php
     $items = $items ?? [];
-    $total = count($items);
+
+    // Последний слайд — приглашение в общий список статей. Выглядит как
+    // обычный слайд, но ведёт не на статью, а на /posts.
+    $cta = $cta ?? null;
+
+    $total = count($items) + ($cta ? 1 : 0);
 @endphp
 
 @if($total)
@@ -44,11 +49,34 @@
                                         'tablet' => $item['image_tablet'] ?? null,
                                         'alt' => $item['title'] ?? '',
                                         'class' => 'main-slider__image image',
+                                        'eager' => $loop->first,
                                     ]" />
                                 </div>
                             </div>
                         </li>
                     @endforeach
+
+                    @if($cta)
+                        <li class="main-slider__slide main-slider__slide_cta splide__slide">
+                            <div class="main-slider__slide-container container">
+                                <div class="main-slider__row row">
+                                    <div class="main-slider__content col-12">
+                                        <div class="main-slider__title">{{ $cta['title'] ?? '' }}</div>
+                                        <div class="main-slider__subtitle">{{ $cta['subtitle'] ?? '' }}</div>
+                                        <a class="main-slider__article-link button button_transparent"
+                                           href="{{ $cta['link'] ?? '#' }}">{{ $cta['button'] ?? 'Все статьи' }}</a>
+                                    </div>
+                                    <x-graphic.remote-picture :value="[
+                                        'main' => $cta['image'] ?? null,
+                                        'mobile' => $cta['image_mobile'] ?? null,
+                                        'tablet' => $cta['image_tablet'] ?? null,
+                                        'alt' => $cta['title'] ?? '',
+                                        'class' => 'main-slider__image image',
+                                    ]" />
+                                </div>
+                            </div>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>

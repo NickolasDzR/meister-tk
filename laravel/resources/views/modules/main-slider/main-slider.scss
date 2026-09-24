@@ -20,6 +20,11 @@
     &__slide {
         display: flex;
         align-items: center;
+
+        // Подложка на случай, когда картинки нет или она не загрузилась
+        // (файл не залит, бакет отдал 403, медленная сеть). Текст слайда
+        // белый — без фона его просто не видно.
+        background: linear-gradient(135deg, $indigo 0%, #2A5A7C 45%, $keppel 100%);
     }
 
     &__slide-container {
