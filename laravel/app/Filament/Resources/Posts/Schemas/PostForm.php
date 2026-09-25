@@ -68,6 +68,13 @@ class PostForm
                             ->disk("yandex")->directory("posts")
                             ->columnSpan(1),
 
+                        FileUpload::make("og_image")
+                            ->label("Картинка для превью ссылки")
+                            ->helperText("JPG 1200×630. Телеграм и ВК плохо показывают webp в превью, поэтому для них отдельный файл. Пусто — возьмётся главная картинка.")
+                            ->image()
+                            ->disk("yandex")->directory("posts/og")
+                            ->columnSpan(2),
+
                         Toggle::make("published")
                             ->label("Опубликовано")
                             ->helperText("Выключено — черновик, на сайте не виден никак")

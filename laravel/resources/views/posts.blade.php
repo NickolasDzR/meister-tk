@@ -35,6 +35,14 @@
 
 @section('title', 'Список постов')
 
+@section('og')
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Статьи компании «Мейстер»">
+    <meta property="og:description" content="О технике, выставках и о том, как устроены грузоперевозки изнутри.">
+    <meta property="og:url" content="{{ route('posts') }}">
+    <meta property="og:image" content="{{ asset('images/content/og-default.jpg') }}">
+@endsection
+
 @section('content')
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
 

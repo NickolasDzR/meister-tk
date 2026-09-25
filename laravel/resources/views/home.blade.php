@@ -33,6 +33,14 @@
 
 @section('title', 'Главная страница')
 
+@section('og')
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Транспортная компания «Мейстер»">
+    <meta property="og:description" content="Грузоперевозки по России: подбор транспорта, расчёт стоимости рейса, сопровождение документов.">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:image" content="{{ asset('images/content/og-default.jpg') }}">
+@endsection
+
 @section('content')
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
 

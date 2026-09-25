@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -15,6 +16,7 @@ class Post extends Model
         'image',
         'image_mobile',
         'image_tablet',
+        'og_image',
         'published',
         'published_at',
     ];
@@ -48,6 +50,17 @@ class Post extends Model
         return $query
             ->where('published', true)
             ->where('published_at', '<=', now());
+    }
+
+    /**
+     * Картинка для превью ссылки в мессенджерах: сначала специально
+     * загруженный jpg, иначе обычная обложка. Null — если нет ни того, ни другого.
+     */
+    public function ogImageUrl(): ?string
+    {
+        $path = $this->og_image ?: $this->image;
+
+        return $path ? Storage::disk('yandex')->url($path) : null;
     }
 
     /**

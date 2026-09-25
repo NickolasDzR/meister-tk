@@ -24,6 +24,21 @@
 
 @section('title', $post->title)
 
+@section('og')
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ $post->title }}">
+    <meta property="og:description" content="{{ $post->excerpt ?? 'Статья компании «Мейстер»' }}">
+    <meta property="og:url" content="{{ route('post', $post->slug) }}">
+    @if($post->ogImageUrl())
+        <meta property="og:image" content="{{ $post->ogImageUrl() }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+    @endif
+    @if($post->published_at)
+        <meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">
+    @endif
+@endsection
+
 @section('content')
     @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
     <main>
