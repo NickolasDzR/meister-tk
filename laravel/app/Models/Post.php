@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -23,4 +24,37 @@ class Post extends Model
         'published_at' => 'datetime',
         'content' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $post) {
+            // Включили публикацию, а дату не тронули — значит публикуем сейчас.
+            // Без этого статья уходила в ленту с пустой датой: не показывалась
+            // под заголовком и падала в самый низ сортировки (MySQL ставит
+            // NULL последним при ORDER BY ... DESC).
+            if ($post->published && blank($post->published_at)) {
+                $post->published_at = now();
+            }
+        });
+    }
+
+    /**
+     * Статьи, которые реально видны на сайте: тумблер включён И время
+     * публикации уже наступило. Один скоуп на все три места (слайдер,
+     * список, страница статьи) — чтобы условие не разъехалось.
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query
+            ->where('published', true)
+            ->where('published_at', '<=', now());
+    }
+
+    /**
+     * Опубликована, но время ещё не пришло — ждёт своего часа.
+     */
+    public function isScheduled(): bool
+    {
+        return $this->published && $this->published_at?->isFuture();
+    }
 }

@@ -28,6 +28,10 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // Черновиков-автосохранений в Filament нет: пока не нажал «Создать»,
+            // записи не существует. Браузер переспросит перед уходом со страницы
+            // с несохранённой формой.
+            ->unsavedChangesAlerts()
             ->colors([
                 'primary' => Color::Amber,
             ])

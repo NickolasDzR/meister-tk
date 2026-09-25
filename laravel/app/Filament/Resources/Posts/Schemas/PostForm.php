@@ -70,10 +70,12 @@ class PostForm
 
                         Toggle::make("published")
                             ->label("Опубликовано")
+                            ->helperText("Выключено — черновик, на сайте не виден никак")
                             ->default(false),
 
                         DateTimePicker::make("published_at")
                             ->label("Дата публикации")
+                            ->helperText("Пусто — поставится текущее время. Дата в будущем — статья появится на сайте в этот момент, а до тех пор будет помечена как запланированная.")
                             ->nullable(),
                     ]),
 

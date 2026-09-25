@@ -11,7 +11,7 @@ Route::get('/', function () {
     // главной не нужен, а весит он больше всего остального вместе взятого.
     $posts = Post::query()
         ->select('id', 'title', 'slug', 'excerpt', 'image', 'image_mobile', 'image_tablet', 'published_at')
-        ->where('published', true)
+        ->published()
         ->orderByDesc('published_at')
         ->limit(6)
         ->get();
@@ -28,7 +28,7 @@ Route::get('/posts', function () {
     // в списке не нужен — выбираем только то, что показывает карточка.
     $posts = Post::query()
         ->select('id', 'title', 'slug', 'excerpt', 'image', 'image_mobile', 'image_tablet', 'published_at')
-        ->where('published', true)
+        ->published()
         ->orderByDesc('published_at')
         ->paginate(9);
 
@@ -43,7 +43,7 @@ Route::get('/posts', function () {
 
 Route::get('/posts/{slug}', function (string $slug) {
     $post = Post::where('slug', $slug)
-        ->where('published', true)
+        ->published()
         ->firstOrFail();
 
     return view('post', compact('post'));
