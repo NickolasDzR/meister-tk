@@ -19,6 +19,20 @@ async function convertImages() {
 
     for (const file of files) {
         const relativePath = path.relative(sourceDir, file);
+
+        // Картинки og-* оставляем как есть: они идут в превью ссылок для
+        // телеграма и вк, а те webp в превью показывают ненадёжно.
+        if (/(^|[\\/])og-/i.test(relativePath)) {
+            const targetPath = path.join(targetDir, relativePath);
+
+            await fs.ensureDir(path.dirname(targetPath));
+            await fs.copy(file, targetPath);
+
+            console.log(`📋 ${relativePath} (скопирован без конвертации — для og-превью)`);
+
+            continue;
+        }
+
         const targetPath = path.join(targetDir, relativePath.replace(/\.(png|jpg|jpeg)$/i, '.webp'));
 
         await fs.ensureDir(path.dirname(targetPath));
