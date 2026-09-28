@@ -8,6 +8,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="csrf-param" content="_token"/>
     <meta name="ymap-api-key" content="{{ env('YMAP_API_KEY') }}">
+    {{--
+    -- Шрифты первого экрана. Без preload браузер узнаёт о них только когда
+    -- разберёт CSS — то есть поздно, и текст успевает моргнуть запасным
+    -- шрифтом. Здесь только те начертания, что видны сразу: Regular — весь
+    -- текст, SemiBold — заголовок слайда.
+    -- crossorigin обязателен даже для своего домена: шрифты грузятся в
+    -- анонимном режиме, и без него файл скачается вторым запросом.
+    -- Формат обязан совпадать с тем, что первым запросит CSS (сейчас woff2),
+    -- иначе файл скачается дважды.
+    --}}
+    <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/Geologica-Regular.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/Geologica-SemiBold.woff2') }}" crossorigin>
+
     @vite(['resources/ts/app.ts', 'resources/scss/app.scss'])
 
     <!-- Ставим стили и скрипты определенной страницы -->

@@ -3,6 +3,7 @@
 
 // Стили главной страницы
 @use '@components/button/button';
+@use '@modules/main/main';
 @use '@components/input/input';
 @use '@modules/main-slider/main-slider';
 @use '@modules/forms/cargo-calc/cargo-calc';

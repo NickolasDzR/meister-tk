@@ -92,6 +92,9 @@ export default defineConfig({
     build: {
         outDir: 'public/build',
         emptyOutDir: true,
-        manifest: true,
+        // Именно строкой, а не true: при true Vite 5 кладёт манифест в
+        // public/build/.vite/manifest.json, а Laravel ищет его в
+        // public/build/manifest.json — и падает на каждой странице.
+        manifest: 'manifest.json',
     },
 });

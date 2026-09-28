@@ -1,10 +1,33 @@
 @use '_variables' as *;
 
+// Высота поля. Зафиксирована, потому что nice-select2 подменяет родной
+// <select> своей разметкой уже после загрузки страницы: до инициализации
+// виден один элемент, после — другой. Без общей высоты страница прыгает,
+// и это тот самый CLS, который ругает PageSpeed.
+// 54/60 — то, что родной select и так занимал: padding + текст + рамки.
+$field-height: 54px;
+$field-height-md: 60px;
+
 .input {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    // Библиотека ставит .nice-select свои 38px и width: fit-content —
+    // поле схлопывалось и по высоте, и по ширине в момент инициализации.
+    // Вес селектора 0-2-0 против 0-1-0 у библиотеки, поэтому побеждает
+    // независимо от порядка подключения файлов.
+    .nice-select {
+        height: $field-height;
+        line-height: $field-height - 2; // минус рамка библиотеки в 1px сверху и снизу
+        width: 100%;
+
+        @media (min-width: $break_md) {
+            height: $field-height-md;
+            line-height: $field-height-md - 2;
+        }
+    }
 
     &:hover {
         .input__icon {
@@ -41,8 +64,12 @@
         }
 
         &_select {
-            height: auto;
+            height: $field-height;
             width: 100%;
+
+            @media (min-width: $break_md) {
+                height: $field-height-md;
+            }
         }
 
         &.error {
@@ -170,7 +197,7 @@
     }
 
     .current {
-        font-family: var(--second-font);
+        font-family: var(--font);
         font-weight: 300;
         color: transparent;
         transition-delay: .2s;
