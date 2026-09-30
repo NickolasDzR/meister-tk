@@ -1,17 +1,56 @@
 @use '_variables' as *;
 
 .post {
+    // Ширины из макета: текст читается в узкой колонке, блоки с
+    // картинками шире. Длинная строка неудобна для чтения — на всю
+    // ширину контейнера в неё влезает около 150 символов вместо
+    // комфортных 60–90.
+    $block-width: 1030px;
+    $text-width: 960px;
+
+    // Вертикальный ритм. Все интервалы заданы здесь и только здесь —
+    // раньше расстояние складывалось из отступа блока, отступа текста
+    // внутри него и браузерных отступов у <p>, поэтому и выходило разным.
+    $rhythm: 30px;
+    $rhythm-lg: 40px;
+
+    // Заголовок раздела: сверху много (это граница смысла), снизу мало —
+    // заголовок должен читаться вместе со своим текстом, а не висеть
+    // посередине между двумя разделами.
+    $rhythm-heading: 60px;
+    $rhythm-heading-lg: 90px;
+    $rhythm-heading-bottom: 20px;
+
+    // Между абзацами внутри одного блока — меньше, чем между блоками.
+    $rhythm-inner: 20px;
+
     &__block {
-        &:has(h2) {
-            margin-top: 60px;
+        @media (min-width: $break_xl) {
+            max-width: $block-width;
+        }
+
+        // Интервал принадлежит промежутку, а не блоку: правило срабатывает
+        // только между соседями, поэтому первому блоку отступ не нужен.
+        & + & {
+            margin-top: $rhythm;
 
             @media (min-width: $break_xl) {
-                margin-top: 90px;
+                margin-top: $rhythm-lg;
             }
         }
 
-        &:not(:has(h2)) {
-            margin-top: 30px;
+        // Перед заголовком раздела.
+        & + &_heading {
+            margin-top: $rhythm-heading;
+
+            @media (min-width: $break_xl) {
+                margin-top: $rhythm-heading-lg;
+            }
+        }
+
+        // После заголовка — вплотную к его тексту, на всех ширинах одинаково.
+        &_heading + & {
+            margin-top: $rhythm-heading-bottom;
         }
     }
 
@@ -20,10 +59,30 @@
     }
 
     &__content {
+        // Колонка флексом: у флекс-элементов margin'ы не схлопываются,
+        // поэтому интервал между блоками равен ровно тому, что написано,
+        // и не зависит от того, что лежит внутри соседнего блока.
+        display: flex;
+        flex-direction: column;
         margin-bottom: 60px;
 
         @media (min-width: $break_xl) {
             margin-bottom: 120px;
+        }
+
+        // Блоки приходят из админки обычной html-разметкой, а у <p>, <ul>
+        // и <blockquote> есть собственные браузерные отступы — они
+        // прибавлялись к интервалу между блоками. Гасим все и раздаём
+        // расстояния сами.
+        p, ul, ol, blockquote, h2, h3, hr {
+            margin: 0;
+        }
+
+        // Абзацы внутри одного текстового блока. Правило живёт здесь же,
+        // рядом со сбросом: у `.post__content p` селектор сильнее, чем
+        // у `.post__block-text > *`, и снаружи сброс бы его перебил.
+        .post__block-text > * + * {
+            margin-top: $rhythm-inner;
         }
     }
 
@@ -74,6 +133,12 @@
         font-weight: 400;
         line-height: 1.33;
         color: var(--black);
+
+        // Та же ширина, что и у основного текста: лид и статья должны
+        // идти по одной вертикали, иначе правый край «ступенькой».
+        @media (min-width: $break_xl) {
+            max-width: $text-width;
+        }
     }
 
     &__date {
@@ -103,24 +168,29 @@
     }
 
     &__block-image {
-        min-height: 316px;
+        height: 316px;
         width: 100%;
         overflow: hidden;
-        display: flex;
-        align-items: center;
         position: relative;
 
         @media (min-width: $break_lg) {
             width: 50%;
         }
 
+        @media (min-width: $break_xl) {
+            height: auto;
+            align-self: flex-start;
+        }
+
         & img {
             width: 100%;
-            height: unset;
+            height: 100%;
             object-fit: cover;
+            display: block;
 
-            @media (min-width: $break_lg) {
-                position: absolute;
+            @media (min-width: $break_xl) {
+                height: auto;
+                object-fit: unset;
             }
         }
     }
@@ -135,12 +205,15 @@
     &__block-text {
         font-size: 16px;
         font-weight: 300;
-        margin-bottom: 30px;
         color: var(--lightGray);
         line-height: 1.6;
 
+        @media (min-width: $break_xl) {
+            max-width: $text-width;
+        }
+
         &_image {
-            margin-bottom: 0;
+            max-width: none;
 
             @media (min-width: $break_lg) {
                 width: 50%;
@@ -153,17 +226,50 @@
         padding-left: 48px;
     }
 
-    &__quote p, &__callout, &__list-item {
+    &__quote p, &__callout, &__list-item, &__italic {
         font-size: 16px;
         font-weight: 300;
         line-height: 1.6;
         color: var(--lightGray);
+    }
+
+    // Ремарка — замечание автора в сторону от основного повествования.
+    // Отличается только наклоном: размер, цвет и ширина те же, что у
+    // основного текста, иначе она читалась бы как подпись или сноска.
+    &__italic {
+        font-style: italic;
+
+        @media (min-width: $break_xl) {
+            max-width: $text-width;
+        }
     }
     
     &__quote-svg {
         display: block;
         position: absolute;
         left: 0;
+    }
+
+    // Автор цитаты. По умолчанию <cite> курсивный и липнет к тексту —
+    // отсюда и ощущение прилипшего хвоста. Ставим его отдельной строкой,
+    // мельче и тише основного текста, с тире вместо кавычек-подписи.
+    &__quote cite {
+        display: block;
+        margin-top: 5px;
+        font-size: 14px;
+        font-weight: 400;
+        font-style: normal;
+        line-height: 1.4;
+        color: var(--gray);
+
+        @media (min-width: $break_md) {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        &::before {
+            content: "— ";
+        }
     }
 
     &__callout {

@@ -112,16 +112,14 @@
 
                                     {{-- Заголовок h2 --}}
                                     @case('heading')
-                                        <div class="post__block">
-                                            <div class="post__block post__block--heading">
-                                                <h2 class="post__heading">{{ $block['data']['text'] }}</h2>
-                                            </div>
+                                        <div class="post__block post__block_heading">
+                                            <h2 class="post__heading">{{ $block['data']['text'] }}</h2>
                                         </div>
                                     @break
 
                                     {{-- Цитата --}}
                                     @case('quote')
-                                        <div class="post__block post__block--quote">
+                                        <div class="post__block">
                                             <blockquote class="post__quote">
                                                 <x-icon name="quotes" class="post__quote-svg"></x-icon>
                                                 <p>{{ $block['data']['text'] }}</p>
@@ -134,7 +132,7 @@
 
                                     {{-- Маркированный список --}}
                                     @case('unordered_list')
-                                        <div class="post__block post__block_list">
+                                        <div class="post__block">
                                             <ul class="post__list">
                                                 @foreach($block['data']['items'] ?? [] as $item)
                                                     <li class="post__list-item">
@@ -147,7 +145,7 @@
 
                                     {{-- Нумерованный список --}}
                                     @case('ordered_list')
-                                        <div class="post__block post__block--list post__block--list-ordered">
+                                        <div class="post__block">
                                             <ol class="post__list">
                                                 @foreach($block['data']['items'] ?? [] as $item)
                                                     <li class="post__list-item">{{ $item['text'] }}</li>
@@ -172,24 +170,21 @@
 
                                     {{-- Врезка --}}
                                     @case('callout')
-                                        <div class="post__block post__block_callout">
-                                            @if(!empty($block['data']['title']))
-                                                <p class="post__block-callout-title">{{ $block['data']['title'] }}</p>
-                                            @endif
+                                        <div class="post__block">
                                             <p class="post__callout">{{ $block['data']['text'] }}</p>
                                         </div>
                                     @break
 
-                                    {{-- Курсив (em) --}}
+                                    {{-- Ремарка --}}
                                     @case('italic')
-                                        <div class="post__block post__block--italic">
-                                            <em>{{ $block['data']['text'] }}</em>
+                                        <div class="post__block">
+                                            <p class="post__italic">{{ $block['data']['text'] }}</p>
                                         </div>
                                     @break
 
                                     {{-- Разделитель (hr) --}}
                                     @case('divider')
-                                        <div class="post__block post__block--divider">
+                                        <div class="post__block">
                                             <hr>
                                         </div>
                                     @break

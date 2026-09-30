@@ -202,22 +202,20 @@ class PostForm
                                     ->label("Врезка")
                                     ->icon("heroicon-o-bookmark")
                                     ->schema([
-                                        TextInput::make("title")
-                                            ->label("Заголовок врезки (необязательно)")
-                                            ->maxLength(255),
                                         Textarea::make("text")
                                             ->label("Текст врезки")
                                             ->rows(3)
                                             ->required(),
                                     ]),
 
-                                // 9. Курсив (em)
+                                // 9. Ремарка
                                 Block::make("italic")
-                                    ->label("Курсив (em)")
+                                    ->label("Ремарка")
                                     ->icon("heroicon-o-italic")
                                     ->schema([
                                         Textarea::make("text")
-                                            ->label("Текст курсивом")
+                                            ->label("Текст ремарки")
+                                            ->helperText("Замечание в сторону от основного рассказа — целиком курсивом. Чтобы выделить слово внутри абзаца, используйте курсив в блоке «Текст».")
                                             ->rows(2)
                                             ->required(),
                                     ]),
@@ -228,7 +226,7 @@ class PostForm
                                     ->icon("heroicon-o-minus")
                                     ->schema([
                                         Placeholder::make("divider_hint")
-                                            ->content("— Горизонтальная линия —"),
+                                            ->content("- Горизонтальная линия -"),
                                     ]),
 
                             ])
