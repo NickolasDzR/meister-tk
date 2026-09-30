@@ -1,8 +1,7 @@
 @php
     $nav = [
-        ['link' => '#', 'text' => 'Новости'],
-        ['link' => '#', 'text' => 'Расчитать доставку'],
-        ['link' => '#', 'text' => 'Контакты']
+        ['link' => route('home'), 'text' => 'Главная'],
+        ['link' => route('posts'), 'text' => 'Статьи'],
     ];
 
     $soc = [

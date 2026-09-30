@@ -1,11 +1,15 @@
 @use '_variables' as *;
 
 .main-slider {
-    height: calc(100vh - 163px);
+    height: calc(100vh - ($header-height + $cargo-calc-height));
     overflow-y: hidden;
 
     @media (min-width: $break_md) {
-        height: calc(100vh - 109px);
+        height: calc(100vh - $header-height-tablet);
+    }
+
+    @media (min-width: $break_xxl) {
+        height: calc(100vh - $header-height-desktop);
     }
 
     &__slider {

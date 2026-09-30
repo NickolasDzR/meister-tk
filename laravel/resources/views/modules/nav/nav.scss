@@ -1,8 +1,6 @@
 @use '_variables' as *;
 
 .nav {
-    color: red;
-
     &__list {
         @media (min-width: $break_xl) {
             display: flex;
@@ -25,6 +23,7 @@
 
     &__link {
         font-size: 16px;
+        font-weight: 300;
         color: var(--lightGray);
         line-height: 1.6;
         text-decoration: none;
@@ -36,10 +35,6 @@
 
         @media (min-width: $break_md) {
             font-size: 20px;
-        }
-
-        @media (min-width: $break_xl) {
-            font-size: 24px;
         }
     }
 }

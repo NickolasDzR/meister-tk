@@ -28,7 +28,7 @@
     @vite(["resources/scss/pages/{$page}.scss", "resources/ts/pages/{$page}.ts"])
 
     @stack('styles')
-    <title>@yield('title', 'Сайт компании ООО "Мейстер"')</title>
+    <title>@yield('title', 'Сайт компании ООО «Мейстер»')</title>
 
     {{--
     -- Open Graph: из этих тегов телеграм, вк и прочие собирают карточку,

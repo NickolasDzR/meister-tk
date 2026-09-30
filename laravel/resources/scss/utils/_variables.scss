@@ -33,6 +33,15 @@ $shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !default;
 $container-max: 1440px;
 $container-padding: 30px;
 
+// Высота шапки
+$header-height: 96px;
+$header-height-tablet: 100px;
+$header-height-desktop: 120px;
+
+// Высота кнопки вызова формы просчёта рейса
+$cargo-calc-height: 64px;
+$cargo-calc-height-tablet: 52px;
+
 // Брейкпоинты
 $break_sm: 576px !default;
 $break_md: 768px !default;

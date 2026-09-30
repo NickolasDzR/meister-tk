@@ -21,7 +21,7 @@ Route::get('/', function () {
     $promo = PromoSlide::active()->latest('updated_at')->first();
 
     return view('home', compact('posts', 'promo'));
-});
+})->name('home');
 
 Route::get('/posts', function () {
     // По девять карточек на страницу. content со всем текстом статьи

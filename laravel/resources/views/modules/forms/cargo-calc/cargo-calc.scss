@@ -14,12 +14,19 @@
     transition: transform 0.5s ease;
     padding: 15px;
 
+    @media (min-width: $break_md) {
+        top: $header-height-tablet;
+    }
+
     @media (min-width: $break_xl) {
-        top: 109px;
         transform: none;
         left: auto;
         padding-right: 144px;
         padding-left: 144px;
+    }
+
+    @media (min-width: $break_xxl) {
+        top: $header-height-desktop;
     }
 
     &::before {

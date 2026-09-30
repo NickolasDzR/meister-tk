@@ -1,8 +1,17 @@
 @use '_variables' as *;
 
 .header {
-    padding-top: 22px;
-    padding-bottom: 20px;
+    height: $header-height;
+    display: flex;
+    align-items: center;
+
+    @media (min-width: $break_md) {
+        height: $header-height-tablet;
+    }
+
+    @media (min-width: $break_xxl) {
+        height: $header-height-desktop;
+    }
 
     &__logo {
         flex: 0;

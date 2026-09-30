@@ -1,8 +1,6 @@
 @php
     $nav = [
-        ['link' => route('posts'), 'text' => 'Новости'],
-        ['link' => '#', 'text' => 'Расчитать доставку'],
-        ['link' => '#', 'text' => 'Контакты']
+        ['link' => route('posts'), 'text' => 'Статьи'],
     ];
 
     $soc = [
@@ -31,7 +29,7 @@
 
 @extends('layouts.app')
 
-@section('title', 'Главная страница')
+@section('title', 'Грузоперевозки по России — ООО «Мейстер»')
 
 @section('og')
     <meta property="og:type" content="website">
