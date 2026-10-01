@@ -9,48 +9,8 @@
     | тут ничего не подписано.
     |
     | Отступы у образцов обнулены: каталог про шрифт, а не про расстояния.
-    |
-    | Когда разберём список ниже — удалить массив $todo и секцию «Что чинить».
-    | Пометки у образцов исчезнут сами, они берутся из этого же массива.
     */
 
-    $todo = [
-        5 => [
-            'title' => 'Заголовки из _global.scss ни на что не влияют',
-            'what'  => '56, 40 и 24 пикселя — единственные размеры в проекте, заданные в rem. В макете их нет, на страницах их всюду перебивают классами. Доходят до экрана ровно в одном месте: «Другие статьи» внизу статьи, где поверх стоит инлайновый style="font-size: 30px".',
-            'fix'   => 'Привести значения к реальным или убрать размеры совсем, а инлайновый стиль заменить классом.',
-            'check' => 'В post.blade.php не осталось атрибута style.',
-            'where' => '_global.scss, post.blade.php',
-        ],
-        6 => [
-            'title' => 'Восемь межстрочных, две пары почти одинаковые',
-            'what'  => '1.4 и 1.43 при кегле 16 дают 22.4 и 22.9 пикселя. 1.5 и 1.52 различаются так же незаметно. Похоже, их получали делением чисел из макета, а не брали из шкалы.',
-            'fix'   => 'Свести каждую пару к одному значению.',
-            'check' => 'В секции «Межстрочные» останется шесть карточек вместо восьми.',
-            'where' => 'post.scss, main-slider.scss, cargo-calc.scss, contacts.scss, footer.scss',
-        ],
-        7 => [
-            'title' => 'Вес 800 в одном месте на весь сайт',
-            'what'  => 'Телефон в блоке контактов — единственное место с font-weight: 800. Остальной сайт обходится 300, 400 и 600.',
-            'fix'   => 'Свериться с макетом: либо 600, либо осознанно оставить.',
-            'check' => 'Образец .contacts__link-title показывает выбранный вес.',
-            'where' => 'contacts.scss',
-        ],
-        9 => [
-            'title' => 'Ссылки без цвета',
-            'what'  => 'В _global.scss у ссылок стоит color: var(--color-accent), а такой переменной в палитре нет. Браузер считает такое объявление недействительным и берёт цвет по наследству, то есть правило не работает ни на одной странице. То же со вторым правилом — a:hover.',
-            'fix'   => 'Решить, какой цвет у ссылки в тексте и при наведении, и задать его. Либо убрать оба правила, если ссылки везде красятся своими классами.',
-            'check' => 'Ссылка внутри текста статьи отличается от обычного текста.',
-            'where' => '_global.scss',
-        ],
-        8 => [
-            'title' => 'font-weight: bold теперь рисуется другим начертанием',
-            'what'  => 'Стоимость в расчёте рейса и текст прелоадера написаны через bold. Пока Bold и ExtraBold были объявлены одним весом, оба места рисовались ExtraBold`ом. Теперь это настоящий Bold, и начертание изменилось само собой.',
-            'fix'   => 'Посмотреть на оба места и решить, тот ли это вес.',
-            'check' => 'Расчёт рейса на главной и прелоадер выглядят как задумано.',
-            'where' => 'cargo-calc.scss, preloader.scss',
-        ],
-    ];
 
     // Образцы. Каждый — настоящий класс сайта; dark — для белого текста,
     // который на светлом фоне не виден.
@@ -73,6 +33,11 @@
             'where' => 'заголовок раздела в статье',
         ],
         [
+            'sel'   => '.slider-offer__heading',
+            'html'  => '<h2 class="slider-offer__heading">Другие статьи</h2>',
+            'where' => 'заголовок слайдера внизу статьи',
+        ],
+        [
             'sel'   => '.post__excerpt',
             'html'  => '<p class="post__excerpt">Короткое описание статьи — показывается под обложкой и в карточке списка.</p>',
             'where' => 'лид статьи',
@@ -92,19 +57,16 @@
             'sel'   => '.post__block-text',
             'html'  => '<div class="post__block-text">Основной текст статьи. Зимой маршрут меняется не только из-за погоды: часть дорог закрывают по весу, и объезд добавляет к рейсу сутки. Это закладывают в срок заранее, а не по факту.</div>',
             'where' => 'текст статьи',
-            'todo'  => 2,
         ],
         [
             'sel'   => '.nav__link',
             'html'  => '<span class="nav__link">Статьи</span>',
             'where' => 'меню в шапке',
-            'todo'  => 2,
         ],
         [
             'sel'   => '.input__placeholder',
             'html'  => '<span class="input__placeholder">Город отправки</span>',
             'where' => 'подпись над полем',
-            'todo'  => 2,
         ],
         [
             'sel'   => '.post__italic',
@@ -122,31 +84,26 @@
             'dark'  => true,
             'html'  => '<p class="main-slider__subtitle">Подпись под заголовком на первом экране.</p>',
             'where' => 'первый экран главной',
-            'todo'  => 6,
         ],
         [
             'sel'   => '.post__quote cite',
             'html'  => '<blockquote class="post__quote" style="padding-left:0"><cite>Сергей Волков, руководитель автопарка</cite></blockquote>',
             'where' => 'автор цитаты',
-            'todo'  => 6,
         ],
         [
             'sel'   => '.cargo-calc__title',
             'html'  => '<p class="cargo-calc__title">Рассчитать стоимость рейса</p>',
             'where' => 'форма на главной',
-            'todo'  => 6,
         ],
         [
             'sel'   => '.contacts__link-title',
             'html'  => '<span class="contacts__link-title">+7 (999) 120 59 82</span>',
             'where' => 'контакты в шапке и подвале',
-            'todo'  => 7,
         ],
         [
             'sel'   => '.footer__address',
             'html'  => '<span class="footer__address">ООО «Мейстер», транспортно-экспедиционные услуги</span>',
             'where' => 'подвал',
-            'todo'  => 6,
         ],
         [
             'sel'   => '.button',
@@ -163,13 +120,11 @@
     // Размеры, которые сейчас встречаются в стилях. orphan — встречается
     // ровно один раз и ни с чем не рифмуется.
     $scale = [
-        ['size' => 56, 'weight' => 600, 'note' => 'h1 из _global.scss', 'orphan' => true],
-        ['size' => 40, 'weight' => 600, 'note' => 'h2 из _global.scss, прелоадер', 'orphan' => true],
+        ['size' => 40, 'weight' => 600, 'note' => 'прелоадер', 'orphan' => true],
         ['size' => 36, 'weight' => 600, 'note' => 'заголовки от 768px'],
         ['size' => 32, 'weight' => 600, 'note' => 'прелоадер', 'orphan' => true],
         ['size' => 30, 'weight' => 600, 'note' => 'заголовок раздела в статье'],
         ['size' => 26, 'weight' => 600, 'note' => 'заголовки до 768px'],
-        ['size' => 24, 'weight' => 600, 'note' => 'h3 из _global.scss', 'orphan' => true],
         ['size' => 20, 'weight' => 400, 'note' => 'лид, заголовки карточек'],
         ['size' => 18, 'weight' => 300, 'note' => 'подпись в слайдере, контакты'],
         ['size' => 16, 'weight' => 300, 'note' => 'основной текст, поля, кнопки'],
@@ -179,22 +134,18 @@
     ];
 
     $leading = [
-        ['v' => '1',    'where' => 'пагинация',               'note' => 'ровно по кеглю'],
-        ['v' => '1.2',  'where' => 'h1, h2, h3',              'note' => 'из _global.scss'],
-        ['v' => '1.33', 'where' => 'заголовки, карточки',     'note' => 'самое частое'],
-        ['v' => '1.4',  'where' => 'автор цитаты, селект',    'note' => '22.4px при кегле 16', 'todo' => 6],
-        ['v' => '1.43', 'where' => 'слайдер, расчёт рейса',   'note' => '22.9px при кегле 16', 'todo' => 6],
-        ['v' => '1.5',  'where' => 'подвал',                  'note' => '21px при кегле 14',   'todo' => 6],
-        ['v' => '1.52', 'where' => 'контакты',                'note' => '27.4px при кегле 18', 'todo' => 6],
-        ['v' => '1.6',  'where' => 'основной текст, меню',    'note' => '25.6px при кегле 16'],
+        ['v' => '1',    'where' => 'номера страниц',                 'note' => 'цифра в круге, ровно по кеглю'],
+        ['v' => '1.33', 'where' => 'заголовки, карточки, лид',       'note' => 'самое частое'],
+        ['v' => '1.4',  'where' => 'плотный мелкий текст',           'note' => 'цитата, селект, форма расчёта'],
+        ['v' => '1.5',  'where' => 'подвал и контакты',              'note' => '21px при кегле 14'],
+        ['v' => '1.6',  'where' => 'основной текст',                 'note' => 'приходит с body'],
     ];
 
     $faces = [
         ['w' => 300, 'name' => 'Light',      'file' => 'Geologica-Light.woff2'],
         ['w' => 400, 'name' => 'Regular',    'file' => 'Geologica-Regular.woff2'],
         ['w' => 600, 'name' => 'SemiBold',   'file' => 'Geologica-SemiBold.woff2'],
-        ['w' => 700, 'name' => 'Bold',       'file' => 'Geologica-Bold.woff2',      'todo' => 1],
-        ['w' => 800, 'name' => 'ExtraBold',  'file' => 'Geologica-ExtraBold.woff2', 'todo' => 1],
+        ['w' => 700, 'name' => 'Bold',       'file' => 'Geologica-Bold.woff2'],
     ];
 @endphp
 
@@ -222,31 +173,6 @@
                         </p>
                     </header>
 
-                    @if (!empty($todo))
-                        <section class="sg__section">
-                            <div class="sg__section-head">
-                                <h2>Что чинить</h2>
-                                <p>Пунктов: {{ count($todo) }}. Разберём — удалим эту секцию, страница останется просто каталогом.</p>
-                            </div>
-
-                            <ol class="sg__todo">
-                                @foreach ($todo as $n => $item)
-                                    <li class="sg__todo-item" id="todo-{{ $n }}">
-                                        <span class="sg__todo-num">{{ $n }}</span>
-                                        <div class="sg__todo-body">
-                                            <h3>{{ $item['title'] }}</h3>
-                                            <p>{{ $item['what'] }}</p>
-                                            <dl class="sg__todo-meta">
-                                                <dt>правка</dt><dd>{{ $item['fix'] }}</dd>
-                                                <dt>проверка</dt><dd>{{ $item['check'] }}</dd>
-                                                <dt>файлы</dt><dd><code>{{ $item['where'] }}</code></dd>
-                                            </dl>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ol>
-                        </section>
-                    @endif
 
                     <section class="sg__section">
                         <div class="sg__section-head">
@@ -261,9 +187,6 @@
                                     <div class="sg__face-meta">
                                         <b>{{ $face['w'] }} — {{ $face['name'] }}</b>
                                         <span>{{ $face['file'] }}</span>
-                                        @isset($todo[$face['todo'] ?? 0])
-                                            <a class="sg__flag" href="#todo-{{ $face['todo'] }}">пункт {{ $face['todo'] }}</a>
-                                        @endisset
                                     </div>
                                 </div>
                             @endforeach
@@ -286,9 +209,6 @@
                                         <code class="sg__sel">{{ $row['sel'] }}</code>
                                         <dl class="sg__metrics"></dl>
                                         <p class="sg__where">{{ $row['where'] }}</p>
-                                        @isset($todo[$row['todo'] ?? 0])
-                                            <a class="sg__flag" href="#todo-{{ $row['todo'] }}">пункт {{ $row['todo'] }}</a>
-                                        @endisset
                                     </div>
                                 </div>
                             @endforeach
@@ -324,9 +244,6 @@
                                     <b>{{ $lead['v'] }}</b>
                                     <p>{{ $lead['where'] }}</p>
                                     <small>{{ $lead['note'] }}</small>
-                                    @isset($todo[$lead['todo'] ?? 0])
-                                        <a class="sg__flag" href="#todo-{{ $lead['todo'] }}">пункт {{ $lead['todo'] }}</a>
-                                    @endisset
                                 </div>
                             @endforeach
                         </div>
