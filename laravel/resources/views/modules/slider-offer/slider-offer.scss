@@ -1,6 +1,17 @@
 @use '_variables' as *;
 
 .slider-offer {
+    // Высота картинки в слайде. Вынесена, потому что от неё считается
+    // положение стрелок: они должны стоять по центру картинки, а не всего
+    // слайда — под картинкой ещё заголовок в одну-две строки.
+    $img-height: 242px;
+    $img-height-xl: 342px;
+
+    &__heading {
+        font-size: 30px;
+        margin-bottom: 20px;
+    }
+
     &__splide {
         &:not(.is-initialized) {
             .splide__track {
@@ -87,9 +98,14 @@
 
         @media (min-width: $break_sm) {
             position: absolute;
-            top: 94px;
+            top: $img-height * 0.5;
+            transform: translateY(-50%);
 
             opacity: 0.59;
+        }
+
+        @media (min-width: $break_xl) {
+            top: $img-height-xl * 0.5;
         }
 
         &_prev, &_next {
@@ -139,12 +155,12 @@
     &__img {
         display: block;
         width: 100%;
-        height: 242px;
+        height: $img-height;
+        object-fit: cover;
 
         @media (min-width: $break_xl) {
-            height: 342px;
+            height: $img-height-xl;
         }
-        object-fit: cover;
     }
 
     &__title {

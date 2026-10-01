@@ -88,30 +88,15 @@ h1, h2, h3 {
     color: var(--black);
 }
 
-h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
-}
-
-h2 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-}
-
-h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
 /* Ссылки */
 a {
-    color: var(--color-accent);
+    color: $dark;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 a:hover {
-    color: var(--color-accent-hover);
+    color: var(--keppel);
 }
 
 /* Списки без маркеров */

@@ -2,7 +2,7 @@
     use Illuminate\Support\Facades\Storage;
     use App\Models\Post;
 
-    $slides = $slides ?? Post::where('published', true)
+    $slides = $slides ?? Post::published()
         ->whereNotNull('image')
         ->when(isset($post), fn ($query) => $query->whereKeyNot($post->id))
         ->inRandomOrder()
@@ -18,6 +18,8 @@
 
 @if(count($slides))
     <section class="slider-offer">
+        <h2 class="slider-offer__heading">Другие статьи</h2>
+
         <div class="slider-offer__splide splide" aria-label="Другие статьи">
             <div class="splide__track">
                 <ul class="slider-offer__list splide__list">
