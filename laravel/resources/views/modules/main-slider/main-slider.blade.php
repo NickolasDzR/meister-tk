@@ -39,8 +39,8 @@
                             <div class="main-slider__slide-container container">
                                 <div class="main-slider__row row">
                                     <div class="main-slider__content col-12">
-                                        <div class="main-slider__title">{{ $item['title'] ?? '' }}</div>
-                                        <div class="main-slider__subtitle">{{ $item['subtitle'] ?? '' }}</div>
+                                        <h2 class="main-slider__title">{{ $item['title'] ?? '' }}</h2>
+                                        <p class="main-slider__subtitle">{{ $item['subtitle'] ?? '' }}</p>
                                         <a class="main-slider__article-link button button_transparent" href="{{ $item['link'] ?? '#' }}">Подробнее</a>
                                     </div>
                                     <x-graphic.remote-picture :value="[
@@ -61,8 +61,8 @@
                             <div class="main-slider__slide-container container">
                                 <div class="main-slider__row row">
                                     <div class="main-slider__content col-12">
-                                        <div class="main-slider__title">{{ $cta['title'] ?? '' }}</div>
-                                        <div class="main-slider__subtitle">{{ $cta['subtitle'] ?? '' }}</div>
+                                        <h2 class="main-slider__title">{{ $cta['title'] ?? '' }}</h2>
+                                        <p class="main-slider__subtitle">{{ $cta['subtitle'] ?? '' }}</p>
                                         <a class="main-slider__article-link button button_transparent"
                                            href="{{ $cta['link'] ?? '#' }}">{{ $cta['button'] ?? 'Все статьи' }}</a>
                                     </div>
