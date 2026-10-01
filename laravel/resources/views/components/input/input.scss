@@ -43,8 +43,13 @@ $field-height-md: 60px;
         }
     }
 
+    // Высота задана, а вертикальных отступов нет: однострочное поле ставит
+    // свой текст по центру содержимого само. Раньше центр собирался из
+    // 17 сверху и 13 снизу — подгонка под системный шрифт, который тут
+    // стоял по недосмотру. С Geologica те же числа роняли текст вниз.
     &__placeholder {
-        padding: 12px 32px;
+        height: $field-height;
+        padding: 0 32px;
         border: 2px solid white;
         border-radius: 5px;
         outline: none;
@@ -52,7 +57,8 @@ $field-height-md: 60px;
         transition: all .3s ease;
 
         @media (min-width: $break_md) {
-            padding: 17px 49px 13px;
+            height: $field-height-md;
+            padding: 0 49px;
         }
 
         &::placeholder {
@@ -60,16 +66,38 @@ $field-height-md: 60px;
         }
 
         &_select {
-            height: $field-height;
             width: 100%;
-
-            @media (min-width: $break_md) {
-                height: $field-height-md;
-            }
         }
 
         &.error {
             border: 2px solid var(--red);
+        }
+    }
+
+    // Точки вспыхивают по очереди, пока идёт запрос к подсказкам.
+    // Без движения строка «Ищем» читается как обычный пункт списка,
+    // то есть как результат, а не как ожидание.
+    &__dots {
+        display: inline-block;
+        margin-left: 1px;
+
+        i {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            margin-left: 3px;
+            border-radius: 50%;
+            vertical-align: middle;
+            background-color: var(--blue-green);
+            animation: input-dots 1.2s ease-in-out infinite;
+
+            &:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            &:nth-child(3) {
+                animation-delay: 0.4s;
+            }
         }
     }
 
@@ -242,5 +270,38 @@ $field-height-md: 60px;
         font-family: var(--font);
         font-weight: 300;
         font-size: 16px
+    }
+}
+
+// До инициализации библиотеки виден родной <select>, и он рисует текст
+// первого option. Подпись .input__label выводит тот же текст и в том же
+// месте — две одинаковые надписи наезжали друг на друга. Прячем текст
+// родного селекта: библиотека потом скрывает его целиком, так что правило
+// живёт только на время загрузки.
+//
+// Уточнение по тегу обязательно. nice-select2 переносит классы исходного
+// элемента на свою разметку, поэтому без `select` правило красит заодно
+// и выпадающий список — там текст пропадал.
+select.input__placeholder_select {
+    color: transparent;
+}
+
+@keyframes input-dots {
+    0%, 70%, 100% {
+        opacity: 0.25;
+    }
+
+    35% {
+        opacity: 1;
+    }
+}
+
+// Движение по кругу без начала и конца — то, от чего в первую очередь
+// укачивает людей с вестибулярной чувствительностью. Точки оставляем
+// видимыми, но неподвижными.
+@media (prefers-reduced-motion: reduce) {
+    .input__dots i {
+        animation: none;
+        opacity: 1;
     }
 }
