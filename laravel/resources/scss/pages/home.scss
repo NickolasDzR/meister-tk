@@ -7,3 +7,9 @@
 @use '@components/input/input';
 @use '@modules/main-slider/main-slider';
 @use '@modules/forms/cargo-calc/cargo-calc';
+
+// Прелоадер показывается, пока считается маршрут. Скрипт создаёт его
+// разметку сам, поэтому отсутствие стилей никак не проявлялось: див
+// добавлялся в body и оставался невидимым — даже текст у него рисуется
+// псевдоэлементом из этого файла.
+@use '@components/preloader/preloader';

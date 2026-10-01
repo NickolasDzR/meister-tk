@@ -178,6 +178,11 @@ export const inputErrorHandler = (input: HTMLInputElement | HTMLDivElement) => {
  *
  * @param element - элемент в котором нужно вывести прелоадер (показать загрузку)
  */
+// Класс active ставится не сразу, а следующим тиком: без этого браузер
+// не увидит смены прозрачности и покажет прелоадер рывком, без плавного
+// появления. Таймер храним, чтобы его можно было отменить.
+let preloaderFadeIn: number | undefined;
+
 export const preloader = {
     enable: (preloaderText?: string) => {
         const preloader = document.createElement("DIV");
@@ -186,33 +191,38 @@ export const preloader = {
         const preloaderWrapper = document.createElement("DIV");
         preloaderWrapper.classList.add("preloader__wrapper");
 
-        if (preloaderText) {
-            preloaderWrapper.dataset.preloaderText = `${preloaderText}`;
-        } else {
-            preloaderWrapper.dataset.preloaderText = `Идёт загрузка`;
-        }
+        preloaderWrapper.dataset.preloaderText = preloaderText ?? "Идёт загрузка";
 
         preloader.appendChild(preloaderWrapper);
 
         document.body.appendChild(preloader);
 
-        setTimeout(() => {
+        preloaderFadeIn = window.setTimeout(() => {
             preloader.classList.add("active");
-        }, 10)
+        }, 10);
     },
     disable: () => {
+        // Отменяем появление: если ошибка пришла быстрее десяти миллисекунд,
+        // прелоадер успел бы стать видимым уже после команды спрятать его.
+        window.clearTimeout(preloaderFadeIn);
+
         const preloader = document.querySelector(".preloader");
 
-        if (preloader) {
-            preloader.addEventListener("transitionend", () => {
-                setTimeout(() => {
-                    preloader.remove();
-                }, 100)
-            }, {once: true});
-
-            preloader.classList.remove("active");
-        } else {
-            console.error("Прелоадер не найден")
+        if (!preloader) {
+            return;
         }
+
+        const remove = () => preloader.remove();
+
+        // Прелоадер лежит поверх всей страницы и ловит клики, даже будучи
+        // прозрачным. Раньше его удаление ждало transitionend — но если
+        // прозрачность не менялась (прелоадер гасили раньше, чем он стал
+        // видимым), событие не приходило никогда, и невидимый слой оставался
+        // висеть: сообщение на экране есть, а нажать ничего нельзя.
+        // Поэтому удаляем по событию и обязательно по таймеру.
+        preloader.addEventListener("transitionend", remove, {once: true});
+        preloader.classList.remove("active");
+
+        window.setTimeout(remove, 500);
     },
 }

@@ -26,7 +26,12 @@ const secret: string = "28deeea55b3c9720d891d81b5c7797b94026d4d3";
  * @return {Promise<addressesResponseType>} Промис объектов с результатами поиска адресов.
  */
 const getDataAddress: (query: string) => Promise<addressesResponseType> = async (query: string) => {
-    return await fetch(dadataUrl, {
+    // Раньше здесь стоял .catch(error => error) — ошибка возвращалась как
+    // данные, и дальше код падал на res["suggestions"] уже внутри обработчика.
+    // Падение гасилось как необработанный промис, список оставался
+    // с надписью «Ищем», и человек ждал бесконечно. Пусть лучше бросает:
+    // тот, кто вызывает, обязан решить, что показать.
+    const response = await fetch(dadataUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -34,16 +39,46 @@ const getDataAddress: (query: string) => Promise<addressesResponseType> = async 
             "X-Secret": secret
         },
         body: JSON.stringify({query: query, count: 20})
-    })
-        .then(r => r)
-        .then(r => r.text())
-        .then(r => JSON.parse(r))
-        .catch(error => error)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Dadata ответила ${response.status}`);
+    }
+
+    return await response.json();
 }
 
 const selects = document.querySelectorAll(".input__placeholder_select") as NodeListOf<HTMLSelectElement>;
 
 const niceSelectInstance: Array<niceSelect2Instance> | any[] = [];
+
+/**
+ * Показывает в открытом списке строку «Ищем» с бегущими точками.
+ *
+ * Пишем прямо в готовую разметку библиотеки и намеренно не зовём update():
+ * он удаляет выпадающий список вместе с полем поиска и строит заново,
+ * а на это поле ссылается код, который потом подставляет результаты.
+ * Перестройка оставляла его со ссылкой на выброшенный элемент, и города
+ * не доезжали до списка.
+ *
+ * @param input Поле поиска внутри открытого списка.
+ */
+const showListMessage = (input: HTMLInputElement, content: string) => {
+    const list = input.closest(".nice-select-dropdown")?.querySelector(".list") as HTMLUListElement | null;
+
+    if (!list) {
+        return;
+    }
+
+    // Одной строкой и без отступов: у пунктов списка стоит
+    // white-space: break-spaces, то есть пробелы и переносы в разметке
+    // попадают на экран как есть. Лесенка кода стала бы отступом в списке.
+    //
+    // Без data-value пункт не кликается: обработчик выбора ищет именно его.
+    list.innerHTML = `<li class="option">${content}</li>`;
+};
+
+const searchingMarkup = `Ищем<span class="input__dots"><i></i><i></i><i></i></span>`;
 
 /**
  * Обработчик события изменения значения поля ввода.
@@ -59,7 +94,21 @@ const onChangedInput = async (input: HTMLInputElement) => {
     // При каждом вызове нужно делать fetch в dadata с поиском адресов по введёному ключу с debounce
     // Подставляем данные в нужный селект
 
-    const res: addressesResponseType = await getDataAddress(value);
+    // Запрос к подсказкам занимает время, а на слабой связи — заметное.
+    // Без этой строки список остаётся пустым, и человек не понимает,
+    // ждать ему или набирать иначе.
+    showListMessage(input, searchingMarkup);
+
+    let res: addressesResponseType;
+
+    try {
+        res = await getDataAddress(value);
+    } catch (error) {
+        console.error("Подсказки городов не загрузились:", error);
+        showListMessage(input, "Не удалось загрузить список. Проверьте связь и попробуйте ещё раз");
+
+        return;
+    }
 
     // Получаем нужные данные
     const results = Array.from(res["suggestions"], address => {
@@ -309,16 +358,15 @@ const costCalculator = (coord: [number, number], form: HTMLFormElement) => {
 
         multiRoute.model.events.add('requestfail', function(event: Event) {
             // @ts-ignore
-            console.log("Route creation failed: " + event.get('error').message);
+            console.error("Маршрут не построен: " + event.get('error').message);
+
+            // Без этого нажатие на кнопку заканчивается ничем: прелоадер
+            // продолжает крутиться, кнопка остаётся заблокированной,
+            // а объяснение уходит в консоль, куда посетитель не смотрит.
+            showUserResults("calculation_error", undefined, form);
         });
 
         form.addEventListener("formCalculationEvent", formEventHandler);
-
-        const cargoCalcButtonResults = document.querySelector(".cargo-calc__button-results") as HTMLButtonElement;
-
-        if (cargoCalcButtonResults) {
-            cargoCalcButtonResults.addEventListener("click", onReadResultsDoneHandler)
-        }
     }
 }
 
@@ -481,6 +529,17 @@ if (selects.length > 0) {
     })
 }
 
+// Кнопка «Понятно» закрывает панель с результатом и возвращает форму.
+// Обработчик вешаем сразу, а не внутри расчёта: раньше он появлялся только
+// если дело дошло до построения маршрута, поэтому при любой ошибке — нет
+// связи, отказ маршрутизатора, незаполненное поле — сообщение показывалось,
+// а закрыть его было нечем.
+const cargoCalcButtonResults = document.querySelector(".cargo-calc__button-results") as HTMLButtonElement | null;
+
+if (cargoCalcButtonResults) {
+    cargoCalcButtonResults.addEventListener("click", onReadResultsDoneHandler);
+}
+
 const cargoCalcButton = document.querySelector(".cargo-calc__button") as HTMLButtonElement;
 
 const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
@@ -508,6 +567,9 @@ const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
             });
         } else {
             console.error("Отсутствует одно из значений для просчёта стоимости рейса");
+
+            // Иначе прелоадер останется висеть: включили его до проверки.
+            showUserResults("calculation_error", undefined, form);
         }
     } else {
         console.error("Кнопка не найдена")
@@ -520,6 +582,8 @@ if (cargoCalcButton) {
 
         const button = event.target as HTMLButtonElement
 
+        const form = button.closest(".cargo-calc__form") as HTMLFormElement;
+
         // TODO тут сделать прелоадер в качестве логотипа, у которого дорога едет, пока грузится карта. На всяк
         preloader.enable();
 
@@ -527,13 +591,25 @@ if (cargoCalcButton) {
             buttonActiveHandler.disable(button);
         }
 
-        const loaded = await YMAPLoader(YMapApiKey);
+        // Загрузка карт может не просто вернуть false, а упасть — например,
+        // когда связи нет вовсе. Исключение внутри async-обработчика ничего
+        // не останавливает и никуда не всплывает: прелоадер оставался
+        // на экране навсегда, кнопка — заблокированной, и человеку
+        // оставалось только перезагрузить страницу.
+        try {
+            const loaded = await YMAPLoader(YMapApiKey);
 
-        if (!loaded) {
-            showUserResults("calculation_error", undefined, button.closest(".cargo-calc__form") as HTMLFormElement);
-            return;
+            if (!loaded) {
+                showUserResults("calculation_error", undefined, form);
+
+                return;
+            }
+
+            getCargoFormInputValuesHandler(button);
+        } catch (error) {
+            console.error("Карты не загрузились:", error);
+
+            showUserResults("calculation_error", undefined, form);
         }
-
-        getCargoFormInputValuesHandler(event.target as HTMLButtonElement);
     })
 }
