@@ -48,8 +48,6 @@ $field-height-md: 60px;
         border: 2px solid white;
         border-radius: 5px;
         outline: none;
-        font-size: 16px;
-        line-height: 1.6;
         color: var(--black);
         transition: all .3s ease;
 
@@ -58,8 +56,6 @@ $field-height-md: 60px;
         }
 
         &::placeholder {
-            font-size: 16px;
-            line-height: 1.6;
             color: transparent;
         }
 
@@ -105,11 +101,8 @@ $field-height-md: 60px;
             position: absolute;
             top: 14px;
             left: 34px;
-            font-size: 16px;
-            line-height: 1.6;
             color: var(--gray);
             transition: all .3s ease;
-            font-weight: 300;
 
             @media (min-width: $break_md) {
                 top: 18px;
@@ -197,8 +190,6 @@ $field-height-md: 60px;
     }
 
     .current {
-        font-family: var(--font);
-        font-weight: 300;
         color: transparent;
         transition-delay: .2s;
         text-overflow: ellipsis;

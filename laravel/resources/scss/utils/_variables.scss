@@ -26,10 +26,6 @@ $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02) !default;
 $shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05) !default;
 $shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !default;
 
-// Контейнер
-// Дублирует $container-max-widths из _grid.scss: тот живёт внутри своего
-// файла и из модулей недоступен. Нужен там, где элемент лежит вне
-// контейнера, но должен считаться от его краёв (стрелки слайдера).
 $container-max: 1440px;
 $container-padding: 30px;
 

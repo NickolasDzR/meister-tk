@@ -1,21 +1,16 @@
 .contacts {
     &__link-title, &__link-subtitle {
         text-decoration: none;
-        color: var(--black);
     }
 
+    // Чёрный — только у телефона. Подпись под ним берёт серый с body.
     &__link-title {
+        color: var(--black);
         font-size: 18px;
         font-weight: 800;
         line-height: 1.52;
         margin-bottom: 1px;
         white-space: nowrap;
-    }
-
-    &__link-subtitle {
-        font-size: 16px;
-        font-weight: 300;
-        color: var(--lightGray);
     }
 
     &__item {

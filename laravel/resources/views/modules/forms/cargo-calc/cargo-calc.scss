@@ -62,6 +62,9 @@
 
     &__title {
         font-size: 20px;
+        // 36 пикселей капслоком белым по фотографии: с весом 300 с body
+        // заголовок расплывается. 400 — как было до переноса базы.
+        font-weight: 400;
         color: var(--white);
         line-height: 1.43;
         text-transform: uppercase;

@@ -1,6 +1,9 @@
 .button {
-    font-family: inherit;
-    font-size: 16px;
+    line-height: normal;
+    // Вес у body — 300, для надписи на кнопке он слишком лёгкий.
+    // 400 — то, что было до переноса базы; своё значение возьмём
+    // из макета на шаге про поля и кнопки.
+    font-weight: 400;
     padding: 18px 25px;
     outline: none;
     color: var(--white);

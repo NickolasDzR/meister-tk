@@ -67,7 +67,6 @@
         min-width: 60px;
         text-align: center;
         font-size: 16px;
-        color: var(--lightGray);
 
         @media (min-width: $break_sm) {
             display: none;
@@ -84,7 +83,6 @@
         background-color: rgba($lightestBlue, 1);
         border-radius: 50%;
         cursor: pointer;
-        color: var(--lightGray);
         transition: all 0.3s ease;
 
         @media (min-width: $break_sm) {
@@ -155,7 +153,6 @@
         font-size: 20px;
         font-weight: 400;
         line-height: 1.33;
-        color: var(--lightGray);
 
         @media (min-width: $break_xl) {
             margin-top: 20px;

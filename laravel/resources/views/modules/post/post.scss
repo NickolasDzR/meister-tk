@@ -205,16 +205,9 @@
 
     &__heading {
         font-size: 30px;
-        line-height: 1.33;
-        font-weight: 600;
-        color: var(--black);
     }
 
     &__block-text {
-        font-size: 16px;
-        font-weight: 300;
-        color: var(--lightGray);
-        line-height: 1.6;
 
         @media (min-width: $break_xl) {
             max-width: $text-width;
@@ -232,13 +225,6 @@
     &__quote {
         position: relative;
         padding-left: 48px;
-    }
-
-    &__quote p, &__callout, &__list-item, &__italic {
-        font-size: 16px;
-        font-weight: 300;
-        line-height: 1.6;
-        color: var(--lightGray);
     }
 
     // Ремарка — замечание автора в сторону от основного повествования.
@@ -281,7 +267,6 @@
     }
 
     &__callout {
-        color: var(--lightGray);
         padding-left: 11px;
         position: relative;
 
