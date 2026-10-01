@@ -18,6 +18,8 @@ export default defineConfig({
                 'resources/ts/pages/home.ts',
                 'resources/ts/pages/posts.ts',
                 'resources/ts/pages/post.ts',
+                'resources/scss/pages/styleguide.scss',
+                'resources/ts/pages/styleguide.ts',
             ],
             refresh: true,
         }),

@@ -49,4 +49,11 @@ Route::get('/posts/{slug}', function (string $slug) {
     return view('post', compact('post'));
 })->name('post');
 
+// Каталог стилей — рабочий инструмент вёрстки, а не страница сайта.
+// Маршрута попросту нет вне локальной машины, поэтому забыть выключить
+// его негде: на сервере адрес отдаст 404.
+if (app()->environment('local')) {
+    Route::view('/styleguide', 'styleguide')->name('styleguide');
+}
+
 require __DIR__.'/auth.php';

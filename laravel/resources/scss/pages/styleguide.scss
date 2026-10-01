@@ -1,0 +1,393 @@
+// Каталог стилей. Модули подключены настоящие — страница показывает то же,
+// что видит посетитель, а не копию. Шапка, меню и контакты уже приехали
+// в app.scss, поэтому второй раз их не подключаем.
+@use 'nice-select2/src/scss/nice-select2';
+
+@use '@components/button/button';
+@use '@components/input/input';
+@use '@components/pagination/pagination';
+@use '@modules/post/post';
+@use '@modules/post-card/post-card';
+@use '@modules/main-slider/main-slider';
+@use '@modules/slider-offer/slider-offer';
+@use '@modules/footer/footer';
+@use '@modules/forms/cargo-calc/cargo-calc';
+
+@use '_variables' as *;
+
+.sg {
+    padding-block: 40px 100px;
+    color: var(--lightGray);
+
+    // ---------- шапка ----------
+    &__head {
+        margin-bottom: 60px;
+    }
+
+    &__eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--keppel);
+        margin-bottom: 12px;
+    }
+
+    &__title {
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--black);
+        margin-bottom: 14px;
+
+        @media (min-width: $break_md) {
+            font-size: 44px;
+        }
+    }
+
+    &__lede {
+        max-width: 70ch;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    &__route {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 10px;
+        font-size: 13px;
+        padding: 8px 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 7px;
+        background: var(--lightestBlue);
+
+        b {
+            font-weight: 600;
+            color: var(--indigo);
+        }
+
+        span {
+            color: var(--gray);
+        }
+    }
+
+    // ---------- секции ----------
+    &__section {
+        margin-bottom: 60px;
+    }
+
+    &__section-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 16px;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--color-border);
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--black);
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 300;
+            color: var(--gray);
+        }
+    }
+
+    // ---------- список правок ----------
+    &__todo {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 14px;
+    }
+
+    &__todo-item {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 14px;
+        padding: 16px 18px;
+        border: 1px solid var(--color-border);
+        border-left: 3px solid var(--red);
+        border-radius: 3px 10px 10px 3px;
+        background: var(--white);
+        scroll-margin-top: 20px;
+    }
+
+    &__todo-num {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--red);
+        line-height: 1.3;
+    }
+
+    &__todo-body {
+        min-width: 0;
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--black);
+            margin: 0 0 6px;
+        }
+
+        > p {
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.6;
+            margin: 0 0 10px;
+        }
+    }
+
+    &__todo-meta {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 4px 14px;
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+
+        dt {
+            color: var(--gray);
+        }
+
+        dd {
+            margin: 0;
+            font-weight: 300;
+        }
+
+        code {
+            font-size: 12px;
+            color: var(--indigo);
+            word-break: break-word;
+        }
+    }
+
+    // ---------- начертания ----------
+    &__faces {
+        display: grid;
+        gap: 1px;
+        background: var(--color-border);
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    &__face {
+        display: grid;
+        gap: 6px 24px;
+        align-items: baseline;
+        padding: 16px 18px;
+        background: var(--white);
+
+        @media (min-width: $break_md) {
+            grid-template-columns: minmax(0, 1fr) 230px;
+        }
+    }
+
+    &__face-word {
+        font-size: 24px;
+        line-height: 1.3;
+        color: var(--black);
+        min-width: 0;
+    }
+
+    &__face-meta {
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--gray);
+
+        b {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+        }
+    }
+
+    // ---------- образцы ----------
+    &__rows {
+        display: grid;
+    }
+
+    &__row {
+        display: grid;
+        gap: 12px 28px;
+        align-items: start;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--color-border);
+
+        @media (min-width: $break_md) {
+            grid-template-columns: minmax(0, 1fr) 230px;
+        }
+    }
+
+    // Отступы и выравнивание образцу не нужны: смотрим только шрифт.
+    // Без обнуления сюда приедут margin и padding из модулей, и каталог
+    // расползётся на три экрана.
+    &__sample {
+        min-width: 0;
+
+        > * {
+            margin: 0;
+            padding: 0;
+            max-width: none;
+            position: static;
+        }
+
+        &_dark {
+            background: var(--black);
+            border-radius: 8px;
+            padding: 16px 18px;
+        }
+    }
+
+    &__meta {
+        min-width: 0;
+    }
+
+    &__sel {
+        display: block;
+        font-size: 12px;
+        color: var(--indigo);
+        word-break: break-word;
+        margin-bottom: 7px;
+    }
+
+    &__metrics {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 2px 10px;
+        margin: 0 0 7px;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+
+        dt {
+            color: var(--gray);
+        }
+
+        dd {
+            margin: 0;
+            font-weight: 300;
+            color: var(--dark);
+        }
+    }
+
+    &__where {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.45;
+        color: var(--gray);
+    }
+
+    &__flag {
+        display: inline-block;
+        margin-top: 7px;
+        font-size: 12px;
+        color: var(--red);
+        border-bottom: 1px dashed currentColor;
+
+        &:hover {
+            color: var(--red);
+            border-bottom-style: solid;
+        }
+    }
+
+    // ---------- шкала ----------
+    &__scale {
+        display: grid;
+    }
+
+    &__scale-row {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 4px 18px;
+        align-items: baseline;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--color-border);
+
+        @media (min-width: $break_md) {
+            grid-template-columns: 44px minmax(0, 1fr) 230px;
+        }
+
+        &_orphan {
+            .sg__scale-num {
+                color: var(--red);
+            }
+        }
+    }
+
+    &__scale-num {
+        font-size: 12px;
+        color: var(--keppel);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+    }
+
+    &__scale-word {
+        color: var(--black);
+        line-height: 1.15;
+        min-width: 0;
+        overflow-wrap: break-word;
+    }
+
+    &__scale-note {
+        grid-column: 2;
+        font-size: 12px;
+        font-weight: 300;
+        color: var(--gray);
+
+        @media (min-width: $break_md) {
+            grid-column: 3;
+        }
+    }
+
+    // ---------- межстрочные ----------
+    &__leading {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 14px;
+    }
+
+    &__lead {
+        padding: 14px 16px;
+        border: 1px solid var(--color-border);
+        border-radius: 9px;
+        background: var(--white);
+        min-width: 0;
+
+        b {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 6px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 1.4;
+        }
+
+        small {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--gray);
+        }
+    }
+}
