@@ -94,11 +94,6 @@ const onChangedInput = async (input: HTMLInputElement) => {
     // При каждом вызове нужно делать fetch в dadata с поиском адресов по введёному ключу с debounce
     // Подставляем данные в нужный селект
 
-    // Запрос к подсказкам занимает время, а на слабой связи — заметное.
-    // Без этой строки список остаётся пустым, и человек не понимает,
-    // ждать ему или набирать иначе.
-    showListMessage(input, searchingMarkup);
-
     let res: addressesResponseType;
 
     try {
@@ -435,6 +430,12 @@ const newSelectSettings: SelectSettings = {
     searchable: true,
     searchtext: 'Напишите город',
     onSearchInputChanged: (input: HTMLInputElement) => {
+        // Сообщение — сразу, на каждую букву. Библиотека прячет пункты, не
+        // совпавшие с набранным, а запрос уходит только через 700 мс после
+        // последней буквы. Пока человек печатает, отсчёт сбрасывается, и без
+        // этой строки под полем было пусто.
+        showListMessage(input, input.value ? searchingMarkup : "Введите местоположение");
+
         if (debounceInputChange) clearTimeout(debounceInputChange);
         debounceInputChange = setTimeout(onChangedInput, 700, input);
     },

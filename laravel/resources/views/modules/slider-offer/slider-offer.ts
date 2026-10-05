@@ -28,6 +28,11 @@ const loadSlider = async () => {
         pagination: false,
         arrows: true,
         drag: 'free',
+        // Свободное перетаскивание останавливало ленту там, где отпустили
+        // палец: после пары свайпов слайд оказывался разрезан пополам.
+        // snap доводит ленту до ближайшего слайда — инерция остаётся,
+        // а слайд всегда встаёт целиком.
+        snap: true,
         autoScroll: false,
         mediaQuery: 'min',
         breakpoints: {
