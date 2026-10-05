@@ -24,7 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'company.admin' => EnsureUserIsCompanyAdmin::class,
         ]);
 
-        //
+        // Туннель для отладки и traefik на боевом сервере отдают сайт по https,
+        // а до приложения запрос доходит обычным http. Без доверия к их
+        // заголовкам Laravel считает, что страница открыта по http, ставит
+        // ссылки http://… — и браузер блокирует их на https-странице.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -6,7 +6,9 @@
         "images": "node vite.convert-images-to-webp.js",
         "fonts": "node vite.copy-fonts.js",
         "dev": "npm run images && npm run fonts && vite",
-        "build": "npm run images && npm run fonts && vite build"
+        "build": "npm run images && npm run fonts && vite build",
+        "watch": "vite build --watch",
+        "tunnel": "ssh -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -R 80:localhost:8083 nokey@localhost.run"
     },
     "devDependencies": {
         "@splidejs/splide-extension-intersection": "^0.2.0",
