@@ -117,6 +117,38 @@
         ],
     ];
 
+    // Кнопки — настоящие сочетания классов со страниц сайта.
+    // В разметке они собираются компонентом <x-button type="..." class="...">,
+    // поэтому .button тут всегда идёт вместе с модификатором.
+    $buttons = [
+        [
+            'sel'   => '.button_keppel',
+            'html'  => '<button class="button button_keppel">Отправить груз</button>',
+            'where' => 'основная кнопка сайта',
+        ],
+        [
+            'sel'   => '.button_transparent',
+            'dark'  => true,
+            'html'  => '<span class="button button_transparent">Все статьи</span>',
+            'where' => 'поверх картинки в слайдере',
+        ],
+        [
+            'sel'   => '.button[disabled]',
+            'html'  => '<button class="button button_keppel" disabled>Идёт расчёт</button>',
+            'where' => 'пока считается рейс',
+        ],
+        [
+            'sel'   => '.cargo-calc__button',
+            'html'  => '<button class="button button_keppel cargo-calc__button">Рассчитать доставку</button>',
+            'where' => 'форма на главной, во всю ширину',
+        ],
+        [
+            'sel'   => '.cargo-calc__button-results',
+            'html'  => '<button class="button button_keppel cargo-calc__button-results">Понятно</button>',
+            'where' => 'закрывает результат расчёта',
+        ],
+    ];
+
     // Размеры, которые сейчас встречаются в стилях. orphan — встречается
     // ровно один раз и ни с чем не рифмуется.
     $scale = [
@@ -209,6 +241,29 @@
                                         <code class="sg__sel">{{ $row['sel'] }}</code>
                                         <dl class="sg__metrics"></dl>
                                         <p class="sg__where">{{ $row['where'] }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </section>
+
+                    <section class="sg__section">
+                        <div class="sg__section-head">
+                            <h2>Кнопки</h2>
+                            <p>Второй столбик чисел — коробка: высота, отступы, радиус, рамка.</p>
+                        </div>
+
+                        <div class="sg__rows">
+                            @foreach ($buttons as $button)
+                                <div class="sg__row">
+                                    <div class="sg__sample sg__sample_box @if(!empty($button['dark'])) sg__sample_dark @endif" data-sample>
+                                        {!! $button['html'] !!}
+                                    </div>
+                                    <div class="sg__meta">
+                                        <code class="sg__sel">{{ $button['sel'] }}</code>
+                                        <dl class="sg__metrics"></dl>
+                                        <dl class="sg__metrics sg__metrics_box"></dl>
+                                        <p class="sg__where">{{ $button['where'] }}</p>
                                     </div>
                                 </div>
                             @endforeach

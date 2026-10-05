@@ -29,6 +29,36 @@ function round(value: number): string {
     return String(Math.round(value * 100) / 100);
 }
 
+/**
+ * Размеры коробки — для кнопок. Шрифт о них ничего не говорит, а сверяем
+ * мы с макетом именно их.
+ */
+function describeBox(el: HTMLElement): Metric[] {
+    const style = getComputedStyle(el);
+    const border = parseFloat(style.borderTopWidth);
+
+    return [
+        ['высота', `${round(el.getBoundingClientRect().height)}px`],
+        ['отступы', `${round(parseFloat(style.paddingTop))} / ${round(parseFloat(style.paddingLeft))}`],
+        ['радиус', style.borderTopLeftRadius],
+        ['рамка', border ? `${round(border)}px` : 'нет'],
+    ];
+}
+
+function fill(list: Element, metrics: Metric[]): void {
+    list.textContent = '';
+
+    metrics.forEach(([label, value]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+
+        list.append(dt, dd);
+    });
+}
+
 function paint(): void {
     document.querySelectorAll<HTMLElement>('[data-sample]').forEach((sample) => {
         // Класс висит на внутреннем элементе, обёртка нужна только для фона.
@@ -39,17 +69,13 @@ function paint(): void {
             return;
         }
 
-        list.textContent = '';
+        fill(list, describe(target));
 
-        describe(target).forEach(([label, value]) => {
-            const dt = document.createElement('dt');
-            dt.textContent = label;
+        const box = sample.closest('.sg__row')?.querySelector('.sg__metrics_box');
 
-            const dd = document.createElement('dd');
-            dd.textContent = value;
-
-            list.append(dt, dd);
-        });
+        if (box) {
+            fill(box, describeBox(target));
+        }
     });
 }
 
