@@ -567,10 +567,13 @@ const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
                 costCalculator([valueFormElements["location_0"] as [number, number], valueFormElements["location_1"] as [number, number]], form);
             });
         } else {
-            console.error("Отсутствует одно из значений для просчёта стоимости рейса");
-
-            // Иначе прелоадер останется висеть: включили его до проверки.
-            showUserResults("calculation_error", undefined, form);
+            // Незаполненные поля уже обведены красным — это делает getFormValues.
+            // Панель с ошибкой здесь не нужна: она открылась бы поверх формы
+            // и закрыла эти рамки, а человеку важно видеть, какое поле пустое.
+            // Только гасим прелоадер и возвращаем кнопку — чтобы можно было
+            // заполнить поле и нажать ещё раз.
+            preloader.disable();
+            buttonActiveHandler.enable(button);
         }
     } else {
         console.error("Кнопка не найдена")

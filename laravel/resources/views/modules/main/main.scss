@@ -2,13 +2,15 @@
 
 .main {
     &__cargo-calc-button {
+        display: flex;
         width: 100%;
         font-weight: 400;
         height: 64px;
+        border-radius: 0;
 
         @media (min-width: $break_md) {
             position: fixed;
-            right: -178px;
+            right: -186px;
             left: auto;
             transform: TranslateX(-50%) rotate(-90deg);
             width: auto;
@@ -17,6 +19,9 @@
             height: 52px;
             padding-top: 0;
             padding-bottom: 0;
+            border-radius: 5px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
 
         @media (min-width: $break_xl) {

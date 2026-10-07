@@ -55,7 +55,7 @@
                 'image_tablet' => $promo->image_tablet,
             ] : null,
         ])
-        @include('modules.forms.cargo-calc.cargo-calc', ['title' => 'Отправить груз', 'button' => 'Расчитать доставку'])
+        @include('modules.forms.cargo-calc.cargo-calc', ['title' => 'Отправить груз', 'button' => 'Рассчитать доставку'])
     </main>
-    <x-button type="keppel" class="main__cargo-calc-button" text="Расчитать доставку" />
+    <x-button type="keppel" class="main__cargo-calc-button" text="Рассчитать доставку" />
 @endsection

@@ -1,6 +1,11 @@
 @use '_variables' as *;
 
 .main-slider {
+    $arrow-size: 56px;
+    $arrows-bottom: 20px;
+    $arrows-bottom-tall: 60px;
+    $arrows-gap: 20px;
+
     height: calc(100vh - ($header-height + $cargo-calc-height));
     overflow-y: hidden;
 
@@ -10,6 +15,18 @@
 
     @media (min-width: $break_xxl) {
         height: calc(100vh - $header-height-desktop);
+    }
+
+    @supports (height: 100svh) {
+        height: calc(100svh - ($header-height + $cargo-calc-height));
+
+        @media (min-width: $break_md) {
+            height: calc(100svh - $header-height-tablet);
+        }
+
+        @media (min-width: $break_xxl) {
+            height: calc(100svh - $header-height-desktop);
+        }
     }
 
     &__slider {
@@ -25,9 +42,16 @@
         display: flex;
         align-items: center;
 
-        // Подложка на случай, когда картинки нет или она не загрузилась
-        // (файл не залит, бакет отдал 403, медленная сеть). Текст слайда
-        // белый — без фона его просто не видно.
+        padding-bottom: $arrows-bottom + $arrow-size + $arrows-gap;
+
+        @media (min-width: 320px) and (height > 760px) {
+            padding-bottom: $arrows-bottom-tall + $arrow-size + $arrows-gap;
+        }
+
+        @media (min-width: $break_md) {
+            padding-bottom: 0;
+        }
+
         background: linear-gradient(135deg, $indigo 0%, #2A5A7C 45%, $keppel 100%);
     }
 
@@ -76,23 +100,20 @@
         position: absolute;
         z-index: 1;
         left: 17px;
-        bottom: 20px;
+        bottom: $arrows-bottom;
 
         @media (min-width: 320px) and (height > 760px) {
-            bottom: 60px;
+            bottom: $arrows-bottom-tall;
         }
 
         @media (min-width: $break_xxl) {
-            // Стрелки лежат вне .container (слайдер во всю ширину экрана),
-            // поэтому край контейнера считаем сами: свободное место делится
-            // поровну. 14.5px — исторический зазор, положение не меняем.
             left: calc((100vw - #{$container-max}) / 2 + 14.5px);
         }
     }
 
     &__arrow {
-        width: 56px;
-        height: 56px;
+        width: $arrow-size;
+        height: $arrow-size;
         padding: 0;
         margin: 0;
         border: none;
@@ -177,6 +198,11 @@
         color: var(--white);
         margin-bottom: 20px;
 
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+
         @media (min-width: $break_md) {
             font-size: 36px;
             margin-bottom: 24px;
@@ -190,8 +216,14 @@
         color: var(--white);
         margin-bottom: 26px;
 
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+
         @media (min-width: $break_md) {
             margin-bottom: 30px;
+            -webkit-line-clamp: 4;
         }
     }
 

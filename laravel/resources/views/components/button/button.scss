@@ -16,7 +16,7 @@
     text-decoration: none;
     text-transform: none;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--default-button-border-radius);
     cursor: pointer;
     transition: all .3s ease;
 
