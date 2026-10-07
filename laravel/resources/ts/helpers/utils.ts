@@ -124,6 +124,15 @@ export const YMAPLoader = async (apikey: string): Promise<any> => {
 
     const currentUlr = `https://api-maps.yandex.ru/2.1/?apikey=${apikey}&lang=ru_RU`;
 
+    // Сорвавшаяся загрузка оставляет тег script на странице: загрузчик
+    // при ошибке удаляет не его, а прежний элемент, которого ещё не было.
+    // Дальше каждый вызов видел тег, отвечал «уже загружено», а карт не
+    // было — форма показывала ошибку до перезагрузки страницы. Пока карт
+    // нет, убираем тег, и следующее нажатие загружает заново.
+    if (typeof (window as any).ymaps === "undefined") {
+        document.getElementById("ymapInstance")?.remove();
+    }
+
     return await download.script(currentUlr, "ymapInstance")
 }
 

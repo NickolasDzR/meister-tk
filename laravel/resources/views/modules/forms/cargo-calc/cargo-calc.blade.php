@@ -38,6 +38,7 @@
                             icon="weight"
                             iconClass="cargo-calc__placeholder-icon"
                             name="weight"
+                            inputmode="decimal"
                     />
 
                     <x-button type="keppel" class="cargo-calc__button" text="Рассчитать доставку" />

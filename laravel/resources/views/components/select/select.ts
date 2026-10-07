@@ -100,7 +100,17 @@ const onChangedInput = async (input: HTMLInputElement) => {
         res = await getDataAddress(value);
     } catch (error) {
         console.error("Подсказки городов не загрузились:", error);
-        showListMessage(input, "Не удалось загрузить список. Проверьте связь и попробуйте ещё раз");
+
+        // fetch падает с TypeError, только когда ответа нет вовсе — это сеть.
+        // Если ответ пришёл с ошибкой (кончился лимит, отозван ключ, сбой
+        // у Dadata), связь у человека в порядке: совет её проверить был бы
+        // неправдой, а набирать город заново бесполезно — остаётся телефон.
+        // Ссылкой tel: номер не сделать: список гасит клики по себе.
+        const message = error instanceof TypeError
+            ? "Нет связи. Проверьте интернет и наберите город ещё раз"
+            : `Поиск городов сейчас не работает. Рассчитаем стоимость по телефону <span style="white-space: nowrap">${currentNumber}</span>`;
+
+        showListMessage(input, message);
 
         return;
     }
@@ -120,9 +130,15 @@ const onChangedInput = async (input: HTMLInputElement) => {
             .map(obj => [obj.value, obj])
     ).values()];
 
-    // Если у results.length > 0, то Задаем ей значение, что местоположение не найдено
+    // Ничего с координатами не нашлось — пишем это строкой в список,
+    // а не пунктом в select. Раньше «Местоположение не найдено» становился
+    // настоящим вариантом: его можно было выбрать, и форма считала поле
+    // заполненным. Строку из showListMessage выбрать нельзя, а прошлый
+    // выбор остаётся нетронутым — как при ошибке поиска.
     if (!uniqueLocations.length) {
-        uniqueLocations.push({value: `Местоположение не найдено`});
+        showListMessage(input, input.value.trim() ? "Местоположение не найдено" : "Введите местоположение");
+
+        return;
     }
 
     const parentInputBlock = input.closest(".input") as HTMLDivElement;
@@ -137,24 +153,21 @@ const onChangedInput = async (input: HTMLInputElement) => {
 
             options.forEach(option => option.remove());
 
+            // Вместе со старым списком update() сбросит и выбранный город:
+            // в поле снова встанет «Выберете место...». Координаты прошлого
+            // выбора стираем тоже — иначе форма считала поле заполненным
+            // и строила маршрут от города, которого на экране уже нет.
+            delete parentInputBlock.dataset.lat;
+            delete parentInputBlock.dataset.lon;
+
             // ...New Set(results) нужен для удаления дублей из массива
             Array.from(uniqueLocations, (location: formatedAddressesResponseType, i: number) => {
                 const option = document.createElement("option") as HTMLOptionElement;
                 option.value = `${i}`;
 
-                if (results.length) {
-                    option.innerText = `${location["value"]}`;
-                    option.dataset.lat = `${location["lat"]}`;
-                    option.dataset.lon = `${location["lon"]}`;
-                } else {
-                    if ((parentInputBlock.querySelector(".nice-select-search") as HTMLInputElement).value.length) {
-                        option.innerText = `Местоположение не найдено`;
-                    } else {
-                        option.innerText = `Введите местоположение`;
-                    }
-
-                    option.dataset["empty"] = "";
-                }
+                option.innerText = `${location["value"]}`;
+                option.dataset.lat = `${location["lat"]}`;
+                option.dataset.lon = `${location["lon"]}`;
 
                 select.insertAdjacentElement("beforeend", option);
             });
@@ -190,9 +203,22 @@ const onReadResultsDoneHandler = (event: Event) => {
     }
 }
 
+/**
+ * Число из поля, где дробь могут написать и через точку, и через запятую.
+ *
+ * На русской раскладке и на клавиатуре телефона дробь — это «1,5».
+ * Унарный плюс на запятой давал NaN, и человек читал «Вес NaN тонн».
+ * Пустая строка и буквы дают NaN — это проверяет getFormValues.
+ */
+const parseNumber = (value: string): number => {
+    const normalized = value.trim().replace(",", ".");
+
+    return normalized === "" ? NaN : Number(normalized);
+};
+
 const currentNumber = `+7 999 120 59 82`;
 
-type DeliveryStatus = 'valid' | 'invalid_weight' | 'calculation_error';
+type DeliveryStatus = 'valid' | 'invalid_weight' | 'calculation_error' | 'short_trip';
 
 /**
  *
@@ -240,6 +266,19 @@ const textGenerationHandler = (cost: string, status: DeliveryStatus): string => 
                 </p>
             `
             break;
+        case "short_trip":
+            // Короткий рейс или оба поля — один город. Цена по километрам
+            // тут бессмысленна: округление до тысяч давало «0 рублей».
+            return `
+                <p class="cargo-calc__delivery-results-text">
+                    Короткие рейсы и перевозки по городу рассчитывает менеджер.
+                </p>
+                <p class="cargo-calc__delivery-results-text">
+                    Позвоните по телефону
+                    <span style="white-space: nowrap">${currentNumber}</span> —
+                    назовём стоимость сразу.
+                </p>
+            `;
 
     }
 }
@@ -257,6 +296,9 @@ const showUserResults = (status: string, deliveryCosts: string | number | undefi
             break;
         case "calculation_error":
             costTextWrapper.insertAdjacentHTML('afterbegin', textGenerationHandler(deliveryCosts as string, "calculation_error"))
+            break;
+        case "short_trip":
+            costTextWrapper.insertAdjacentHTML('afterbegin', textGenerationHandler(deliveryCosts as string, "short_trip"))
             break;
     }
 
@@ -279,91 +321,79 @@ const deliveryCosts: Record<WeightCategory, DeliveryCostConfig> = {
     from10to20Tons: {minWeight: 10, maxWeight: 20, costPerKm: 120}
 };
 
-const formEventHandler = (event: CustomEvent) => {
-    let text = undefined as string | undefined;
-    const form = event.target as HTMLFormElement;
+/**
+ * Категория груза по весу. Категории перебираются по порядку, поэтому
+ * ровно 2 тонны — это ещё «до двух», как и было. Ноль и меньше —
+ * не груз: нижняя граница первой категории открытая.
+ *
+ * @return Категория или undefined, если вес вне всех диапазонов.
+ */
+const getWeightCategory = (weight: number): WeightCategory | undefined =>
+    (Object.keys(deliveryCosts) as WeightCategory[]).find(category =>
+        weight > 0 && weight >= deliveryCosts[category].minWeight && weight <= deliveryCosts[category].maxWeight
+    );
 
-    if (event.detail.data) {
-        const distance = +(event.detail.data as string) as number;
-        const cargoWeightInput = form.querySelector(".cargo-calc__placeholder[name='weight']") as HTMLInputElement;
+/**
+ * Показывает цену рейса по расстоянию и весу.
+ *
+ * @param distance Длина маршрута в км.
+ * @param weight Вес груза в тоннах.
+ */
+const showCost = (distance: number, weight: number, form: HTMLFormElement) => {
+    const category = getWeightCategory(weight);
 
-        if (cargoWeightInput) {
-            const cargoWeight = +cargoWeightInput.value as number;
-            let category: WeightCategory;
-
-            // Определяем категорию груза по весу
-            if (cargoWeight >= deliveryCosts.upTo2Tons.minWeight && cargoWeight <= deliveryCosts.upTo2Tons.maxWeight) {
-                category = 'upTo2Tons';
-            } else if (cargoWeight >= deliveryCosts.from2to5Tons.minWeight && cargoWeight <= deliveryCosts.from2to5Tons.maxWeight) {
-                category = 'from2to5Tons';
-            } else if (cargoWeight >= deliveryCosts.from5to10Tons.minWeight && cargoWeight <= deliveryCosts.from5to10Tons.maxWeight) {
-                category = 'from5to10Tons';
-            } else if (cargoWeight >= deliveryCosts.from10to20Tons.minWeight && cargoWeight <= deliveryCosts.from10to20Tons.maxWeight) {
-                category = 'from10to20Tons';
-            } else {
-                showUserResults("invalid_weight", cargoWeight, form)
-                return false;
-            }
-
-            // Берём цену за км согласно категории груза
-            const costPerKm = deliveryCosts[category].costPerKm as number;
-
-            // Передаём данные в обработчик результатов и показываем пользователю
-            text = String(Math.round((costPerKm * distance) / 1000) * 1000);
-        }
-        // Если у нас ошибка в возвращаемом значении дистации между точками2
-    } else {
-        text = undefined;
+    // Диапазон уже проверен до запроса маршрута — здесь на всякий случай.
+    if (!category) {
+        showUserResults("invalid_weight", weight, form);
+        return;
     }
 
-    showUserResults(text ? "valid" : "calculation_error", text, form);
+    // Берём цену за км согласно категории груза
+    const costPerKm = deliveryCosts[category].costPerKm;
+
+    const cost = Math.round((costPerKm * distance) / 1000) * 1000;
+
+    // Меньше тысячи после округления — это ноль: на рейсе короче
+    // примерно 12 км человек читал «примерно 0 рублей».
+    if (cost < 1000) {
+        showUserResults("short_trip", undefined, form);
+        return;
+    }
+
+    showUserResults("valid", String(cost), form);
 };
 
-let multiRoute: any;
+/**
+ * Длина маршрута между двумя точками в км.
+ *
+ * Каждый раз — новый запрос. Раньше на всю страницу был один MultiRoute:
+ * при повторном нажатии в него только подставлялись точки, и с теми же
+ * городами расчёт заканчивался ошибкой — даже если поменять лишь тоннаж.
+ * ymaps.route отдаёт промис: либо маршрут, либо ошибку, без событий
+ * и без состояния между нажатиями.
+ */
+const getRouteDistance = async (from: [number, number], to: [number, number]): Promise<number> => {
+    const route = await ymaps.route([from, to]);
+    const distance = route.getLength() / 1000;
 
-const costCalculator = (coord: [number, number], form: HTMLFormElement) => {
-    if (multiRoute) {
-        // @ts-ignore
-        multiRoute.model.setReferencePoints(coord, [], []);   // Устанавливаем новые координаты
-    } else {
-        multiRoute = new ymaps.multiRouter.MultiRoute({
-            referencePoints: coord
-        }, {});
-
-        multiRoute.model.events.add('requestsuccess', function () {
-            const activeRoute = multiRoute.getActiveRoute();
-
-            const distance = activeRoute ? activeRoute.properties.get("distance", {}) : activeRoute;
-            // distance будет в метрах, переводим в километры
-            // const distanceKm = distance["value"] / 1000;
-
-            // console.log("Расстояние между точками: " + distanceKm + " км", typeof distanceKm);
-
-            const customEvent = new CustomEvent('formCalculationEvent', {
-                detail: {
-                    data: distance ? distance["value"] / 1000 : distance,
-                    timestamp: Date.now()
-                },
-                cancelable: true,
-                bubbles: true,
-            });
-
-            form.dispatchEvent(customEvent);
-        });
-
-        multiRoute.model.events.add('requestfail', function(event: Event) {
-            // @ts-ignore
-            console.error("Маршрут не построен: " + event.get('error').message);
-
-            // Без этого нажатие на кнопку заканчивается ничем: прелоадер
-            // продолжает крутиться, кнопка остаётся заблокированной,
-            // а объяснение уходит в консоль, куда посетитель не смотрит.
-            showUserResults("calculation_error", undefined, form);
-        });
-
-        form.addEventListener("formCalculationEvent", formEventHandler);
+    if (!Number.isFinite(distance)) {
+        throw new Error("Яндекс вернул маршрут без длины");
     }
-}
+
+    return distance;
+};
+
+/**
+ * Обрывает ожидание через ms миллисекунд. Без этого запрос, на который
+ * не пришёл ответ, оставлял прелоадер на экране навсегда.
+ */
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+    Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+            window.setTimeout(() => reject(new Error(`Нет ответа за ${ms / 1000} с`)), ms);
+        }),
+    ]);
 
 const getFormValues = (form: HTMLFormElement): valueFormElementsTypes | undefined | {} => {
     if (form && form.tagName === "FORM") {
@@ -380,8 +410,17 @@ const getFormValues = (form: HTMLFormElement): valueFormElementsTypes | undefine
             // TODO получение данных с формы и преобразование их в object нужно вынести в отдельный метод
             Array.from(formElements, (formElement: Element) => {
                 if (formElement.tagName === "INPUT") {
+                    const input = formElement as HTMLInputElement;
+
+                    // Числовое поле с буквами внутри — то же, что пустое:
+                    // считать по нему нечего. Отсекаем здесь, до карт,
+                    // а не после построения маршрута.
+                    const isNumberField = input.inputMode === "decimal";
+                    const isFilled = input.value.trim() !== ""
+                        && (!isNumberField || Number.isFinite(parseNumber(input.value)));
+
                     if (("name" in formElement) && ("value" in formElement)) {
-                        if (formElement["name"] && formElement["value"]) {
+                        if (formElement["name"] && isFilled) {
                             valueFormElements[`${formElement["name"]}`] = formElement.value;
                         } else {
                             inputErrorHandler(formElement as HTMLInputElement);
@@ -543,42 +582,13 @@ if (cargoCalcButtonResults) {
 
 const cargoCalcButton = document.querySelector(".cargo-calc__button") as HTMLButtonElement;
 
-const getCargoFormInputValuesHandler = async (button: HTMLButtonElement) => {
-    if (button && button.tagName === "BUTTON") {
-        const form = button.closest(".cargo-calc__form") as HTMLFormElement;
-
-        // Собираем данные с формы
-        const valueFormElements = getFormValues(form) as Coordinates;
-
-        const isValidFormValues = (obj: any): obj is valueFormElementsTypes => {
-            return obj &&
-                typeof obj.location_0 !== 'undefined' &&
-                typeof obj.location_1 !== 'undefined' &&
-                typeof obj.weight !== 'undefined';
-        };
-
-        // Проверил, есть ли все данные введенные в форме
-        if (valueFormElements && isValidFormValues(valueFormElements)) {
-            ymaps.ready(() => {
-                // const location0 = Array.isArray(valueFormElements.location_0) ? Number(valueFormElements.location_0[0]) : Number(valueFormElements.location_0);
-                // const location1 = Array.isArray(valueFormElements.location_1) ? Number(valueFormElements.location_1[0]) : Number(valueFormElements.location_1);
-
-                // @ts-ignore
-                costCalculator([valueFormElements["location_0"] as [number, number], valueFormElements["location_1"] as [number, number]], form);
-            });
-        } else {
-            // Незаполненные поля уже обведены красным — это делает getFormValues.
-            // Панель с ошибкой здесь не нужна: она открылась бы поверх формы
-            // и закрыла эти рамки, а человеку важно видеть, какое поле пустое.
-            // Только гасим прелоадер и возвращаем кнопку — чтобы можно было
-            // заполнить поле и нажать ещё раз.
-            preloader.disable();
-            buttonActiveHandler.enable(button);
-        }
-    } else {
-        console.error("Кнопка не найдена")
-    }
-}
+// Обе точки выбраны из подсказок и тоннаж введён — можно считать.
+const isValidFormValues = (obj: any): obj is Coordinates & {weight: string} => {
+    return obj &&
+        typeof obj.location_0 !== 'undefined' &&
+        typeof obj.location_1 !== 'undefined' &&
+        typeof obj.weight !== 'undefined';
+};
 
 if (cargoCalcButton) {
     cargoCalcButton.addEventListener("click", async (event) => {
@@ -587,6 +597,39 @@ if (cargoCalcButton) {
         const button = event.target as HTMLButtonElement
 
         const form = button.closest(".cargo-calc__form") as HTMLFormElement;
+
+        // Сначала поля, потом сеть. Пустые поля getFormValues сам обведёт
+        // красным — дальше идти незачем: ни прелоадер, ни карты не нужны.
+        // Раньше проверка стояла после загрузки карт, и при пустом тоннаже
+        // человек ждал чужой скрипт, чтобы узнать, что поле не заполнено.
+        const values = getFormValues(form);
+
+        if (!isValidFormValues(values)) {
+            return;
+        }
+
+        // Вес вне диапазона — ответ известен без карт и маршрута.
+        // Раньше это выяснялось только после построения маршрута:
+        // при 222 тоннах человек ждал загрузку карт и запрос к Яндексу.
+        const weight = parseNumber(values.weight);
+
+        if (!getWeightCategory(weight)) {
+            showUserResults("invalid_weight", weight, form);
+
+            return;
+        }
+
+        // Один и тот же город в обоих полях. Dadata даёт координаты центра
+        // города, маршрут выходит нулевым, и Яндекс отвечал ошибкой —
+        // человек читал «маршрут недоступен». Это перевозка по городу,
+        // её считает менеджер, и карты для этого не нужны.
+        const [from, to] = [values.location_0, values.location_1];
+
+        if (from[0] === to[0] && from[1] === to[1]) {
+            showUserResults("short_trip", undefined, form);
+
+            return;
+        }
 
         // TODO тут сделать прелоадер в качестве логотипа, у которого дорога едет, пока грузится карта. На всяк
         preloader.enable();
@@ -601,17 +644,21 @@ if (cargoCalcButton) {
         // на экране навсегда, кнопка — заблокированной, и человеку
         // оставалось только перезагрузить страницу.
         try {
-            const loaded = await YMAPLoader(YMapApiKey);
+            // Загрузчик отвечает false, если скрипт карт уже на странице.
+            // Это не ошибка, а «уже загружено». Раньше false считался
+            // провалом, и любой расчёт после первого заканчивался ошибкой.
+            // Настоящий провал загрузки приходит исключением — в catch.
+            await YMAPLoader(YMapApiKey);
 
-            if (!loaded) {
-                showUserResults("calculation_error", undefined, form);
+            await ymaps.ready();
 
-                return;
-            }
+            const distance = await withTimeout(getRouteDistance(from, to), 15000);
 
-            getCargoFormInputValuesHandler(button);
+            showCost(distance, weight, form);
         } catch (error) {
-            console.error("Карты не загрузились:", error);
+            // Сюда приходит всё: карты не загрузились, маршрута нет,
+            // Яндекс не ответил за 15 секунд.
+            console.error("Маршрут не рассчитан:", error);
 
             showUserResults("calculation_error", undefined, form);
         }
