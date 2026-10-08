@@ -31,21 +31,35 @@ const getDataAddress: (query: string) => Promise<addressesResponseType> = async 
     // Падение гасилось как необработанный промис, список оставался
     // с надписью «Ищем», и человек ждал бесконечно. Пусть лучше бросает:
     // тот, кто вызывает, обязан решить, что показать.
-    const response = await fetch(dadataUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Token " + token,
-            "X-Secret": secret
-        },
-        body: JSON.stringify({query: query, count: 20})
-    });
+    //
+    // Ждём не дольше 15 секунд. Когда сервер не отвечает вовсе, браузер
+    // может ждать соединения минуту и больше — всё это время человек
+    // смотрел на «Ищем». Даже на EDGE запрос с ответом укладывается
+    // секунды в три. AbortSignal.timeout короче, но его нет в iOS 15 —
+    // там поиск не работал бы никогда, поэтому контроллер с таймером.
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
 
-    if (!response.ok) {
-        throw new Error(`Dadata ответила ${response.status}`);
+    try {
+        const response = await fetch(dadataUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Token " + token,
+                "X-Secret": secret
+            },
+            body: JSON.stringify({query: query, count: 20}),
+            signal: controller.signal
+        });
+
+        if (!response.ok) {
+            throw new Error(`Dadata ответила ${response.status}`);
+        }
+
+        return await response.json();
+    } finally {
+        clearTimeout(timer);
     }
-
-    return await response.json();
 }
 
 const selects = document.querySelectorAll(".input__placeholder_select") as NodeListOf<HTMLSelectElement>;
@@ -102,11 +116,14 @@ const onChangedInput = async (input: HTMLInputElement) => {
         console.error("Подсказки городов не загрузились:", error);
 
         // fetch падает с TypeError, только когда ответа нет вовсе — это сеть.
+        // AbortError — наш таймаут: сервер не ответил за 15 секунд, тоже сеть.
         // Если ответ пришёл с ошибкой (кончился лимит, отозван ключ, сбой
         // у Dadata), связь у человека в порядке: совет её проверить был бы
         // неправдой, а набирать город заново бесполезно — остаётся телефон.
         // Ссылкой tel: номер не сделать: список гасит клики по себе.
-        const message = error instanceof TypeError
+        const isNetwork = error instanceof TypeError || (error as Error).name === "AbortError";
+
+        const message = isNetwork
             ? "Нет связи. Проверьте интернет и наберите город ещё раз"
             : `Поиск городов сейчас не работает. Рассчитаем стоимость по телефону <span style="white-space: nowrap">${currentNumber}</span>`;
 
