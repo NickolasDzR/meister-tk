@@ -4,9 +4,9 @@
 // <select> своей разметкой уже после загрузки страницы: до инициализации
 // виден один элемент, после — другой. Без общей высоты страница прыгает,
 // и это тот самый CLS, который ругает PageSpeed.
-// 54/60 — то, что родной select и так занимал: padding + текст + рамки.
-$field-height: 54px;
-$field-height-md: 60px;
+// 60 на всех ширинах — как в макете и как кнопка «Рассчитать доставку»
+// под полями. Раньше на телефоне было 54, и кнопка выходила выше полей.
+$field-height: 60px;
 
 .input {
     position: relative;
@@ -22,11 +22,6 @@ $field-height-md: 60px;
         height: $field-height;
         line-height: $field-height - 2; // минус рамка библиотеки в 1px сверху и снизу
         width: 100%;
-
-        @media (min-width: $break_md) {
-            height: $field-height-md;
-            line-height: $field-height-md - 2;
-        }
     }
 
     &:hover {
@@ -57,7 +52,6 @@ $field-height-md: 60px;
         transition: all .3s ease;
 
         @media (min-width: $break_md) {
-            height: $field-height-md;
             padding: 0 49px;
         }
 
@@ -127,13 +121,12 @@ $field-height-md: 60px;
         &::before {
             content: attr(data-title);
             position: absolute;
-            top: 14px;
+            top: 18px;
             left: 34px;
             color: var(--gray);
             transition: all .3s ease;
 
             @media (min-width: $break_md) {
-                top: 18px;
                 left: 50px;
             }
         }
@@ -154,7 +147,9 @@ $field-height-md: 60px;
         font-size: 9px;
         border-radius: 5px;
         padding: 2px 7px 1px;
-        transform: translate3D(-23px, -24px, 0);
+        // Подпись поднимается на верхнюю рамку. Сдвиг по вертикали считается
+        // от top: 18px — при поле в 54 было -24, к 60 добавились те же 4px.
+        transform: translate3D(-23px, -28px, 0);
 
         @media (min-width: $break_md) {
             transform: translate3D(-29px, -29px, 0);
@@ -225,6 +220,7 @@ $field-height-md: 60px;
         overflow: hidden;
         max-width: 100%;
         display: block;
+        font-size: 16px;
     }
 
     .option {
