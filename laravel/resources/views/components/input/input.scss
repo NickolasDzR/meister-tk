@@ -7,6 +7,23 @@
 // 60 на всех ширинах — как в макете и как кнопка «Рассчитать доставку»
 // под полями. Раньше на телефоне было 54, и кнопка выходила выше полей.
 $field-height: 60px;
+$field-border: 2px;
+
+// Иконка и текст. Подпись в пустом поле (.input__label::before) и введённый
+// текст рисуются разными элементами, поэтому их левый край считается
+// из одних чисел: от иконки до текста 9px, как в макете. Раньше подпись
+// стояла на left, а текст — на padding, и они расходились на 3px.
+$icon-left: 12px;
+$icon-size: 18px;
+$icon-left-md: 20px;
+$icon-size-md: 24px;
+$icon-gap: 9px;
+$text-left: $icon-left + $icon-size + $icon-gap;          // 39
+$text-left-md: $icon-left-md + $icon-size-md + $icon-gap; // 53
+
+// Куда встаёт подпись, поднятая на верхнюю рамку.
+$raised-left: 11px;
+$raised-left-md: 21px;
 
 .input {
     position: relative;
@@ -44,15 +61,15 @@ $field-height: 60px;
     // стоял по недосмотру. С Geologica те же числа роняли текст вниз.
     &__placeholder {
         height: $field-height;
-        padding: 0 32px;
-        border: 2px solid white;
+        padding: 0 35px 0 ($text-left - $field-border);
+        border: $field-border solid white;
         border-radius: 5px;
         outline: none;
         color: var(--black);
         transition: all .3s ease;
 
         @media (min-width: $break_md) {
-            padding: 0 49px;
+            padding: 0 49px 0 ($text-left-md - $field-border);
         }
 
         &::placeholder {
@@ -97,18 +114,18 @@ $field-height: 60px;
 
     &__icon {
         position: absolute;
-        left: 12px;
-        width: 18px;
-        height: 18px;
+        left: $icon-left;
+        width: $icon-size;
+        height: $icon-size;
         fill: var(--gray);
         pointer-events: none;
         transition: all .3s ease;
         z-index: 1;
 
         @media (min-width: $break_md) {
-            left: 20px;
-            width: 24px;
-            height: 24px;
+            left: $icon-left-md;
+            width: $icon-size-md;
+            height: $icon-size-md;
         }
     }
 
@@ -122,12 +139,12 @@ $field-height: 60px;
             content: attr(data-title);
             position: absolute;
             top: 18px;
-            left: 34px;
+            left: $text-left;
             color: var(--gray);
             transition: all .3s ease;
 
             @media (min-width: $break_md) {
-                left: 50px;
+                left: $text-left-md;
             }
         }
     }
@@ -149,10 +166,11 @@ $field-height: 60px;
         padding: 2px 7px 1px;
         // Подпись поднимается на верхнюю рамку. Сдвиг по вертикали считается
         // от top: 18px — при поле в 54 было -24, к 60 добавились те же 4px.
-        transform: translate3D(-23px, -28px, 0);
+        // По горизонтали — от left подписи до $raised-left.
+        transform: translate3D($raised-left - $text-left, -28px, 0);
 
         @media (min-width: $break_md) {
-            transform: translate3D(-29px, -29px, 0);
+            transform: translate3D($raised-left-md - $text-left-md, -29px, 0);
             font-size: 12px;
         }
     }

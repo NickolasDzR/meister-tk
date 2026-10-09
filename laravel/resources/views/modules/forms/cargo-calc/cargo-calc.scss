@@ -49,10 +49,10 @@
         max-width: 100%;
 
         // На десктопе панель ужимается под содержимое, и без точной ширины
-        // каждый браузер считал её по-своему: Safari давал 314, Chrome — 310,
-        // по ширине заголовка. Ширина из макета — одна для всех.
+        // каждый браузер считал её по-своему: без этой строки Safari давал
+        // 328, Chrome — 317. Ширина из макета — одна для всех.
         @media (min-width: $break_xl) {
-            width: 314px;
+            width: 357px;
         }
     }
 
@@ -74,10 +74,10 @@
     }
 
     &__title {
-        font-size: 20px;
+        font-size: 36px;
         // 36 пикселей капслоком белым по фотографии: с весом 300 с body
-        // заголовок расплывается. 400 — как было до переноса базы.
-        font-weight: 400;
+        // заголовок расплывается. 600 — как в макете.
+        font-weight: 600;
         color: var(--white);
         line-height: 1.4;
         text-transform: uppercase;
@@ -151,6 +151,10 @@
     }
 
     &__form {
+        width: 100%;
+        max-width: 357px;
+        min-width: 290px;
+        margin: 0 auto;
         position: relative;
         transition: all .3s ease;
     }
@@ -159,10 +163,6 @@
         max-width: 100%;
         width: 100%;
         position: relative;
-
-        @media (min-width: $break_xl) {
-            max-width: 314px;
-        }
     }
 
     &__delivery-results {
@@ -190,7 +190,7 @@
     }
 
     &__delivery-results-text-cost {
-        font-family: var(--font);
+        font-family: var(--font), serif;
         font-size: inherit;
         font-weight: bold;
         line-height: inherit;

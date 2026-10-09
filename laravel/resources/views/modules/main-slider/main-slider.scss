@@ -53,6 +53,26 @@
         }
 
         background: linear-gradient(135deg, $indigo 0%, #2A5A7C 45%, $keppel 100%);
+
+        // Затемнение между картинкой и текстом. На светлой фотографии
+        // белые заголовок и кнопка терялись. Цвет — indigo, как у панели
+        // формы, чтобы фото было в тон сайту, а не просто серее.
+        // Текст сверху: у .main-slider__content z-index 1.
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+
+            // На телефоне текст занимает почти всю картинку — темним целиком,
+            // сильнее книзу, где стрелки и «Подробнее».
+            background: linear-gradient(to bottom, rgba($indigo, .35), rgba($indigo, .7));
+
+            // Шире текст стоит слева — темним левую часть, правая остаётся чистой.
+            @media (min-width: $break_md) {
+                background: linear-gradient(to right, rgba($indigo, .75) 0%, rgba($indigo, .4) 45%, transparent 75%);
+            }
+        }
     }
 
     &__slide-container {
@@ -140,6 +160,13 @@
         &:hover {
             &::before {
                 opacity: .9;
+            }
+        }
+
+        &-prev {
+            .main-slider__svg-arrow {
+                position: relative;
+                left: -2px;
             }
         }
 

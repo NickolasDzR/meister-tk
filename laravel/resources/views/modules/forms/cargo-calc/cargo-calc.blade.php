@@ -16,7 +16,7 @@
                 <div class="cargo-calc__content">
                     <x-select
                             :options="['Выберете место загрузки']"
-                            error="Введите значение"
+                            error="Введите место загрузки"
                             parentClass="cargo-calc__input"
                             icon="location"
                             name="location_0"
@@ -24,7 +24,7 @@
 
                     <x-select
                             :options="['Выберете место выгрузки']"
-                            error="Введите значение"
+                            error="Введите место выгрузки"
                             parentClass="cargo-calc__input"
                             icon="location"
                             name="location_1"
@@ -32,7 +32,7 @@
 
                     <x-input
                             placeholder="Тоннаж"
-                            error="Введите значение"
+                            error="Введите тоннаж груза"
                             class="cargo-calc__input"
                             placeholderClass="cargo-calc__placeholder"
                             icon="weight"
