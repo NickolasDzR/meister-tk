@@ -17,9 +17,12 @@
     -- анонимном режиме, и без него файл скачается вторым запросом.
     -- Формат обязан совпадать с тем, что первым запросит CSS (сейчас woff2),
     -- иначе файл скачается дважды.
+    -- Адрес — через Vite::asset, тот же, что в собранном CSS. С asset('fonts/…')
+    -- предзагрузка тянула копию из public/fonts, а CSS — файл из build/assets
+    -- с хешем в имени: разные адреса, шрифт качался дважды.
     --}}
-    <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/Geologica-Regular.woff2') }}" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="{{ asset('fonts/Geologica-SemiBold.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ Vite::asset('resources/fonts/Geologica-Regular.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ Vite::asset('resources/fonts/Geologica-SemiBold.woff2') }}" crossorigin>
 
     @vite(['resources/ts/app.ts', 'resources/scss/app.scss'])
 

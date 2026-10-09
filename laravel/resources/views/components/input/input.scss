@@ -262,10 +262,13 @@ $field-height: 60px;
         font-size: 16px;
     }
 
+    // Цвет задаём сами: у каждого браузера свой серый по умолчанию,
+    // и в Safari подсказка выходила заметно светлее, чем в Chrome.
     & .nice-select-search::placeholder {
-        font-family: var(--font);
+        font-family: var(--font), serif;
         font-weight: 300;
-        font-size: 16px
+        font-size: 16px;
+        color: var(--gray);
     }
 }
 

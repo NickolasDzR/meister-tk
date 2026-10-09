@@ -4,9 +4,8 @@
     "type": "module",
     "scripts": {
         "images": "node vite.convert-images-to-webp.js",
-        "fonts": "node vite.copy-fonts.js",
-        "dev": "npm run images && npm run fonts && vite",
-        "build": "npm run images && npm run fonts && vite build",
+        "dev": "npm run images && vite",
+        "build": "npm run images && vite build",
         "watch": "vite build --watch",
         "tunnel": "ssh -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -R 80:localhost:8083 nokey@localhost.run"
     },
