@@ -4,4 +4,5 @@
     $mod = trim($class . ' close-button is-active');
 @endphp
 
-<x-hamburger class="{{ $mod }}" />
+{{-- Остальные атрибуты (aria-label и т. п.) — на кнопку как есть. --}}
+<x-hamburger class="{{ $mod }}" {{ $attributes }} />

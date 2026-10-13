@@ -120,6 +120,10 @@ class PostForm
                                             ->label("Текст (справа)")
                                             ->rows(5)
                                             ->required(),
+                                        Toggle::make("zoomable")
+                                            ->label("Можно раскрыть по клику")
+                                            ->helperText("Включите для скриншотов и схем с мелкими подписями.")
+                                            ->default(false),
                                     ]),
 
                                 // 3. Заголовок h2
@@ -195,6 +199,10 @@ class PostForm
                                             ->image()
                                             ->disk("yandex")->directory("posts/content")
                                             ->required(),
+                                        Toggle::make("zoomable")
+                                            ->label("Можно раскрыть по клику")
+                                            ->helperText("Включите для скриншотов и схем с мелкими подписями.")
+                                            ->default(false),
                                     ]),
 
                                 // 8. Врезка

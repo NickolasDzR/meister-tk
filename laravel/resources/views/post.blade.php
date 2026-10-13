@@ -101,7 +101,7 @@
                                         <div class="post__block">
                                             <div class="post__block-image-with-text">
                                                 <div class="post__block-image">
-                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image']) }}" alt="">
+                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image']) }}" alt="" @if(!empty($block['data']['zoomable'])) data-zoom @endif>
                                                 </div>
                                                 <div class="post__block-text post__block-text_image">
                                                     <p>{{ $block['data']['text'] }}</p>
@@ -154,15 +154,17 @@
                                         </div>
                                     @break
 
-                                    {{-- Две картинки --}}
+                                    {{-- Две картинки. data-zoom со значением — номер блока: картинки
+                                         с одинаковым значением листаются в окне вместе, а с другими
+                                         блоками статьи не смешиваются. --}}
                                     @case('two_images')
                                         <div class="post__block">
                                             <div class="post__two-images">
                                                 <div class="post__two-images-image">
-                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image_left']) }}" alt="">
+                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image_left']) }}" alt="" @if(!empty($block['data']['zoomable'])) data-zoom="block-{{ $loop->index }}" @endif>
                                                 </div>
                                                 <div class="post__two-images-image">
-                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image_right']) }}" alt="">
+                                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('yandex')->url($block['data']['image_right']) }}" alt="" @if(!empty($block['data']['zoomable'])) data-zoom="block-{{ $loop->index }}" @endif>
                                                 </div>
                                             </div>
                                         </div>

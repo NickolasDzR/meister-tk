@@ -1,0 +1,89 @@
+@use '_variables' as *;
+@use '../../../../node_modules/photoswipe/dist/photoswipe.css';
+
+// Картинки, которые можно раскрыть, — курсор-лупа.
+img[data-zoom] {
+    cursor: zoom-in;
+}
+
+// PhotoSwipe под сайт: затемнение в тон indigo, как у слайдов и карточек.
+// Значки белые, их подложка — тот же indigo.
+.pswp {
+    --pswp-bg: #{$indigo};
+    --pswp-icon-color: #{$white};
+    --pswp-icon-color-secondary: #{$indigo};
+    --pswp-icon-stroke-color: #{$indigo};
+    --pswp-error-text-color: #{$white};
+
+    font-family: var(--font), sans-serif;
+}
+
+// Свой крестик: белые линии 2px, как у .hamburger.is-active на сайте.
+.pswp__icn-close path {
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 2;
+}
+
+// Навигация: на телефоне стрелки и счётчик рядом внизу, под большим
+// пальцем. С планшета навигация растянута на весь экран: стрелки по
+// бокам картинки, счётчик внизу по центру.
+.pswp__nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    // Сам слой не мешает зуму и перетаскиванию — ловят только кнопки.
+    pointer-events: none;
+
+    @media (min-width: $break_md) {
+        top: 0;
+        bottom: 0;
+        display: block;
+    }
+}
+
+// Одна картинка — листать нечего.
+.pswp--one-slide .pswp__nav {
+    display: none;
+}
+
+// Вид стрелок — из arrow-button.scss, здесь только место.
+.lightbox__arrow {
+    pointer-events: auto;
+
+    @media (min-width: $break_md) {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+
+        &_prev {
+            left: 25px;
+        }
+
+        &_next {
+            right: 25px;
+        }
+    }
+}
+
+.lightbox__counter {
+    min-width: 50px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
+    pointer-events: auto;
+
+    @media (min-width: $break_md) {
+        position: absolute;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+    }
+}

@@ -607,6 +607,10 @@ const isValidFormValues = (obj: any): obj is Coordinates & {weight: string} => {
         typeof obj.weight !== 'undefined';
 };
 
+// Номер текущего расчёта. «Отменить» на прелоадере сдвигает его, и ответ
+// Яндекса, пришедший после отмены, уже ничего не показывает.
+let calcAttempt = 0;
+
 if (cargoCalcButton) {
     cargoCalcButton.addEventListener("click", async (event) => {
         event.preventDefault();
@@ -648,8 +652,17 @@ if (cargoCalcButton) {
             return;
         }
 
+        const current = ++calcAttempt;
+
         // TODO тут сделать прелоадер в качестве логотипа, у которого дорога едет, пока грузится карта. На всяк
-        preloader.enable();
+        preloader.enable(undefined, {
+            // Связь пропала — через 10 секунд человек может отменить ожидание
+            // и вернуться к форме, не дожидаясь таймаута маршрута.
+            onCancel: () => {
+                calcAttempt++;
+                buttonActiveHandler.enable(button);
+            },
+        });
 
         if (button && button.tagName === "BUTTON") {
             buttonActiveHandler.disable(button);
@@ -671,8 +684,16 @@ if (cargoCalcButton) {
 
             const distance = await withTimeout(getRouteDistance(from, to), 15000);
 
+            if (current !== calcAttempt) {
+                return;
+            }
+
             showCost(distance, weight, form);
         } catch (error) {
+            if (current !== calcAttempt) {
+                return;
+            }
+
             // Сюда приходит всё: карты не загрузились, маршрута нет,
             // Яндекс не ответил за 15 секунд.
             console.error("Маршрут не рассчитан:", error);

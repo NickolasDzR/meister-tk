@@ -30,6 +30,10 @@ Route::get('/posts', function () {
         ->select('id', 'title', 'slug', 'excerpt', 'image', 'image_mobile', 'image_tablet', 'published_at')
         ->published()
         ->orderByDesc('published_at')
+        // Две статьи на одну минуту — порядок между ними задаёт id. Без этого
+        // база вправе отдавать их по-разному, и при листании страниц статья
+        // могла повториться на соседней странице или пропасть.
+        ->orderByDesc('id')
         ->paginate(9);
 
     // Страницы за последней отдавали пустой список с кодом 200: человек видел

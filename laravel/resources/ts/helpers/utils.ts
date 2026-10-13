@@ -192,8 +192,20 @@ export const inputErrorHandler = (input: HTMLInputElement | HTMLDivElement) => {
 // появления. Таймер храним, чтобы его можно было отменить.
 let preloaderFadeIn: number | undefined;
 
+// Через сколько показать крестик закрытия. Связь пропала (метро) или
+// совсем медленная — без кнопки прелоадер закрывал страницу навсегда,
+// и оставалось только перезагрузить её.
+const PRELOADER_CANCEL_AFTER = 10000;
+let preloaderCancelTimer: number | undefined;
+
+type PreloaderOptions = {
+    // Что сделать, если человек отменил ожидание: вернуть кнопку,
+    // не открывать окно, когда загрузка всё-таки придёт, и т. п.
+    onCancel?: () => void;
+};
+
 export const preloader = {
-    enable: (preloaderText?: string) => {
+    enable: (preloaderText?: string, options: PreloaderOptions = {}) => {
         const preloader = document.createElement("DIV");
         preloader.classList.add("preloader");
 
@@ -209,11 +221,32 @@ export const preloader = {
         preloaderFadeIn = window.setTimeout(() => {
             preloader.classList.add("active");
         }, 10);
+
+        window.clearTimeout(preloaderCancelTimer);
+        preloaderCancelTimer = window.setTimeout(() => {
+            // Крестик — той же разметкой, что у меню и формы расчёта
+            // (компонент hamburger в состоянии is-active), чтобы выглядел так же.
+            const cancel = document.createElement("button");
+            cancel.type = "button";
+            cancel.className = "hamburger close-button is-active preloader__close";
+            cancel.setAttribute("aria-label", "Закрыть");
+            cancel.innerHTML = '<span class="hamburger-box"><span class="hamburger-inner"></span></span>';
+
+            cancel.addEventListener("click", () => {
+                preloader.remove();
+                window.clearTimeout(preloaderCancelTimer);
+                options.onCancel?.();
+            }, {once: true});
+
+            preloader.appendChild(cancel);
+            cancel.focus();
+        }, PRELOADER_CANCEL_AFTER);
     },
     disable: () => {
         // Отменяем появление: если ошибка пришла быстрее десяти миллисекунд,
         // прелоадер успел бы стать видимым уже после команды спрятать его.
         window.clearTimeout(preloaderFadeIn);
+        window.clearTimeout(preloaderCancelTimer);
 
         const preloader = document.querySelector(".preloader");
 

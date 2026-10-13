@@ -31,7 +31,9 @@
         position: absolute;
         inset: 0;
         backdrop-filter: blur(8px);
-        background: rgba(255, 255, 255, 0.6);
+        // Тёмная подложка в тон indigo — как у формы расчёта и окна
+        // с картинкой. На ней крестик белый, как у них.
+        background: rgba($indigo, 0.6);
     }
 
     &__wrapper {
@@ -52,6 +54,23 @@
 
         &:before {
             content: attr(data-preloader-text);
+        }
+    }
+
+    // Крестик закрытия — появляется через 10 секунд ожидания, в том же
+    // месте, где крестик формы расчёта и меню. Вид — от .hamburger.is-active.
+    &__close {
+        position: absolute;
+        top: 25px;
+        right: 10px;
+        z-index: 999;
+
+        // Белый, как в форме расчёта. Селектор сильнее .hamburger.is-active,
+        // который красит линии в тёмный.
+        &.is-active .hamburger-inner,
+        &.is-active .hamburger-inner::before,
+        &.is-active .hamburger-inner::after {
+            background-color: var(--white);
         }
     }
 }
