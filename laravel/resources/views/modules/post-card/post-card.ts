@@ -2,7 +2,7 @@ import { getElementHeight, breakpoint, type Breakpoint } from "@utils";
 
 const postCardTitleBottomMargin: Partial<Record<Breakpoint, number>> = {
     md: 65,
-    xs: 30,
+    xs: 29,
 };
 
 const getMarginForBreakpoint = (bp: Breakpoint): number => {

@@ -58,45 +58,6 @@
         }
     }
 
-    &__arrow {
-        width: 40px;
-        height: 40px;
-        border-radius: 9999px;
-        background-color: var(--lightestBlue);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all .3s ease;
-
-        @media (min-width: $break_md) {
-            width: 48px;
-            height: 48px;
-        }
-
-        &:hover {
-            background-color: var(--keppel);
-
-            .pagination__svg-path {
-                stroke: var(--white);
-            }
-        }
-
-        &_disabled {
-            opacity: .35;
-            pointer-events: none;
-        }
-    }
-
-    &__svg {
-        width: 10px;
-        height: 16px;
-        display: block;
-    }
-
-    &__svg-path {
-        fill: none;
-        stroke: var(--indigo);
-        stroke-width: 2;
-        transition: stroke .3s ease;
-    }
+    // Стрелки «назад / вперёд» — компонент arrow-button, своих стилей
+    // у пагинации для них нет.
 }

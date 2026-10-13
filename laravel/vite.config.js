@@ -98,5 +98,12 @@ export default defineConfig({
         // public/build/.vite/manifest.json, а Laravel ищет его в
         // public/build/manifest.json — и падает на каждой странице.
         manifest: 'manifest.json',
+        // Под какие браузеры сжимать CSS. По умолчанию Vite 8 берёт
+        // «baseline-widely-available» (Safari от 16.4) и переписывает
+        // (min-width: 768px) в (width>=768px). Safari до 16.4 такой записи
+        // не понимает и выбрасывает правило целиком: на iPhone с iOS 15–16
+        // не работали ни медиазапросы по высоте, ни раскладка планшета.
+        // Цель ниже оставляет старую запись — её понимают все.
+        cssTarget: ['safari14', 'chrome87', 'edge88', 'firefox78'],
     },
 });

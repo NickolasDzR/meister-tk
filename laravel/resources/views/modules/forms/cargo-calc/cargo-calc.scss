@@ -12,13 +12,18 @@
     z-index: 2;
     transform: translateX(-100vw);
     transition: transform 0.5s ease;
-    padding: 15px;
+    // Сверху — место под крестик закрытия (top 25 + высота ~30 + зазор).
+    // Форма стоит по центру, и на низком экране (iPhone SE) заголовок
+    // поднимался вплотную к крестику.
+    padding: 70px 15px 15px;
 
     @media (min-width: $break_md) {
         top: $header-height-tablet;
     }
 
+    // Крестика на десктопе нет — запас сверху не нужен.
     @media (min-width: $break_xl) {
+        padding-top: 15px;
         transform: none;
         left: auto;
         padding-right: 144px;
@@ -74,7 +79,9 @@
     }
 
     &__title {
-        font-size: 36px;
+        // 36 из макета на 375; на узком экране (SE, 320) «ОТПРАВИТЬ»
+        // занимал всю ширину и упирался в крестик — там шрифт меньше.
+        font-size: clamp(28px, 9.6vw, 36px);
         // 36 пикселей капслоком белым по фотографии: с весом 300 с body
         // заголовок расплывается. 600 — как в макете.
         font-weight: 600;

@@ -1,0 +1,65 @@
+@use '_variables' as *;
+
+// Круглая стрелка «назад / вперёд» — общая для слайдера «Другие статьи»
+// и пагинации. Здесь только внешний вид и состояния. Где стрелка стоит
+// (поверх картинки, в ряду номеров) — решает модуль своим классом.
+.arrow-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: var(--lightestBlue);
+    // Стрелка часто лежит на картинке. Полупрозрачный светлый круг
+    // пропадал на светлых фото (карта, снег), поэтому круг непрозрачный
+    // и с тенью — тень отделяет его от любого фона.
+    box-shadow: 0 2px 10px rgba($indigo, .35);
+    color: var(--black);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .3s ease;
+
+    // Наведение не должно звать к нажатию, которое ничего не сделает:
+    // на крайнем слайде Splide ставит кнопке disabled.
+    &:hover:not(:disabled) {
+        background-color: var(--keppel);
+        color: var(--white);
+    }
+
+    &:disabled,
+    &_disabled {
+        opacity: .5;
+        cursor: default;
+    }
+
+    // <span> вместо ссылки — клики ему не нужны вовсе.
+    &_disabled {
+        pointer-events: none;
+    }
+
+    &__svg {
+        display: block;
+        position: relative;
+    }
+
+    &__path {
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    // Уголок стрелки визуально тяжелее хвоста — без сдвига на 2px
+    // она кажется смещённой от центра круга.
+    &_prev &__svg {
+        right: 2px;
+    }
+
+    &_next &__svg {
+        left: 2px;
+    }
+}

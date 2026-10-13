@@ -133,6 +133,16 @@
             'where' => 'поверх картинки в слайдере',
         ],
         [
+            'sel'   => '.button_transparent.button_small',
+            'dark'  => true,
+            // Без .post-card__more: у неё opacity 0 до наведения на карточку.
+            // Класс стрелки — оттуда же, он задаёт ей размер.
+            'html'  => '<span class="button button_transparent button_small">Читать статью'
+                . \Illuminate\Support\Facades\Blade::render('<x-icon name="thin-arrow-right" class="post-card__more-arrow" aria-hidden="true" />')
+                . '</span>',
+            'where' => 'карточка в списке статей, при наведении',
+        ],
+        [
             'sel'   => '.button[disabled]',
             'html'  => '<button class="button button_keppel" disabled>Идёт расчёт</button>',
             'where' => 'пока считается рейс',
@@ -146,6 +156,23 @@
             'sel'   => '.cargo-calc__button-results',
             'html'  => '<button class="button button_keppel cargo-calc__button-results">Понятно</button>',
             'where' => 'закрывает результат расчёта',
+        ],
+        // Стрелки собираются настоящим компонентом, а не копией разметки:
+        // поменяется компонент — поменяется и образец.
+        [
+            'sel'   => '.arrow-button',
+            'html'  => \Illuminate\Support\Facades\Blade::render('<x-arrow-button direction="next" label="Вперёд" />'),
+            'where' => 'кнопка: слайдер «Другие статьи»',
+        ],
+        [
+            'sel'   => '.arrow-button_prev',
+            'html'  => \Illuminate\Support\Facades\Blade::render('<x-arrow-button direction="prev" href="#" label="Назад" />'),
+            'where' => 'ссылка: пагинация списка статей',
+        ],
+        [
+            'sel'   => '.arrow-button_disabled',
+            'html'  => \Illuminate\Support\Facades\Blade::render('<x-arrow-button direction="next" :disabled="true" />'),
+            'where' => 'листать некуда: первая или последняя страница',
         ],
     ];
 

@@ -22,22 +22,11 @@
 
             {{-- Назад --}}
             <li class="pagination__item">
-                @if($paginator->onFirstPage())
-                    <span class="pagination__arrow pagination__arrow_prev pagination__arrow_disabled" aria-hidden="true">
-                        <svg class="pagination__svg" viewBox="0 0 12 20" width="12" height="20">
-                            <path class="pagination__svg-path" d="M11.0283 1.20798L2.39014 9.84619L11.0283 18.4844"></path>
-                        </svg>
-                    </span>
-                @else
-                    <a class="pagination__arrow pagination__arrow_prev"
-                       href="{{ $paginator->previousPageUrl() }}"
-                       rel="prev"
-                       aria-label="Предыдущая страница">
-                        <svg class="pagination__svg" viewBox="0 0 12 20" width="12" height="20">
-                            <path class="pagination__svg-path" d="M11.0283 1.20798L2.39014 9.84619L11.0283 18.4844"></path>
-                        </svg>
-                    </a>
-                @endif
+                <x-arrow-button direction="prev"
+                                :href="$paginator->previousPageUrl()"
+                                :disabled="$paginator->onFirstPage()"
+                                rel="prev"
+                                label="Предыдущая страница" />
             </li>
 
             {{-- Номера страниц --}}
@@ -53,22 +42,11 @@
 
             {{-- Вперёд --}}
             <li class="pagination__item">
-                @if($paginator->hasMorePages())
-                    <a class="pagination__arrow pagination__arrow_next"
-                       href="{{ $paginator->nextPageUrl() }}"
-                       rel="next"
-                       aria-label="Следующая страница">
-                        <svg class="pagination__svg" viewBox="0 0 12 20" width="12" height="20">
-                            <path class="pagination__svg-path" d="M1.39011 1.26797L10.0283 9.90619L1.39011 18.5444"></path>
-                        </svg>
-                    </a>
-                @else
-                    <span class="pagination__arrow pagination__arrow_next pagination__arrow_disabled" aria-hidden="true">
-                        <svg class="pagination__svg" viewBox="0 0 12 20" width="12" height="20">
-                            <path class="pagination__svg-path" d="M1.39011 1.26797L10.0283 9.90619L1.39011 18.5444"></path>
-                        </svg>
-                    </span>
-                @endif
+                <x-arrow-button direction="next"
+                                :href="$paginator->nextPageUrl()"
+                                :disabled="! $paginator->hasMorePages()"
+                                rel="next"
+                                label="Следующая страница" />
             </li>
 
         </ul>

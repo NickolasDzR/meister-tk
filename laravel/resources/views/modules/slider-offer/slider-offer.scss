@@ -10,6 +10,7 @@
     &__heading {
         font-size: 30px;
         margin-bottom: 20px;
+        color: var(--lightGray);
     }
 
     &__splide {
@@ -85,42 +86,19 @@
     }
 
     &__arrow {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border: 1px solid transparent;
-        background-color: rgba($lightestBlue, 1);
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-
         @media (min-width: $break_sm) {
             position: absolute;
             top: $img-height * 0.5;
             transform: translateY(-50%);
-
-            opacity: 0.59;
         }
 
         @media (min-width: $break_xl) {
             top: $img-height-xl * 0.5;
         }
 
-        &_prev, &_next {
-            svg {
-                position: relative;
-            }
-        }
-
         &_prev {
             @media (min-width: $break_sm) {
                 left: 15px;
-            }
-
-            svg {
-                right: 2px;
             }
         }
 
@@ -128,21 +106,6 @@
             @media (min-width: $break_sm) {
                 right: 15px;
             }
-
-            svg {
-                left: 2px;
-            }
-        }
-
-        &:hover {
-            background-color: var(--gray);
-            opacity: 0.59;
-            color: white;
-        }
-
-        svg {
-            display: block;
-            transition: all .3s ease;
         }
     }
 

@@ -115,6 +115,7 @@
 
         font-size: 26px;
         font-weight: 600;
+        line-height: 1.33;
         position: relative;
         margin-bottom: 0;
 
@@ -208,6 +209,10 @@
     }
 
     &__block-text {
+
+        p {
+            line-height: 1.6;
+        }
 
         @media (min-width: $break_xl) {
             max-width: $text-width;

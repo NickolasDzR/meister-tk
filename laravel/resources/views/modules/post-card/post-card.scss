@@ -1,3 +1,5 @@
+@use '_variables' as *;
+
 .post-card {
     position: relative;
     min-height: 450px;
@@ -18,15 +20,35 @@
         z-index: 1;
     }
 
+    // Постоянное затемнение снизу, под заголовком — как у слайдов на главной.
+    // Белый заголовок на светлом фото (карта, снег) не читался, а на телефоне
+    // наведения нет, и заливка из ::before там не появляется никогда.
+    // Верх картинки остаётся чистым.
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba($indigo, .85) 0%, rgba($indigo, .6) 35%, transparent 70%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
     &:hover {
         .post-card__content {
             transform: translateY(0) !important;
         }
 
         .post-card__subtitle,
-        .post-card__link {
+        .post-card__link,
+        .post-card__more {
             opacity: 1;
         }
+
+        // Стрелка чуть уходит вправо — «туда, куда ведёт ссылка».
+        .post-card__more-arrow {
+            transform: translateX(3px);
+        }
+
 
         &::before {
             opacity: 0.8;
@@ -36,7 +58,7 @@
     &__content {
         z-index: 2;
         transform: translateY(calc(100% - 120px));
-        padding: 15px;
+        padding: 15px 5px;
         transition: transform .3s ease;
     }
 
@@ -66,6 +88,26 @@
         color: var(--white);
         opacity: 0;
         transition: opacity .3s ease;
+    }
+
+    // «Читать статью →» — вид от .button_transparent .button_small, здесь
+    // только появление при наведении на карточку, вместе с описанием.
+    &__more {
+        margin-bottom: 15px;
+        opacity: 0;
+    }
+
+    &__more-arrow {
+        // Квадрат крупнее буквы: сама стрелка в файле занимает три четверти
+        // его ширины и половину высоты.
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+        transition: transform .3s ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
     }
 
     &__link {

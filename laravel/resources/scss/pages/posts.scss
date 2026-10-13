@@ -1,4 +1,6 @@
 // Стили страницы списка постов
+@use '@components/button/button';
+@use '@components/arrow-button/arrow-button';
 @use '@components/pagination/pagination';
 @use '@modules/post-cards/post-cards';
 @use '@modules/post-card/post-card';
