@@ -17,7 +17,7 @@ if (mainSlider) {
 
         const sliderSettings = {
             type: 'loop',
-            autoplay: true,
+            autoplay: false,
 
             interval: 4000,
             speed: 600,
@@ -26,7 +26,7 @@ if (mainSlider) {
             pauseOnFocus: false,
             intersection: {
                 inView: {
-                    autoplay: true,
+                    autoplay: false,
                 },
                 outView: {
                     autoplay: false,

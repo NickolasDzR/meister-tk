@@ -92,7 +92,7 @@
         ],
         [
             'sel'   => '.cargo-calc__title',
-            'html'  => '<p class="cargo-calc__title">Рассчитать стоимость рейса</p>',
+            'html'  => '<h1 class="cargo-calc__title">Грузоперевозки по России до 20 тонн</h1>',
             'where' => 'форма на главной',
         ],
         [

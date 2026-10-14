@@ -35,22 +35,33 @@
     }
 
     &_transparent {
+        // Фон задаём явно: у тега <button> браузер по умолчанию рисует
+        // серый. Пока прозрачная кнопка была только ссылкой <a>, это
+        // не проявлялось.
+        background-color: transparent;
         border: 1px solid var(--white);
 
-        &:hover {
-            background-color: var(--keppel);
-            border-color: var(--keppel);
-            color: var(--white);
+        // Подсветка — только там, где есть мышь. На телефоне :hover залипает
+        // после тапа: «Посчитать заново» появлялась сразу залитой, потому
+        // что встала на место только что нажатой «Рассчитать доставку».
+        @media (hover: hover) {
+            &:hover {
+                background-color: var(--keppel);
+                border-color: var(--keppel);
+                color: var(--white);
+            }
         }
     }
 
     &_keppel {
         background-color: var(--keppel);
 
-        &:hover {
-            background-color: var(--white);
-            border-color: var(--white);
-            color: var(--keppel)
+        @media (hover: hover) {
+            &:hover {
+                background-color: var(--white);
+                border-color: var(--white);
+                color: var(--keppel);
+            }
         }
     }
 }

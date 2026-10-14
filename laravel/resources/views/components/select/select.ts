@@ -62,6 +62,22 @@ const getDataAddress: (query: string) => Promise<addressesResponseType> = async 
     }
 }
 
+/**
+ * Маршрут в форме проложен, когда у обоих полей городов есть координаты:
+ * пунктир между булавками становится сплошным (cargo-calc__form_route).
+ */
+const updateRoute = (field: HTMLElement) => {
+    const form = field.closest(".cargo-calc__form") as HTMLFormElement | null;
+
+    if (!form) {
+        return;
+    }
+
+    const chosen = form.querySelectorAll(".cargo-calc__input[data-lat][data-lon]").length;
+
+    form.classList.toggle("cargo-calc__form_route", chosen >= 2);
+};
+
 const selects = document.querySelectorAll(".input__placeholder_select") as NodeListOf<HTMLSelectElement>;
 
 const niceSelectInstance: Array<niceSelect2Instance> | any[] = [];
@@ -125,7 +141,7 @@ const onChangedInput = async (input: HTMLInputElement) => {
 
         const message = isNetwork
             ? "Нет связи. Проверьте интернет и наберите город ещё раз"
-            : `Поиск городов сейчас не работает. Рассчитаем стоимость по телефону <span style="white-space: nowrap">${currentNumber}</span>`;
+            : `Поиск городов сейчас не работает. Рассчитаем стоимость по телефону <span style="white-space: nowrap">${phone}</span>`;
 
         showListMessage(input, message);
 
@@ -176,6 +192,7 @@ const onChangedInput = async (input: HTMLInputElement) => {
             // и строила маршрут от города, которого на экране уже нет.
             delete parentInputBlock.dataset.lat;
             delete parentInputBlock.dataset.lon;
+            updateRoute(parentInputBlock);
 
             // ...New Set(results) нужен для удаления дублей из массива
             Array.from(uniqueLocations, (location: formatedAddressesResponseType, i: number) => {
@@ -200,12 +217,56 @@ const onChangedInput = async (input: HTMLInputElement) => {
     }
 }
 
+/**
+ * Очищает форму расчёта — «Посчитать заново» начинает с пустой формы.
+ *
+ * Города: в select вместо найденных подсказок возвращается исходный пункт
+ * («Выберите место загрузки»), координаты выбранного города стираются,
+ * библиотека перерисовывает поле. Вес — пустой, красные рамки и сплошная
+ * линия маршрута снимаются.
+ */
+const resetCargoForm = (form: HTMLFormElement) => {
+    form.querySelectorAll<HTMLSelectElement>("select.input__placeholder_select").forEach(select => {
+        const field = select.closest(".cargo-calc__input") as HTMLElement | null;
+        const title = field?.querySelector<HTMLElement>(".input__label")?.dataset.title ?? "";
+
+        select.innerHTML = "";
+        const option = document.createElement("option");
+        option.value = "0";
+        option.dataset.select = title;
+        option.textContent = title;
+        select.appendChild(option);
+
+        if (field) {
+            delete field.dataset.lat;
+            delete field.dataset.lon;
+            delete field.dataset.oldValue;
+        }
+
+        niceSelectInstance[parseInt(select.dataset.index ?? "")]?.update();
+    });
+
+    form.querySelectorAll<HTMLInputElement>("input.input__placeholder").forEach(input => {
+        input.value = "";
+        input.classList.remove("valid");
+    });
+
+    form.querySelectorAll(".error").forEach(element => element.classList.remove("error"));
+    form.classList.remove("cargo-calc__form_route");
+};
+
 const onReadResultsDoneHandler = (event: Event) => {
     event.preventDefault();
 
     const costCalculatedBlock = document.querySelector(".cost-calculated") as HTMLDivElement;
 
     if (costCalculatedBlock) {
+        const form = costCalculatedBlock.querySelector(".cargo-calc__form") as HTMLFormElement | null;
+
+        if (form) {
+            resetCargoForm(form);
+        }
+
         const cargoCalcDeliveryResultsWrapper = document.querySelector(".cargo-calc__delivery-results-wrapper") as HTMLDivElement;
 
         if (cargoCalcDeliveryResultsWrapper) {
@@ -233,7 +294,12 @@ const parseNumber = (value: string): number => {
     return normalized === "" ? NaN : Number(normalized);
 };
 
-const currentNumber = `+7 999 120 59 82`;
+// Телефон — из config/site.php через data-атрибуты формы: номер один
+// на весь сайт и в шапке, и в ответах формы. В ответах он ссылкой —
+// на телефоне звонок в одно касание.
+const formPhone = (document.querySelector(".cargo-calc__form") as HTMLFormElement | null)?.dataset;
+const phone = formPhone?.phone ?? "";
+const phoneLink = `<a class="cargo-calc__phone" href="${formPhone?.phoneHref ?? ""}">${phone}</a>`;
 
 type DeliveryStatus = 'valid' | 'invalid_weight' | 'calculation_error' | 'short_trip';
 
@@ -244,65 +310,91 @@ type DeliveryStatus = 'valid' | 'invalid_weight' | 'calculation_error' | 'short_
  */
 const textGenerationHandler = (cost: string, status: DeliveryStatus): string => {
     switch (status) {
+        // Тексты ответа. Одно слово на всём пути — «доставка»: кнопка
+        // «Рассчитать доставку», ответ «Доставка обойдётся…». Ошибки говорят,
+        // что случилось и что делать, без извинений.
+        // Цена — ответ на нажатие кнопки, ради неё и считали: отдельной
+        // крупной строкой, пояснение под ней тише.
         case 'valid':
             return `
+                <p class="cargo-calc__delivery-results-price">≈ ${cost} ₽</p>
                 <p class="cargo-calc__delivery-results-text">
-                    Стоимость рейса составит примерно 
-                    <span class="cargo-calc__delivery-results-text-cost">${cost}</span> 
-                    рублей.
-                </p>
-                <p class="cargo-calc__delivery-results-text">
-                    Для более точного расчёта стоимости рейса позвоните нашему менеджеру по телефону 
-                    <span style="white-space: nowrap">${currentNumber}</span>, 
-                    поскольку нужны дополнительные данные о характере груза.
+                    Примерная стоимость доставки. Точную цену назовёт менеджер
+                    по телефону ${phoneLink}: ему понадобятся размеры и тип груза.
                 </p>
             `
-            break
         case 'invalid_weight':
-            // Вес вне допустимого диапазона
-            return `
+            // Вес вне допустимого диапазона: ноль и меньше — или больше 20 тонн.
+            return Number(cost) > 0
+                ? `
                 <p class="cargo-calc__delivery-results-text">
-                    Вес ${cost} тонн вне допустимого диапазона.
+                    Возим грузы до 20 тонн, а ${cost} т в одну машину не поместится.
                 </p>
                 <p class="cargo-calc__delivery-results-text">
-                    Пожалуйста, проверьте введённые значения и попробуйте снова.
+                    Для большой партии позвоните по телефону
+                    ${phoneLink} —
+                    подберём несколько машин.
+                </p>
+            `
+                : `
+                <p class="cargo-calc__delivery-results-text">
+                    Укажите вес груза в тоннах — больше нуля.
                 </p>
             `;
-            break
         case "calculation_error":
             return `
                 <p class="cargo-calc__delivery-results-text">
-                    К сожалению, не удалось рассчитать стоимость рейса.
+                    Не получилось построить маршрут между этими городами.
                 </p>
                 <p class="cargo-calc__delivery-results-text">
-                    Возможно, выбранный маршрут временно недоступен, либо произошла техническая ошибка.
-                    
-                    Рекомендуем связаться с нашими специалистами по телефону
-                    <span style="white-space: nowrap">${currentNumber}</span> 
-                    для уточнения деталей расчета.
+                    Проверьте города или позвоните по телефону
+                    ${phoneLink} —
+                    посчитаем доставку вручную.
                 </p>
             `
-            break;
         case "short_trip":
             // Короткий рейс или оба поля — один город. Цена по километрам
             // тут бессмысленна: округление до тысяч давало «0 рублей».
             return `
                 <p class="cargo-calc__delivery-results-text">
-                    Короткие рейсы и перевозки по городу рассчитывает менеджер.
+                    Доставку по городу и на короткие расстояния считает менеджер.
                 </p>
                 <p class="cargo-calc__delivery-results-text">
                     Позвоните по телефону
-                    <span style="white-space: nowrap">${currentNumber}</span> —
-                    назовём стоимость сразу.
+                    ${phoneLink} —
+                    назовём цену сразу.
                 </p>
             `;
 
     }
 }
 
+/**
+ * Что посчитали — одной тихой строкой над ответом: «г Москва — г Тверь, 2 т».
+ * Форма на время ответа скрыта, и без этой строки человек видел цену,
+ * не видя, к какому маршруту и весу она относится.
+ * Пустые части пропускаются: города нет, если его не выбрали из подсказок.
+ */
+const routeSummary = (form: HTMLFormElement): string => {
+    const cities = Array.from(form.querySelectorAll<HTMLElement>(".cargo-calc__content > .input_select"))
+        .map(field => (field.dataset.lat ? field.querySelector(".nice-select .current")?.textContent?.trim() ?? "" : ""));
+
+    const weightInput = form.querySelector<HTMLInputElement>(".cargo-calc__placeholder[name='weight']");
+    const weight = weightInput ? parseNumber(weightInput.value) : NaN;
+
+    const route = cities.every(Boolean) ? cities.join(" — ") : "";
+    const tons = Number.isFinite(weight) && weight > 0 ? `${weight.toLocaleString("ru-RU")} т` : "";
+
+    return [route, tons].filter(Boolean).join(", ");
+};
+
 const showUserResults = (status: string, deliveryCosts: string | number | undefined, form: HTMLFormElement) => {
     const formParent = form.closest(".cargo-calc") as HTMLDivElement;
     const costTextWrapper = formParent.querySelector(".cargo-calc__delivery-results-wrapper") as HTMLSpanElement;
+
+    // Начинаем с чистой панели: прошлый ответ стирается с задержкой после
+    // закрытия, и быстрый повторный расчёт мог дописать новый поверх старого.
+    costTextWrapper.innerHTML = "";
 
     switch (status) {
         case "valid":
@@ -317,6 +409,16 @@ const showUserResults = (status: string, deliveryCosts: string | number | undefi
         case "short_trip":
             costTextWrapper.insertAdjacentHTML('afterbegin', textGenerationHandler(deliveryCosts as string, "short_trip"))
             break;
+    }
+
+    const summary = routeSummary(form);
+
+    if (summary) {
+        // textContent, а не HTML: названия городов приходят из Dadata.
+        const line = document.createElement("p");
+        line.className = "cargo-calc__delivery-results-route";
+        line.textContent = summary;
+        costTextWrapper.prepend(line);
     }
 
     formParent.classList.add("cost-calculated");
@@ -377,7 +479,8 @@ const showCost = (distance: number, weight: number, form: HTMLFormElement) => {
         return;
     }
 
-    showUserResults("valid", String(cost), form);
+    // 28 000, а не 28000: разряды разделены, как пишут цены.
+    showUserResults("valid", cost.toLocaleString("ru-RU"), form);
 };
 
 /**
@@ -533,6 +636,7 @@ const newSelectSettings: SelectSettings = {
 
                             parentSelect.dataset.lat = lat;
                             parentSelect.dataset.lon = lon;
+                            updateRoute(parentSelect);
                         } else {
                             console.error("data-lan, data-lat - отсутвует один или оба этих значения");
                         }

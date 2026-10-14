@@ -3,20 +3,6 @@
         ['link' => route('posts'), 'text' => 'Статьи'],
     ];
 
-    $soc = [
-        ['link' => '#', 'name' => 'tg'],
-        ['link' => '#', 'name' => 'vk']
-    ];
-
-    $contacts = [
-        [
-            'title' => '+7 (999) 120 59 82',
-            'titleLink' => '#',
-            'subtitle' => 'nickolasdzr@yandex.ru',
-            'subtitleLink' => '#'
-        ]
-    ];
-
     $slides = $posts->map(fn ($post) => [
         'image' => $post->image,
         'image_mobile' => $post->image_mobile,
@@ -40,7 +26,7 @@
 @endsection
 
 @section('content')
-    @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
+    @include('modules.header.header', ['nav' => $nav])
 
     <main>
         @include('modules.main-slider.main-slider', [
@@ -55,7 +41,10 @@
                 'image_tablet' => $promo->image_tablet,
             ] : null,
         ])
-        @include('modules.forms.cargo-calc.cargo-calc', ['title' => 'Отправить груз', 'button' => 'Рассчитать доставку'])
+        @include('modules.forms.cargo-calc.cargo-calc', [
+            'title' => "Грузоперевозки по\u{00A0}России до\u{00A0}20\u{00A0}тонн",
+            'button' => 'Рассчитать доставку',
+        ])
     </main>
     <x-button type="keppel" class="main__cargo-calc-button" text="Рассчитать доставку" />
 @endsection

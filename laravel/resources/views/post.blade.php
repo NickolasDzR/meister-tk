@@ -3,20 +3,6 @@
         ['link' => route('home'), 'text' => 'Главная'],
         ['link' => route('posts'), 'text' => 'Статьи'],
     ];
-
-    $soc = [
-        ['link' => '#', 'name' => 'tg'],
-        ['link' => '#', 'name' => 'vk']
-    ];
-
-    $contacts = [
-        [
-            'title' => '+7 (999) 120 59 82',
-            'titleLink' => '#',
-            'subtitle' => 'nickolasdzr@yandex.ru',
-            'subtitleLink' => '#'
-        ]
-    ];
 @endphp
 
 @extends('layouts.app')
@@ -39,7 +25,7 @@
 @endsection
 
 @section('content')
-    @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
+    @include('modules.header.header', ['nav' => $nav])
     <main>
         <article class="post">
             <header class="post__header">

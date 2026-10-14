@@ -1,4 +1,14 @@
-@props(['value' => false, 'nav' => [], 'soc' => [], 'contacts' => []])
+@props(['value' => false, 'nav' => []])
+
+@php
+    $soc = config('site.social');
+    $contacts = [[
+        'title' => config('site.phone.display'),
+        'titleLink' => config('site.phone.href'),
+        'subtitle' => config('site.email'),
+        'subtitleLink' => 'mailto:' . config('site.email'),
+    ]];
+@endphp
 
 <header class="header">
     <div class="container">

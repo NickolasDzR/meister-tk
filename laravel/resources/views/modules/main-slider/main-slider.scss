@@ -1,7 +1,7 @@
 @use '_variables' as *;
 
 .main-slider {
-    $arrow-size: 56px;
+    $arrow-size: 44px;
     $arrows-bottom: 20px;
     $arrows-bottom-tall: 60px;
     $arrows-gap: 20px;
@@ -126,13 +126,16 @@
         inset: 0;
     }
 
+    // Вид стрелок — компонент arrow-button. Здесь место: ряд «‹ 1 / 7 ›»
+    // внизу слайда, по левому краю текста.
     &__arrows {
         display: flex;
         justify-content: center;
         align-items: center;
+        gap: 20px;
         position: absolute;
         z-index: 1;
-        left: 17px;
+        left: 15px;
         bottom: $arrows-bottom;
 
         @media (min-width: 320px) and (min-height: 761px) {
@@ -140,90 +143,15 @@
         }
 
         @media (min-width: $break_xxl) {
-            left: calc((100vw - #{$container-max}) / 2 + 14.5px);
+            left: calc((100vw - #{$container-max}) / 2 + 15px);
         }
-    }
-
-    &__arrow {
-        width: $arrow-size;
-        height: $arrow-size;
-        padding: 0;
-        margin: 0;
-        border: none;
-        outline: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        background-color: transparent;
-        cursor: pointer;
-
-        &::before {
-            content: "";
-            width: 95%;
-            height: 95%;
-            display: block;
-            position: absolute;
-            border-radius: 9999px;
-            background-color: white;
-            opacity: .6;
-            transition: all .3s ease;
-        }
-
-        &:hover {
-            &::before {
-                opacity: .9;
-            }
-        }
-
-        &-prev {
-            .main-slider__svg-arrow {
-                position: relative;
-                left: -2px;
-            }
-        }
-
-        svg:not(.main-slider__progress) {
-            fill: none;
-            width: 12px;
-            height: 20px;
-            opacity: 0.6;
-        }
-
-        path {
-            stroke: #4B4B4B;
-            stroke-width: 2;
-            stroke-linecap: round;
-        }
-    }
-
-    &__arrow-prev {
-        margin-right: 122px;
     }
 
     &__slide-count {
+        min-width: 50px;
+        text-align: center;
         color: var(--white);
-        opacity: .8;
-        display: flex;
-        align-items: center;
-        position: absolute;
-    }
-
-    &__progress {
-        transform: rotate(-90deg);
-        width: 66px;
-        height: 66px;
-        background-color: transparent;
-        position: absolute;
-        border-radius: 50%;
-        fill: transparent;
-    }
-
-    &__progress-bar {
-        stroke: white;
-        stroke-width: 8px;
-        stroke-dasharray: 314;
-        stroke-dashoffset: 314;
+        font-variant-numeric: tabular-nums;
     }
 
     &__content {
@@ -258,6 +186,13 @@
             font-size: 36px;
             margin-bottom: 24px;
             -webkit-line-clamp: 4;
+        }
+
+        // Рядом форма с h1 страницы. Два одинаково громких заголовка
+        // спорили — заголовок статьи тише: меньше и обычным весом.
+        @media (min-width: $break_xl) {
+            font-size: 28px;
+            font-weight: 400;
         }
     }
 

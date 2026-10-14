@@ -3,20 +3,6 @@
         ['link' => route('home'), 'text' => 'Главная'],
     ];
 
-    $soc = [
-        ['link' => '#', 'name' => 'tg'],
-        ['link' => '#', 'name' => 'vk']
-    ];
-
-    $contacts = [
-        [
-            'title' => '+7 (999) 120 59 82',
-            'titleLink' => '#',
-            'subtitle' => 'nickolasdzr@yandex.ru',
-            'subtitleLink' => '#'
-        ]
-    ];
-
     // getCollection(), а не сам пагинатор: карточкам нужен плоский массив,
     // а $posts должен остаться пагинатором — из него рисуются ссылки страниц.
     $postCards = $posts->getCollection()->map(fn ($post) => [
@@ -42,7 +28,7 @@
 @endsection
 
 @section('content')
-    @include('modules.header.header', ['nav' => $nav, 'soc' => $soc, 'contacts' => $contacts])
+    @include('modules.header.header', ['nav' => $nav])
 
     <main>
         @include('modules.post-cards.post-cards', ['postCards' => $postCards])

@@ -49,9 +49,13 @@
         transform: translateX(0);
     }
 
+    // Заголовок, поля и панель ответа — одна колонка шириной с форму (357
+    // по макету) и по центру. Раньше колонка ограничивалась только на
+    // десктопе: на планшете заголовок прижимался к левому краю экрана,
+    // а поля стояли по центру.
     &__form-wrapper {
         width: 100%;
-        max-width: 100%;
+        max-width: 357px;
 
         // На десктопе панель ужимается под содержимое, и без точной ширины
         // каждый браузер считал её по-своему: без этой строки Safari давал
@@ -78,23 +82,21 @@
         }
     }
 
+    // h1 страницы — главный акцент первого экрана. Обычный регистр:
+    // капсом фраза читалась как ярлык. По левому краю — как поля и маршрут
+    // под ним, текст и форма читаются одной колонкой.
     &__title {
-        // 36 из макета на 375; на узком экране (SE, 320) «ОТПРАВИТЬ»
-        // занимал всю ширину и упирался в крестик — там шрифт меньше.
-        font-size: clamp(28px, 9.6vw, 36px);
-        // 36 пикселей капслоком белым по фотографии: с весом 300 с body
-        // заголовок расплывается. 600 — как в макете.
+        font-size: 26px;
         font-weight: 600;
         color: var(--white);
-        line-height: 1.4;
-        text-transform: uppercase;
-        margin-bottom: 35px;
-        text-align: center;
+        line-height: 1.25;
+        margin-bottom: 30px;
+        text-align: left;
         z-index: 1;
         position: relative;
 
-        @media (min-width: $break_md) {
-            font-size: 36px;
+        @media (min-width: $break_xl) {
+            font-size: 30px;
         }
     }
 
@@ -132,6 +134,40 @@
         .nice-select .list li {
             pointer-events: none;
         }
+    }
+
+    &__content::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: 30px;
+        height: 80px;
+        width: 2px;
+        background: repeating-linear-gradient(to bottom, var(--keppel) 0 4px, transparent 4px 8px);
+        animation: cargo-calc-route 0.8s linear infinite;
+
+        @media (min-width: $break_md) {
+            left: 31px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+    }
+
+    &__form_route &__content::before {
+        background: var(--keppel);
+        animation: none;
+    }
+
+    &__form_route .input_select .input__icon {
+        fill: var(--keppel);
+    }
+
+    &__content > &__input {
+        &:nth-child(1) { z-index: 3; }
+        &:nth-child(2) { z-index: 2; }
+        &:nth-child(3) { z-index: 1; }
     }
 
     &__input, &__placeholder {
@@ -172,14 +208,12 @@
         position: relative;
     }
 
+    // Панель ответа лежит поверх формы, шириной с неё.
     &__delivery-results {
         position: absolute;
-        inset: 0;
-        max-width: 314px;
-        left: auto;
-        right: auto;
-        top: auto;
-        bottom: auto;
+        top: 0;
+        left: 0;
+        width: 100%;
         opacity: 0;
         transition: all .3s ease;
     }
@@ -196,11 +230,42 @@
         }
     }
 
-    &__delivery-results-text-cost {
-        font-family: var(--font), serif;
-        font-size: inherit;
-        font-weight: bold;
-        line-height: inherit;
+    &__delivery-results-route {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.4;
+        color: rgba($white, .7);
+        margin-bottom: 8px;
+    }
+
+    &__delivery-results-price {
+        font-size: 40px;
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--white);
+        margin-bottom: 12px;
+        font-variant-numeric: tabular-nums;
+
+        @media (min-width: $break_xl) {
+            font-size: 44px;
+        }
+    }
+
+    &__phone {
         color: inherit;
+        white-space: nowrap;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    &__call {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+}
+
+@keyframes cargo-calc-route {
+    to {
+        background-position: 0 8px;
     }
 }

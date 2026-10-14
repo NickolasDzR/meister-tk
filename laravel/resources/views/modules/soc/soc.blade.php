@@ -9,7 +9,7 @@
     <ul class="soc__list">
         @foreach($socItems as $item)
             <li class="soc__item">
-                <a class="soc__link" href="{{ $item['link'] ?? '#' }}">
+                <a class="soc__link" href="{{ $item['link'] ?? '#' }}" target="_blank" rel="noopener" @if(!empty($item['label'])) aria-label="{{ $item['label'] }}" @endif>
                     <x-icon
                         :name="$item['name'] ?? ''"
                         :class="$svgClassBase ? 'soc__svg ' . $svgClassBase . ' soc__svg_' . ($item['name'] ?? '') : 'soc__svg soc__svg_' . ($item['name'] ?? '')"
