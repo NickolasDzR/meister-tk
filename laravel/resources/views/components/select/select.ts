@@ -11,16 +11,12 @@ import {YMapApiKey} from "../../../ts/app";
 
 declare var ymaps: any;
 
-const dadataUrl: string = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address";
-const token: string = "3f637eb956c800c700b18d79bb1fb687cdcb2b94";
-const secret: string = "28deeea55b3c9720d891d81b5c7797b94026d4d3";
-
 /**
- * Выполняет HTTP-запрос к серверу Dadata.ru для получения адресных предложений по указанному запросу.
+ * Запрашивает подсказки городов у нашего сервера (маршрут address-suggest
+ * в routes/web.php), а он — у Dadata. Ключ Dadata живёт только на сервере.
  *
- * @summary Запрашивает адресные предложения через API сервиса Dadata.ru.
+ * @summary Запрашивает адресные предложения через наш сервер.
  * @description Возвращает промис объектов с результатами запросов по адресу.
- * Использует аутентификационные токены ("token" и "secret") Которые можно получить в л/к dadata.ru.
  *
  * @param {string} query Строка запроса для поиска адреса.
  * @return {Promise<addressesResponseType>} Промис объектов с результатами поиска адресов.
@@ -41,19 +37,13 @@ const getDataAddress: (query: string) => Promise<addressesResponseType> = async 
     const timer = setTimeout(() => controller.abort(), 15000);
 
     try {
-        const response = await fetch(dadataUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Token " + token,
-                "X-Secret": secret
-            },
-            body: JSON.stringify({query: query, count: 20}),
+        const response = await fetch("/address-suggest?query=" + encodeURIComponent(query), {
+            headers: {"Accept": "application/json"},
             signal: controller.signal
         });
 
         if (!response.ok) {
-            throw new Error(`Dadata ответила ${response.status}`);
+            throw new Error(`Подсказки ответили ${response.status}`);
         }
 
         return await response.json();

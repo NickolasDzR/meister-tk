@@ -35,7 +35,6 @@ return [
         ],
     ],
 
-    // Дадата — сервис проверки компаний по ИНН при регистрации.
     'dadata' => [
         'api_key' => env('DADATA_API_KEY'),
         'secret_key' => env('DADATA_SECRET_KEY'),

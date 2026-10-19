@@ -5,7 +5,8 @@
         <div class="row">
             <div class="col-12 col-xl-5">
                 <p class="footer__address">
-                    ООО «Мейстер» , 606007, Нижегородская область, г. Дзержинск, Водозаборная, 3а.
+                    @php $address = config('site.address'); @endphp
+                    {{ config('site.legal_name') }}, {{ $address['postal_code'] }}, {{ $address['region'] }}, г. {{ $address['city'] }}, {{ $address['street'] }}.
                 </p>
             </div>
             <div class="col-2"></div>

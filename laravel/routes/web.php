@@ -2,6 +2,9 @@
 
 use App\Models\Post;
 use App\Models\PromoSlide;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -53,11 +56,47 @@ Route::get('/posts/{slug}', function (string $slug) {
     return view('post', compact('post'));
 })->name('post');
 
+// Подсказки городов для формы расчёта. Браузер спрашивает наш сервер,
+// а сервер — Dadata: ключ остаётся здесь и не уезжает в скрипт, где его
+// видит любой. Отдаём только то, что нужно форме: название и координаты.
+// throttle — чтобы чужой скрипт не выел квоту Dadata (60 запросов в минуту
+// с одного адреса; человек, набирающий город, делает их единицы).
+Route::get('/address-suggest', function (Request $request) {
+    $query = $request->validate([
+        'query' => ['required', 'string', 'max:100'],
+    ])['query'];
+
+    try {
+        $response = Http::withToken(config('services.dadata.api_key'), 'Token')
+            ->timeout(10)
+            ->post('https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address', [
+                'query' => $query,
+                'count' => 20,
+            ]);
+    } catch (ConnectionException) {
+        // Dadata не ответила. 502 — форма покажет «поиск не работает» и телефон.
+        abort(502);
+    }
+
+    if ($response->failed()) {
+        abort(502);
+    }
+
+    $suggestions = collect($response->json('suggestions', []))
+        ->map(fn (array $item) => [
+            'value' => $item['value'],
+            'data' => [
+                'geo_lat' => $item['data']['geo_lat'] ?? null,
+                'geo_lon' => $item['data']['geo_lon'] ?? null,
+            ],
+        ]);
+
+    return ['suggestions' => $suggestions];
+})->middleware('throttle:60,1')->name('address-suggest');
+
 // Каталог стилей — рабочий инструмент вёрстки, а не страница сайта.
 // Маршрута попросту нет вне локальной машины, поэтому забыть выключить
 // его негде: на сервере адрес отдаст 404.
 if (app()->environment('local')) {
     Route::view('/styleguide', 'styleguide')->name('styleguide');
 }
-
-require __DIR__.'/auth.php';

@@ -40,7 +40,7 @@
     -- Адреса обязательно абсолютные: мессенджер читает теги в отрыве
     -- от страницы и относительный путь не разберёт.
     --}}
-    <meta property="og:site_name" content="Мейстер ТК">
+    <meta property="og:site_name" content="{{ config('site.name') }}">
     <meta property="og:locale" content="ru_RU">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -53,6 +53,8 @@
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:image" content="{{ asset('images/content/og-default.jpg') }}">
     @endif
+
+    @include('modules.schema.organization')
 </head>
 <body>
     @yield("content")

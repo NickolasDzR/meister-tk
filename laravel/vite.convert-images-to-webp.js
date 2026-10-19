@@ -20,15 +20,16 @@ async function convertImages() {
     for (const file of files) {
         const relativePath = path.relative(sourceDir, file);
 
-        // Картинки og-* оставляем как есть: они идут в превью ссылок для
-        // телеграма и вк, а те webp в превью показывают ненадёжно.
-        if (/(^|[\\/])og-/i.test(relativePath)) {
+        // Картинки og-* и schema-* оставляем как есть: первые идут в превью
+        // ссылок для телеграма и вк, вторые — логотип в разметке Schema.org
+        // для поисковиков. И те и другие webp показывают ненадёжно.
+        if (/(^|[\\/])(og|schema)-/i.test(relativePath)) {
             const targetPath = path.join(targetDir, relativePath);
 
             await fs.ensureDir(path.dirname(targetPath));
             await fs.copy(file, targetPath);
 
-            console.log(`📋 ${relativePath} (скопирован без конвертации — для og-превью)`);
+            console.log(`📋 ${relativePath} (скопирован без конвертации — для превью и поисковиков)`);
 
             continue;
         }

@@ -20,6 +20,18 @@ return [
 
     'email' => 'nickolasdzr@yandex.ru',
 
+    // Название и реквизиты — подвал, og-теги и разметка Schema.org.
+    'name' => 'Транспортная компания «Мейстер»',
+    'legal_name' => 'ООО «Мейстер»',
+    'inn' => '5249167085',
+    'ogrn' => '1195275019829',
+    'address' => [
+        'postal_code' => '606007',
+        'region' => 'Нижегородская область',
+        'city' => 'Дзержинск',
+        'street' => 'Водозаборная, 3а',
+    ],
+
     'social' => [
         ['name' => 'tg', 'link' => 'https://t.me/tkmeister', 'label' => 'Telegram'],
         ['name' => 'vk', 'link' => 'https://vk.ru/tkmeister', 'label' => 'ВКонтакте'],
