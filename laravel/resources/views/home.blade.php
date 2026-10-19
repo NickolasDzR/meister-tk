@@ -17,6 +17,8 @@
 
 @section('title', 'Грузоперевозки по России — ООО «Мейстер»')
 
+@section('description', 'Грузоперевозки по России до 20 тонн: подбор транспорта, расчёт стоимости рейса онлайн, сопровождение документов.')
+
 @section('og')
     <meta property="og:type" content="website">
     <meta property="og:title" content="Транспортная компания «Мейстер»">

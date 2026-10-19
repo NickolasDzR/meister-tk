@@ -19,6 +19,8 @@
 
 @section('title', 'Статьи компании ООО «Мейстер»')
 
+@section('description', 'Статьи транспортной компании «Мейстер»: о том, как как устроены грузоперевозки изнутри.')
+
 @section('og')
     <meta property="og:type" content="website">
     <meta property="og:title" content="Статьи компании «Мейстер»">

@@ -18,6 +18,11 @@ return [
         'href' => 'tel:+79991205982',
     ],
 
+    // Пускать ли поисковики. Пока на сайте нет статей — false: robots.txt
+    // запрещает обход, а страницы просят не показывать их в выдаче.
+    // Открыть — SITE_INDEXING=true в .env и php artisan config:cache.
+    'indexing' => (bool) env('SITE_INDEXING', false),
+
     'email' => 'nickolasdzr@yandex.ru',
 
     // Название и реквизиты — подвал, og-теги и разметка Schema.org.

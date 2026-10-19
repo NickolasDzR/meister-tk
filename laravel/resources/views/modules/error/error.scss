@@ -1,0 +1,70 @@
+@use '_variables' as *;
+
+.error {
+    padding: 60px 0 80px;
+
+    @media (min-width: $break_xl) {
+        padding: 120px 0 160px;
+    }
+
+    &__hero {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+
+        @media (min-width: $break_md) {
+            gap: 32px;
+        }
+    }
+
+    // Знак по высоте цифр кода; пропорции знака 140 × 92.
+    &__mark {
+        width: 120px;
+        height: auto;
+        flex-shrink: 0;
+
+        @media (min-width: $break_md) {
+            width: 220px;
+        }
+    }
+
+    &__code {
+        margin-bottom: 0;
+        font-size: 96px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--keppel);
+
+        @media (min-width: $break_md) {
+            font-size: 160px;
+        }
+    }
+
+    &__title {
+        margin-bottom: 16px;
+        font-size: 26px;
+
+        @media (min-width: $break_md) {
+            font-size: 36px;
+        }
+    }
+
+    &__text {
+        max-width: 560px;
+        margin-bottom: 32px;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    // Прозрачная кнопка рассчитана на тёмный фон (белая рамка и текст),
+    // здесь фон светлый.
+    &__button-posts {
+        color: var(--indigo);
+        border-color: var(--indigo);
+    }
+}

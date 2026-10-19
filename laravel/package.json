@@ -14,7 +14,6 @@
         "@tailwindcss/vite": "^4.0.0",
         "@types/node": "^25.5.2",
         "@types/yandex-maps": "^2.1.36",
-        "@vitejs/plugin-react": "^6.0.1",
         "axios": ">=1.11.0 <=1.14.0",
         "bootstrap": "^5.3.8",
         "concurrently": "^9.0.1",
@@ -35,13 +34,9 @@
     "dependencies": {
         "@mornya/dynamic-load-libs": "^0.3.5",
         "@splidejs/splide": "^4.1.4",
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
         "autoprefixer": "^10.4.27",
         "photoswipe": "^5.4.4",
         "postcss-combine-media-query": "^2.1.0",
-        "postcss-sort-media-queries": "^6.3.3",
-        "react": "^19.2.4",
-        "react-dom": "^19.2.4"
+        "postcss-sort-media-queries": "^6.3.3"
     }
 }

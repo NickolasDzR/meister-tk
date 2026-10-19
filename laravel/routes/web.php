@@ -111,6 +111,16 @@ Route::get('/address-suggest', function (Request $request) {
     return ['suggestions' => $suggestions];
 })->middleware('throttle:60,1')->name('address-suggest');
 
+// robots.txt собирается здесь, а не лежит файлом в public: так его можно
+// открыть и закрыть одной настройкой (site.indexing) вместе с meta robots.
+Route::get('/robots.txt', function () {
+    $lines = config('site.indexing')
+        ? ['User-agent: *', 'Disallow:']
+        : ['User-agent: *', 'Disallow: /'];
+
+    return response(implode("\n", $lines) . "\n")->header('Content-Type', 'text/plain');
+})->name('robots');
+
 // Каталог стилей — рабочий инструмент вёрстки, а не страница сайта.
 // Маршрута попросту нет вне локальной машины, поэтому забыть выключить
 // его негде: на сервере адрес отдаст 404.

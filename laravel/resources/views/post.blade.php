@@ -22,6 +22,8 @@
     @include('modules.schema.breadcrumbs', ['items' => $breadcrumbs])
 @endpush
 
+@section('description', $post->excerpt ?? $post->title)
+
 @section('og')
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ $post->title }}">

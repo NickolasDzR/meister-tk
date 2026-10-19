@@ -58,7 +58,9 @@ return [
             'url' => env('YANDEX_ENDPOINT', 'https://storage.yandexcloud.net').'/'.env('YANDEX_BUCKET'),
             'use_path_style_endpoint' => true,
             'visibility' => 'public',
-            'throw' => false,
+            // Не удалась загрузка в бакет — пусть админка скажет об ошибке,
+            // а не сохранит статью со ссылкой на файл, которого нет.
+            'throw' => true,
         ],
 
         's3' => [

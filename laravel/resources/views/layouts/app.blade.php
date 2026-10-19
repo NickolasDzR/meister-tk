@@ -2,8 +2,22 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    {{-- Без запрета масштабирования: человек должен мочь увеличить текст пальцами. --}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="@yield('description', 'Грузоперевозки по России до 20 тонн: подбор транспорта, расчёт стоимости рейса, сопровождение документов.')">
+
+    {{--
+    -- Пока сайт закрыт от поисковиков (SITE_INDEXING=false), каждая страница
+    -- просит не попадать в выдачу. Открывается одной строкой в .env,
+    -- вместе с robots.txt (маршрут в routes/web.php).
+    --}}
+    @unless(config('site.indexing'))
+        <meta name="robots" content="noindex, nofollow">
+    @endunless
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="csrf-param" content="_token"/>
@@ -27,7 +41,8 @@
     @vite(['resources/ts/app.ts', 'resources/scss/app.scss'])
 
     <!-- Ставим стили и скрипты определенной страницы -->
-    @php $page = Route::currentRouteName() ?? 'home'; @endphp
+    {{-- Страница без маршрута (ошибка 404, 500) называет свой набор сама через @section('page'). --}}
+    @php $page = trim($__env->yieldContent('page')) ?: (Route::currentRouteName() ?? 'home'); @endphp
     @vite(["resources/scss/pages/{$page}.scss", "resources/ts/pages/{$page}.ts"])
 
     @stack('styles')

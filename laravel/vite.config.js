@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
 import path from "node:path";
 import autoprefixer from 'autoprefixer';
 import postcssSortMediaQueries from 'postcss-sort-media-queries';
@@ -18,12 +17,13 @@ export default defineConfig({
                 'resources/ts/pages/home.ts',
                 'resources/ts/pages/posts.ts',
                 'resources/ts/pages/post.ts',
+                'resources/scss/pages/error.scss',
+                'resources/ts/pages/error.ts',
                 'resources/scss/pages/styleguide.scss',
                 'resources/ts/pages/styleguide.ts',
             ],
             refresh: true,
         }),
-        react(),
     ],
     css: {
         preprocessorOptions: {
