@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="csrf-param" content="_token"/>
-    <meta name="ymap-api-key" content="{{ env('YMAP_API_KEY') }}">
+    <meta name="ymap-api-key" content="{{ config('services.yandex_maps.api_key') }}">
     {{--
     -- Шрифты первого экрана. Без preload браузер узнаёт о них только когда
     -- разберёт CSS — то есть поздно, и текст успевает моргнуть запасным

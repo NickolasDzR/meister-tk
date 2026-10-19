@@ -21,7 +21,7 @@ app-seeders:
 	docker compose run --rm laravel php artisan db:seed
 
 app-add-admin:
-	docker compose run --rm laravel php artisan user:create
+	docker compose run --rm laravel php artisan make:filament-user
 
 app-storage-link:
 	docker compose run --rm laravel php artisan storage:link
