@@ -1,0 +1,32 @@
+.breadcrumbs {
+    font-size: 14px;
+    line-height: 1.5;
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    // Разделитель — косая черта перед каждым пунктом, кроме первого.
+    // В CSS, а не в разметке: экранный диктор её не зачитывает.
+    &__item + &__item::before {
+        content: "/";
+        margin: 0 8px;
+        color: var(--gray);
+    }
+
+    &__link {
+        color: var(--lightGray);
+        text-decoration: none;
+        transition: color .2s ease;
+
+        @media (hover: hover) {
+            &:hover {
+                color: var(--keppel);
+            }
+        }
+    }
+}

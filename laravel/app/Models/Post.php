@@ -25,6 +25,7 @@ class Post extends Model
         'published' => 'boolean',
         'published_at' => 'datetime',
         'content' => 'array',
+        'views' => 'integer',
     ];
 
     protected static function booted(): void

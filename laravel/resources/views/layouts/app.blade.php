@@ -55,6 +55,7 @@
     @endif
 
     @include('modules.schema.organization')
+    @stack('schema')
 </head>
 <body>
     @yield("content")

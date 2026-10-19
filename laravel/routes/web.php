@@ -4,6 +4,7 @@ use App\Models\Post;
 use App\Models\PromoSlide;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -48,10 +49,26 @@ Route::get('/posts', function () {
     return view('posts', compact('posts'));
 })->name('posts');
 
-Route::get('/posts/{slug}', function (string $slug) {
+Route::get('/posts/{slug}', function (Request $request, string $slug) {
     $post = Post::where('slug', $slug)
         ->published()
         ->firstOrFail();
+
+    // Просмотр считаем, только если статью открыл живой читатель впервые
+    // за сессию. Без этих условий число врёт: F5 накручивает, поисковые
+    // роботы заходят постоянно, а автор сам перечитывает свои статьи.
+    $viewed = $request->session()->get('viewed_posts', []);
+    $isBot = preg_match('/bot|crawl|spider|slurp|facebookexternalhit|preview/i', (string) $request->userAgent());
+
+    if (! $isBot && ! auth()->check() && ! in_array($post->id, $viewed, true)) {
+        // Мимо модели, напрямую в таблицу: модель при increment обновила бы
+        // updated_at, и каждый просмотр выглядел бы как правка статьи
+        // (дата правки уходит поисковику в разметке).
+        DB::table('posts')->where('id', $post->id)->increment('views');
+        $post->views++;
+
+        $request->session()->push('viewed_posts', $post->id);
+    }
 
     return view('post', compact('post'));
 })->name('post');

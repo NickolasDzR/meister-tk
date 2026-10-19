@@ -51,6 +51,11 @@ class PostsTable
                     ->dateTime("d.m.Y H:i")
                     ->sortable(),
 
+                TextColumn::make("views")
+                    ->label("Просмотры")
+                    ->numeric(thousandsSeparator: " ")
+                    ->sortable(),
+
                 TextColumn::make("created_at")
                     ->label("Создано")
                     ->dateTime("d.m.Y")

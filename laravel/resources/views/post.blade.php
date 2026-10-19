@@ -3,11 +3,24 @@
         ['link' => route('home'), 'text' => 'Главная'],
         ['link' => route('posts'), 'text' => 'Статьи'],
     ];
+
+    // Путь до статьи: целиком — в разметку для поисковика, без самой
+    // статьи — в видимые крошки (её заголовок стоит рядом).
+    $breadcrumbs = [
+        ['name' => 'Главная', 'url' => route('home')],
+        ['name' => 'Статьи', 'url' => route('posts')],
+        ['name' => $post->title, 'url' => route('post', $post->slug)],
+    ];
 @endphp
 
 @extends('layouts.app')
 
 @section('title', $post->title)
+
+@push('schema')
+    @include('modules.schema.article')
+    @include('modules.schema.breadcrumbs', ['items' => $breadcrumbs])
+@endpush
 
 @section('og')
     <meta property="og:type" content="article">
@@ -52,11 +65,25 @@
                 <div class="container relative">
                     <div class="row">
                         <div class="col-12">
-                            @if($post->published_at)
-                                <time class="post__date" datetime="{{ $post->published_at->format('Y-m-d') }}">
-                                    {{ $post->published_at->translatedFormat('d F Y') }}
-                                </time>
-                            @endif
+                            @include('modules.breadcrumbs.breadcrumbs', [
+                                'items' => array_slice($breadcrumbs, 0, -1),
+                                'parentClass' => 'post__breadcrumbs',
+                            ])
+
+                            <div class="post__meta">
+                                @if($post->published_at)
+                                    <time class="post__date" datetime="{{ $post->published_at->format('Y-m-d') }}">
+                                        {{ $post->published_at->translatedFormat('d F Y') }}
+                                    </time>
+                                @endif
+
+                                {{-- Подпись словами — для экранного диктора: глаз он не прочтёт. --}}
+                                <span class="post__views" title="Просмотры">
+                                    <x-icon name="eye" class="post__views-icon" aria-hidden="true" />
+                                    <span class="visually-hidden">Просмотры:</span>
+                                    {{ number_format($post->views, 0, '', ' ') }}
+                                </span>
+                            </div>
 
                             @if($post->excerpt)
                                 <p class="post__excerpt">{{ $post->excerpt }}</p>

@@ -1,6 +1,7 @@
 @use '../../../node_modules/@splidejs/splide/dist/css/splide-core.min.css';
 
 @use '@modules/post/post';
+@use '@modules/breadcrumbs/breadcrumbs';
 @use '@components/lightbox/lightbox';
 // Прелоадер — пока по первому клику грузится окно с картинкой.
 @use '@components/preloader/preloader';

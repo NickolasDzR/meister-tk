@@ -142,9 +142,31 @@
         }
     }
 
-    &__date {
+    &__breadcrumbs {
+        margin-bottom: 8px;
+    }
+
+    // Дата и просмотры одной строкой.
+    &__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
         margin-bottom: 40px;
-        display: block;
+    }
+
+    &__views {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--gray);
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__views-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
     }
 
     // Картинка и текст делят строку поровну. В макете колонки чуть разной
