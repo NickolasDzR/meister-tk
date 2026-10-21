@@ -19,6 +19,8 @@ class Post extends Model
         'og_image',
         'published',
         'published_at',
+        'telegram_enabled',
+        'telegram_text',
     ];
 
     protected $casts = [
@@ -26,6 +28,9 @@ class Post extends Model
         'published_at' => 'datetime',
         'content' => 'array',
         'views' => 'integer',
+        'telegram_enabled' => 'boolean',
+        'telegram_posted_at' => 'datetime',
+        'telegram_attempts' => 'integer',
     ];
 
     protected static function booted(): void
@@ -70,5 +75,19 @@ class Post extends Model
     public function isScheduled(): bool
     {
         return $this->published && $this->published_at?->isFuture();
+    }
+
+    /**
+     * Где сейчас анонс в Telegram — для админки. Null, если отправка
+     * не включена или текста поста нет.
+     */
+    public function telegramStatus(): ?string
+    {
+        return match (true) {
+            $this->telegram_posted_at !== null => 'Отправлен',
+            ! $this->telegram_enabled || blank($this->telegram_text) => null,
+            $this->telegram_attempts >= 3 => 'Ошибка',
+            default => 'Ждёт',
+        };
     }
 }

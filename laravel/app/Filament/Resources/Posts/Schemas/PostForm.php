@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
+use App\Models\Post;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\DateTimePicker;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class PostForm
@@ -242,6 +244,36 @@ class PostForm
                             ->reorderable()
                             ->collapsible()
                             ->columnSpanFull(),
+                    ]),
+
+                Section::make("Анонс в Telegram")
+                    ->description("С включённым тумблером уходит в канал сам, когда статья появляется на сайте: сразу после публикации или в запланированное время.")
+                    ->collapsible()
+                    ->schema([
+                        Toggle::make("telegram_enabled")
+                            ->label("Отправить анонс в Telegram")
+                            ->helperText("Выключено — пост можно спокойно писать и править, в канал ничего не уйдёт.")
+                            ->default(false)
+                            ->live(),
+
+                        Textarea::make("telegram_text")
+                            ->label("Текст поста")
+                            ->helperText("Обычный текст. **Так** — жирным. Обложка и ссылка на статью добавятся сами. После отправки правки в канал уже не попадут.")
+                            ->required(fn (Get $get): bool => (bool) $get("telegram_enabled"))
+                            ->maxLength(900)
+                            ->rows(10),
+
+                        Placeholder::make("telegram_status")
+                            ->label("Статус")
+                            ->content(fn (?Post $record): string => match ($record?->telegramStatus()) {
+                                "Отправлен" => "Отправлен ".$record->telegram_posted_at->format("d.m.Y в H:i"),
+                                "Ошибка" => "Не отправлен: ".$record->telegram_error.". Исправьте и нажмите «Отправить в Telegram ещё раз» вверху страницы.",
+                                "Ждёт" => $record->telegram_error
+                                    ? "Ждёт отправки. Прошлая попытка: ".$record->telegram_error
+                                    : "Ждёт отправки",
+                                default => "—",
+                            })
+                            ->visibleOn("edit"),
                     ]),
             ]);
     }

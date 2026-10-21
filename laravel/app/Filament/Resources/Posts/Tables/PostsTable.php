@@ -46,6 +46,17 @@ class PostsTable
                         ? "Появится на сайте ".$record->published_at->format("d.m.Y в H:i")
                         : null),
 
+                TextColumn::make("telegram")
+                    ->label("Telegram")
+                    ->badge()
+                    ->state(fn (Post $record): ?string => $record->telegramStatus())
+                    ->color(fn (?string $state): string => match ($state) {
+                        "Отправлен" => "success",
+                        "Ошибка" => "danger",
+                        default => "gray",
+                    })
+                    ->tooltip(fn (Post $record): ?string => $record->telegram_error),
+
                 TextColumn::make("published_at")
                     ->label("Дата публикации")
                     ->dateTime("d.m.Y H:i")
