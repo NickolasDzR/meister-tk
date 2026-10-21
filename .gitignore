@@ -3,3 +3,5 @@ docker/log
 docker/redis
 .idea
 .env
+# Боевой сервер: пароли и ключи, только на сервере
+.env.production

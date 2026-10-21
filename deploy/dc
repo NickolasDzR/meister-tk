@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# docker compose для боевого сервера: сам подставляет compose.prod.yaml и .env.production.
+# Примеры (на сервере, из папки ~/meister-tk):
+#   ./deploy/dc ps                          — что запущено
+#   ./deploy/dc logs -f --tail=100 app      — логи Laravel/PHP
+#   ./deploy/dc restart app                 — перезапустить приложение (после правки .env.production)
+#   ./deploy/dc exec app php artisan tinker — консоль Laravel
+set -euo pipefail
+cd "$(dirname "$0")/.."
+exec docker compose -f compose.prod.yaml --env-file .env.production "$@"

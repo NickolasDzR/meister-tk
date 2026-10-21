@@ -1,0 +1,70 @@
+# Боевой сервер. Не запускать руками через docker compose: для этого есть deploy/dc (он подставляет
+# этот файл и .env.production). Локально по-прежнему docker-compose.yml.
+#
+#   web — Caddy без портов наружу: в общей сети edge его видит Caddy Битулята как meister-web
+#   app — Laravel на PHP-FPM
+#   db  — MySQL 8, наружу не открыт; памяти урезано — сервер общий, 2 ГБ на всех
+# Данные живут в томах db_data (база) и storage (логи Laravel, временные загрузки админки):
+# пересборка и перезапуск контейнеров их не трогают.
+name: meister
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+      target: web
+    image: meister/web
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      default:
+      edge:
+        aliases:
+          - meister-web
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+      target: app
+    image: meister/app
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - storage:/var/www/laravel/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=128M
+      - --performance-schema=OFF
+      - --max-connections=30
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+networks:
+  # Общая сеть с Caddy Битулята. Создаётся один раз руками: docker network create edge
+  edge:
+    external: true
+
+volumes:
+  db_data:
+  storage:

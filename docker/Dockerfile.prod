@@ -1,0 +1,58 @@
+# Боевой образ Мейстера. Собирается на сервере командой deploy/update.sh (через compose.prod.yaml).
+# Три шага:
+#   assets — собирает фронт (Vite) в public/build
+#   app    — PHP-FPM с кодом и зависимостями composer, без xdebug и dev-пакетов
+#   web    — Caddy: раздаёт статику, PHP отдаёт в app. Наружу не смотрит:
+#            HTTPS и порты 80/443 держит Caddy Битулята, он и шлёт сюда запросы tk-meister.ru
+# В отличие от локального Dockerfile, код здесь внутри образа, а не подключён томом.
+
+# ── 1. Фронт ─────────────────────────────────────────
+FROM node:24-alpine AS assets
+WORKDIR /app
+COPY laravel/package.json laravel/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY laravel/vite.config.js laravel/tsconfig.json laravel/tsconfig.node.json ./
+COPY laravel/resources ./resources
+COPY laravel/public ./public
+# Только vite build, без npm run images: картинки уже переведены в webp и лежат в git (public/images)
+RUN npx vite build
+
+# ── 2. PHP ───────────────────────────────────────────
+FROM php:8.3-fpm AS app
+
+# Пакеты Debian — с зеркала Яндекса: deb.debian.org из российских дата-центров часто не открывается
+ARG DEBIAN_MIRROR=mirror.yandex.ru
+RUN sed -i "s|deb.debian.org|${DEBIAN_MIRROR}|g" /etc/apt/sources.list.d/debian.sources
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions @composer bcmath exif intl opcache pdo_mysql zip
+
+COPY docker/php/php.prod.ini /usr/local/etc/php/conf.d/zz-app.ini
+
+WORKDIR /var/www/laravel
+
+# Сначала только зависимости: пока composer.lock не менялся, этот слой берётся из кэша
+COPY laravel/composer.json laravel/composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction --prefer-dist
+
+COPY laravel/ ./
+COPY --from=assets /app/public/build ./public/build
+# Папки storage — до artisan: сам storage в образ не копируется (локальные логи и загрузки не нужны),
+# а Laravel без них не запускается
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs storage/app/public storage/app/private bootstrap/cache \
+  && composer dump-autoload --optimize --no-dev \
+  && php artisan package:discover --ansi \
+  && chown -R www-data:www-data storage bootstrap/cache
+
+COPY --chmod=755 docker/php/start-prod.sh /usr/local/bin/start-prod
+# Своей домашней папки у www-data нет: tinker кладёт настройки во /tmp, иначе молча не запускается
+ENV XDG_CONFIG_HOME=/tmp
+USER www-data
+CMD ["start-prod"]
+
+# ── 3. Caddy ─────────────────────────────────────────
+FROM caddy:2-alpine AS web
+# Статика лежит по тому же пути, что в app: Caddy отдаёт файлы сам, а PHP-запросы шлёт в app
+COPY --from=app /var/www/laravel/public /var/www/laravel/public
+COPY deploy/Caddyfile /etc/caddy/Caddyfile

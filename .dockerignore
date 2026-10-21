@@ -1,0 +1,13 @@
+# В образ не нужно: локальная база, зависимости (ставятся в образе заново), логи, git
+.git
+docker/db
+docker/log
+laravel/node_modules
+laravel/vendor
+laravel/public/build
+laravel/public/hot
+# storage целиком: локальные логи и загрузки; пустые папки Dockerfile создаёт сам
+laravel/storage
+laravel/.env
+laravel/.env.*
+.env.production

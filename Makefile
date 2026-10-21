@@ -47,3 +47,22 @@ bash-nginx:
 
 nginx-reload:
 	docker exec -it app_nginx service nginx reload
+# ── Боевой сервер ─────────────────────────────────────
+# ssh-имя из ~/.ssh/config (общий сервер с Битулятом) и папка проекта на нём
+SERVER = bitulyat
+SERVER_DIR = meister-tk
+
+deploy: ## Выкатить main на сервер: git push на сервер + сборка, миграции, проверка
+	@bad=$$(git ls-files -s deploy/*.sh deploy/dc docker/php/start-prod.sh | awk '$$1 != "100755" {print $$4}'); \
+	if [ -n "$$bad" ]; then echo "Потерян бит исполнения: $$bad (git update-index --chmod=+x …)"; exit 1; fi
+	git push server main
+	ssh $(SERVER) 'cd $(SERVER_DIR) && ./deploy/update.sh'
+
+server: ## Зайти на сервер в папку проекта
+	ssh -t $(SERVER) 'cd $(SERVER_DIR) && exec bash'
+
+server-logs: ## Последние логи сайта на сервере
+	ssh $(SERVER) 'cd $(SERVER_DIR) && ./deploy/dc logs --tail=100 app web'
+
+server-backup: ## Бэкап базы на сервере сейчас
+	ssh $(SERVER) 'cd $(SERVER_DIR) && ./deploy/backup.sh manual'
