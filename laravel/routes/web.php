@@ -126,4 +126,9 @@ Route::get('/robots.txt', function () {
 // его негде: на сервере адрес отдаст 404.
 if (app()->environment('local')) {
     Route::view('/styleguide', 'styleguide')->name('styleguide');
+
+    // Посмотреть страницы ошибок: /_error/404, /_error/500. abort() — это
+    // HTTP-ошибка, поэтому даже с APP_DEBUG=true Laravel покажет нашу
+    // страницу errors/{код}, а не отладочный экран. На сервере адреса нет.
+    Route::get('/_error/{code}', fn (int $code) => abort($code))->whereNumber('code');
 }

@@ -10,7 +10,7 @@
     ]];
 @endphp
 
-<header class="header">
+<header class="header {{ $modifiers ?? '' }}">
     <div class="container">
         <div class="row">
 

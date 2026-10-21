@@ -11,3 +11,41 @@
         }
     }
 }
+// Знак на тёмном фоне — версия логотипа из брендбука: «М» стальная
+// голубая, дорога светлая, разметка белая. Прелоадер и страницы ошибок.
+// В svg цвета заданы атрибутами fill/stroke — CSS их перекрывает.
+.logo-mark_on-dark {
+    [fill="#21435e"] { fill: $logo-dark-bg-m; }
+    [stroke="#21435e"] { stroke: $logo-dark-bg-m; }
+    [fill="#3c97a2"] { fill: $logo-dark-bg-road; }
+    [stroke="#3c97a2"] { stroke: $logo-dark-bg-road; }
+}
+
+// Дорога в логотипе едет: разметка сдвигается вниз на один шаг полос
+// (18 единиц рисунка) и повторяется — как будто едешь по дороге.
+// Работает для логотипа в шапке и для знака (logo-mark.svg) на страницах
+// ошибок и в прелоадере. Разметка — в самих svg.
+@keyframes logo-road {
+    to {
+        transform: translateY(18px);
+    }
+}
+
+.logo-road__lines {
+    animation: logo-road .8s linear infinite;
+}
+
+// Неподвижные штрихи оригинала — только когда движение выключено.
+.logo-road__static {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logo-road__moving {
+        display: none;
+    }
+
+    .logo-road__static {
+        display: inline;
+    }
+}

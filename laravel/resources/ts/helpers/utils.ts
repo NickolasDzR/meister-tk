@@ -1,4 +1,8 @@
+/// <reference types="vite/client" />
 import {DynamicLoad} from "@mornya/dynamic-load-libs";
+// Знак логотипа с едущей дорогой — для прелоадера. ?raw — Vite кладёт
+// содержимое svg строкой прямо в скрипт, отдельного запроса нет.
+import logoMark from "#/images/svg/logo-mark.svg?raw";
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -212,7 +216,15 @@ export const preloader = {
         const preloaderWrapper = document.createElement("DIV");
         preloaderWrapper.classList.add("preloader__wrapper");
 
-        preloaderWrapper.dataset.preloaderText = preloaderText ?? "Идёт загрузка";
+        // Знак логотипа, в котором едет дорога, и подпись под ним.
+        // Подпись — textContent: текст может прийти снаружи.
+        preloaderWrapper.innerHTML = logoMark;
+        preloaderWrapper.firstElementChild?.classList.add("preloader__mark", "logo-mark_on-dark");
+
+        const preloaderLabel = document.createElement("P");
+        preloaderLabel.classList.add("preloader__text");
+        preloaderLabel.textContent = preloaderText ?? "Загружаем…";
+        preloaderWrapper.appendChild(preloaderLabel);
 
         preloader.appendChild(preloaderWrapper);
 

@@ -13,6 +13,17 @@
         height: $header-height-desktop;
     }
 
+    // Логотип стоит: на странице уже едет крупный знак, двух движений не нужно.
+    &_still-logo {
+        .logo-road__moving {
+            display: none;
+        }
+
+        .logo-road__static {
+            display: inline;
+        }
+    }
+
     &__logo {
         flex: 0;
         margin-right: 56px;

@@ -1,6 +1,7 @@
 @props(['value' => false])
 
-<footer class="footer {{ !request()->routeIs('posts') ? 'footer_bordered' : '' }}">
+{{-- Линия сверху — везде, кроме списка статей; страница может решить сама через $bordered. --}}
+<footer class="footer {{ ($bordered ?? !request()->routeIs('posts')) ? 'footer_bordered' : '' }}">
     <div class="container">
         <div class="row">
             <div class="col-12 col-xl-5">

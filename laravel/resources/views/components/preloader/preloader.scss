@@ -1,8 +1,10 @@
 @use '_variables' as *;
 
-/* HTML:
+/* HTML (собирается в utils.ts → preloader.enable):
     <div class="preloader">
         <div class="preloader__wrapper">
+            <svg class="preloader__mark">…</svg>
+            <p class="preloader__text">Загружаем…</p>
         </div>
     </div>
 */
@@ -33,28 +35,35 @@
         backdrop-filter: blur(8px);
         // Тёмная подложка в тон indigo — как у формы расчёта и окна
         // с картинкой. На ней крестик белый, как у них.
-        background: rgba($indigo, 0.6);
+        background: rgba($indigo, 0.78);
     }
 
+    // Знак с едущей дорогой и подпись под ним.
     &__wrapper {
-        width: fit-content;
-        font-size: 32px;
-        font-family: system-ui, sans-serif;
-        font-weight: bold;
-        text-transform: uppercase;
-        color: #0000;
-        -webkit-text-stroke: 1px var(--keppel);
-        background: conic-gradient($keppel 0 0) 50%/0 100% no-repeat text;
-        animation: l4 1.5s linear infinite;
+        position: relative;
         z-index: 999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    // Знак — в «тёмной» версии логотипа (logo-mark_on-dark, modules/logo).
+    &__mark {
+        width: 112px;
+        height: auto;
 
         @media (min-width: $break_md) {
-            font-size: 40px
+            width: 136px;
         }
+    }
 
-        &:before {
-            content: attr(data-preloader-text);
-        }
+    &__text {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 1.5;
+        color: rgba($white, .85);
     }
 
     // Крестик закрытия — появляется через 10 секунд ожидания, в том же
@@ -72,11 +81,5 @@
         &.is-active .hamburger-inner::after {
             background-color: var(--white);
         }
-    }
-}
-
-@keyframes l4 {
-    to {
-        background-size: 120% 100%
     }
 }
