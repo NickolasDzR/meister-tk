@@ -20,6 +20,7 @@ class TelegramAnnounceTest extends TestCase
         config([
             'services.telegram.bot_token' => 'secret-token',
             'services.telegram.channel' => '@meister_test',
+            'services.vk.token' => null,
         ]);
     }
 
@@ -46,8 +47,8 @@ class TelegramAnnounceTest extends TestCase
         Http::fake(['api.telegram.org/*' => Http::response(['ok' => true, 'result' => ['message_id' => 42]])]);
         $post = $this->makePost();
 
-        $this->artisan('posts:telegram')->assertSuccessful();
-        $this->artisan('posts:telegram')->assertSuccessful();
+        $this->artisan('posts:announce')->assertSuccessful();
+        $this->artisan('posts:announce')->assertSuccessful();
 
         Http::assertSentCount(1);
         Http::assertSent(fn (Request $r) => str_ends_with($r->url(), '/sendPhoto')
@@ -58,7 +59,7 @@ class TelegramAnnounceTest extends TestCase
         $post->refresh();
         $this->assertSame(42, $post->telegram_message_id);
         $this->assertNotNull($post->telegram_posted_at);
-        $this->assertSame('Отправлен', $post->telegramStatus());
+        $this->assertSame('Отправлен', $post->announceStatus('telegram'));
     }
 
     public function test_skips_disabled_drafts_scheduled_and_posts_without_text(): void
@@ -70,10 +71,10 @@ class TelegramAnnounceTest extends TestCase
         $this->makePost(['telegram_text' => null]);
         $this->makePost(['telegram_text' => '']);
 
-        $this->artisan('posts:telegram')->assertSuccessful();
+        $this->artisan('posts:announce')->assertSuccessful();
 
         Http::assertNothingSent();
-        $this->assertNull($disabled->telegramStatus());
+        $this->assertNull($disabled->announceStatus('telegram'));
     }
 
     public function test_falls_back_to_text_when_photo_rejected(): void
@@ -84,7 +85,7 @@ class TelegramAnnounceTest extends TestCase
         ]);
         $post = $this->makePost();
 
-        $this->artisan('posts:telegram')->assertSuccessful();
+        $this->artisan('posts:announce')->assertSuccessful();
 
         $this->assertSame(7, $post->refresh()->telegram_message_id);
     }
@@ -95,14 +96,14 @@ class TelegramAnnounceTest extends TestCase
         $post = $this->makePost();
 
         foreach (range(1, 5) as $_) {
-            $this->artisan('posts:telegram');
+            $this->artisan('posts:announce');
         }
 
         $post->refresh();
         $this->assertSame(3, $post->telegram_attempts);
         $this->assertSame('Bad Request: chat not found', $post->telegram_error);
         $this->assertNull($post->telegram_posted_at);
-        $this->assertSame('Ошибка', $post->telegramStatus());
+        $this->assertSame('Ошибка', $post->announceStatus('telegram'));
         // На каждую попытку: фото, затем текст.
         Http::assertSentCount(6);
     }
@@ -112,7 +113,7 @@ class TelegramAnnounceTest extends TestCase
         Http::fake(fn () => throw new ConnectionException('cURL error 28 for https://api.telegram.org/botsecret-token/sendPhoto'));
         $post = $this->makePost();
 
-        $this->artisan('posts:telegram');
+        $this->artisan('posts:announce');
 
         $this->assertStringNotContainsString('secret-token', $post->refresh()->telegram_error);
     }
@@ -123,7 +124,7 @@ class TelegramAnnounceTest extends TestCase
         Http::fake();
         $this->makePost();
 
-        $this->artisan('posts:telegram')->assertSuccessful();
+        $this->artisan('posts:announce')->assertSuccessful();
 
         Http::assertNothingSent();
     }

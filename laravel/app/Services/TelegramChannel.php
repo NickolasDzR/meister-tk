@@ -10,8 +10,18 @@ use RuntimeException;
 /**
  * Анонс статьи в Telegram-канал: обложка, текст из админки и ссылка на статью.
  */
-class TelegramChannel
+class TelegramChannel implements AnnounceChannel
 {
+    public function key(): string
+    {
+        return 'telegram';
+    }
+
+    public function name(): string
+    {
+        return 'Telegram';
+    }
+
     public function isConfigured(): bool
     {
         return filled(config('services.telegram.bot_token'))
@@ -63,6 +73,16 @@ class TelegramChannel
         $url = htmlspecialchars(route('post', $post->slug), ENT_QUOTES);
 
         return $text."\n\n".'<a href="'.$url.'">Читать полностью →</a>';
+    }
+
+    /**
+     * Текст для ручной публикации: копируется в админке и вставляется в канал.
+     * **Жирный** остаётся как есть — Telegram Desktop сам делает его жирным
+     * при отправке.
+     */
+    public function manualText(Post $post): string
+    {
+        return trim($post->telegram_text)."\n\nЧитать полностью: ".route('post', $post->slug);
     }
 
     private function call(string $method, array $params): array

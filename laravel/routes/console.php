@@ -1,7 +1,8 @@
 <?php
 
-use App\Models\Post;
+use App\Services\Announcer;
 use App\Services\TelegramChannel;
+use App\Services\VkWall;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -11,47 +12,25 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 /*
- * Анонсы статей в Telegram-канал. Берёт статьи, которые уже видны на сайте,
- * с включённым тумблером «Отправить анонс», текстом поста и ещё не
- * отправленные. Запланированная статья уйдёт в канал в ту же минуту,
- * когда появится на сайте.
+ * Анонсы опубликованных статей: Telegram-канал и стена ВК. Какие статьи
+ * берутся — см. Announcer. Площадка без ключей в .env просто пропускается.
  */
-Artisan::command('posts:telegram', function (TelegramChannel $telegram) {
-    if (! $telegram->isConfigured()) {
-        $this->warn('TELEGRAM_BOT_TOKEN или TELEGRAM_CHANNEL не заданы — пропускаю');
+Artisan::command('posts:announce', function (Announcer $announcer, TelegramChannel $telegram, VkWall $vk) {
+    foreach ([$telegram, $vk] as $channel) {
+        if (! $channel->isConfigured()) {
+            $this->line("{$channel->name()}: ключи не заданы — пропускаю");
 
-        return;
-    }
+            continue;
+        }
 
-    $posts = Post::published()
-        ->where('telegram_enabled', true)
-        ->whereNotNull('telegram_text')
-        ->where('telegram_text', '!=', '')
-        ->whereNull('telegram_posted_at')
-        ->where('telegram_attempts', '<', 3)
-        ->orderBy('published_at')
-        ->get();
-
-    foreach ($posts as $post) {
-        try {
-            $post->forceFill([
-                'telegram_message_id' => $telegram->publish($post),
-                'telegram_posted_at' => now(),
-                'telegram_error' => null,
-            ])->save();
-
-            $this->info("Отправлено: {$post->title}");
-        } catch (Throwable $e) {
-            $post->forceFill([
-                'telegram_attempts' => $post->telegram_attempts + 1,
-                'telegram_error' => $e->getMessage(),
-            ])->save();
-
-            $this->error("Ошибка: {$post->title} — {$e->getMessage()}");
+        foreach ($announcer->run($channel) as $title => $error) {
+            $error === null
+                ? $this->info("{$channel->name()}: отправлено — {$title}")
+                : $this->error("{$channel->name()}: ошибка — {$title} — {$error}");
         }
     }
-})->purpose('Отправить анонсы опубликованных статей в Telegram-канал');
+})->purpose('Отправить анонсы опубликованных статей в Telegram и ВК');
 
 // На сервере schedule:run раз в минуту запускает cron (deploy/install-cron.sh).
-// withoutOverlapping — чтобы медленный ответ Telegram не привёл к двойной отправке.
-Schedule::command('posts:telegram')->everyMinute()->withoutOverlapping();
+// withoutOverlapping — чтобы медленный ответ площадки не привёл к двойной отправке.
+Schedule::command('posts:announce')->everyMinute()->withoutOverlapping();

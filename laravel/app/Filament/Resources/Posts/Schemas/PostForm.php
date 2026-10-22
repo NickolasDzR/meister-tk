@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Models\Post;
+use App\Services\AnnounceChannel;
+use App\Services\TelegramChannel;
+use App\Services\VkWall;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\DateTimePicker;
@@ -246,35 +249,54 @@ class PostForm
                             ->columnSpanFull(),
                     ]),
 
-                Section::make("Анонс в Telegram")
-                    ->description("С включённым тумблером уходит в канал сам, когда статья появляется на сайте: сразу после публикации или в запланированное время.")
-                    ->collapsible()
-                    ->schema([
-                        Toggle::make("telegram_enabled")
-                            ->label("Отправить анонс в Telegram")
-                            ->helperText("Выключено — пост можно спокойно писать и править, в канал ничего не уйдёт.")
-                            ->default(false)
-                            ->live(),
+                self::announceSection(app(TelegramChannel::class), 900, "Обычный текст. **Так** — жирным. Обложка и ссылка на статью добавятся сами."),
 
-                        Textarea::make("telegram_text")
-                            ->label("Текст поста")
-                            ->helperText("Обычный текст. **Так** — жирным. Обложка и ссылка на статью добавятся сами. После отправки правки в канал уже не попадут.")
-                            ->required(fn (Get $get): bool => (bool) $get("telegram_enabled"))
-                            ->maxLength(900)
-                            ->rows(10),
+                self::announceSection(app(VkWall::class), 2000, "Обычный текст, без жирного. Ссылка на статью с карточкой и обложкой добавится сама."),
+            ]);
+    }
 
-                        Placeholder::make("telegram_status")
-                            ->label("Статус")
-                            ->content(fn (?Post $record): string => match ($record?->telegramStatus()) {
-                                "Отправлен" => "Отправлен ".$record->telegram_posted_at->format("d.m.Y в H:i"),
-                                "Ошибка" => "Не отправлен: ".$record->telegram_error.". Исправьте и нажмите «Отправить в Telegram ещё раз» вверху страницы.",
-                                "Ждёт" => $record->telegram_error
-                                    ? "Ждёт отправки. Прошлая попытка: ".$record->telegram_error
-                                    : "Ждёт отправки",
-                                default => "—",
-                            })
-                            ->visibleOn("edit"),
-                    ]),
+    /**
+     * Раздел анонса для площадки: тумблер автоотправки, текст, статус.
+     * Нет ключей в .env — тумблера нет: анонс копируют кнопкой вверху
+     * страницы и публикуют руками.
+     */
+    private static function announceSection(AnnounceChannel $channel, int $maxLength, string $textHelp): Section
+    {
+        $k = $channel->key();
+        $auto = $channel->isConfigured();
+
+        return Section::make("Анонс: {$channel->name()}")
+            ->description($auto
+                ? "С включённым тумблером уходит сам, когда статья появляется на сайте: сразу после публикации или в запланированное время."
+                : "Автоотправка выключена. Сохраните текст, скопируйте его кнопкой «Скопировать анонс» вверху страницы и опубликуйте вручную.")
+            ->collapsible()
+            ->schema([
+                Toggle::make("{$k}_enabled")
+                    ->label("Отправить анонс: {$channel->name()}")
+                    ->helperText("Выключено — пост можно спокойно писать и править, никуда ничего не уйдёт.")
+                    ->default(false)
+                    ->live()
+                    ->visible($auto),
+
+                Textarea::make("{$k}_text")
+                    ->label("Текст поста")
+                    ->helperText($textHelp." После отправки правки на площадку уже не попадут.")
+                    ->required(fn (Get $get): bool => $auto && (bool) $get("{$k}_enabled"))
+                    ->maxLength($maxLength)
+                    ->rows(10),
+
+                Placeholder::make("{$k}_status")
+                    ->label("Статус")
+                    ->content(fn (?Post $record): string => match ($record?->announceStatus($k)) {
+                        "Отправлен" => ($record->{"{$k}_message_id"} ? "Отправлен " : "Отмечен отправленным вручную ")
+                            .$record->{"{$k}_posted_at"}->format("d.m.Y в H:i"),
+                        "Ошибка" => "Не отправлен: ".$record->{"{$k}_error"}.". Исправьте и нажмите «Отправить ещё раз» вверху страницы.",
+                        "Ждёт" => $record->{"{$k}_error"}
+                            ? "Ждёт отправки. Прошлая попытка: ".$record->{"{$k}_error"}
+                            : "Ждёт отправки",
+                        default => "—",
+                    })
+                    ->visibleOn("edit"),
             ]);
     }
 }

@@ -46,16 +46,9 @@ class PostsTable
                         ? "Появится на сайте ".$record->published_at->format("d.m.Y в H:i")
                         : null),
 
-                TextColumn::make("telegram")
-                    ->label("Telegram")
-                    ->badge()
-                    ->state(fn (Post $record): ?string => $record->telegramStatus())
-                    ->color(fn (?string $state): string => match ($state) {
-                        "Отправлен" => "success",
-                        "Ошибка" => "danger",
-                        default => "gray",
-                    })
-                    ->tooltip(fn (Post $record): ?string => $record->telegram_error),
+                self::announceColumn("telegram", "Telegram"),
+
+                self::announceColumn("vk", "ВК"),
 
                 TextColumn::make("published_at")
                     ->label("Дата публикации")
@@ -89,5 +82,20 @@ class PostsTable
             // Раньше было по дате создания: статья с ранней датой публикации,
             // созданная недавно, стояла в админке вверху, а на сайте — в конце.
             ->defaultSort("published_at", "desc");
+    }
+
+    /** Статус анонса на площадке: Ждёт / Отправлен / Ошибка, пусто — анонса нет. */
+    private static function announceColumn(string $channel, string $label): TextColumn
+    {
+        return TextColumn::make("{$channel}_status")
+            ->label($label)
+            ->badge()
+            ->state(fn (Post $record): ?string => $record->announceStatus($channel))
+            ->color(fn (?string $state): string => match ($state) {
+                "Отправлен" => "success",
+                "Ошибка" => "danger",
+                default => "gray",
+            })
+            ->tooltip(fn (Post $record): ?string => $record->{"{$channel}_error"});
     }
 }
